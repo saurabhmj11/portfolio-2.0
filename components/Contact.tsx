@@ -39,11 +39,11 @@ const Contact = () => {
 
           <Magnetic>
             <motion.a
-              href="mailto:contact@saurabh.dev"
+              href="mailto:saurabhmj11@gmail.com"
               whileHover={{ scale: 1.05 }}
               className="group relative inline-flex items-center gap-4 text-xl md:text-2xl font-medium border border-black rounded-full px-8 py-4 transition-colors hover:bg-black hover:text-white"
             >
-              <span>contact@saurabh.dev</span>
+              <span>saurabhmj11@gmail.com</span>
               <ArrowUpRight className="w-5 h-5 group-hover:rotate-45 transition-transform" />
             </motion.a>
           </Magnetic>
