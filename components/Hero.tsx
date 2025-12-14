@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import TextReveal from './TextReveal';
+import AIParticles from './AIParticles';
 // import Hero3D from './Hero3D';
 // import VelocityText from './VelocityText';
 import ErrorBoundary from './ErrorBoundary';
@@ -37,6 +38,8 @@ const Hero = () => {
             </div>
 
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />
+
+            <AIParticles />
 
             {/* 3D Element */}
             {/* <ErrorBoundary>

@@ -36,17 +36,29 @@ const Chatbot = () => {
 
         // Simulate AI delay and response
         setTimeout(() => {
-            let botText = "I'm not sure about that, but I can connect you with Saurabh!";
+            let botText = "I'm not sure about that, but I can connect you with Saurabh or tell you about his Agents!";
             const lowerInput = userMsg.text.toLowerCase();
 
-            if (lowerInput.includes('project') || lowerInput.includes('work')) {
-                botText = "Saurabh has worked on some cool Generative AI projects like an Image Generator, Video Creator, and NLP Chatbots. Check out the 'Selected Work' section!";
-            } else if (lowerInput.includes('skill') || lowerInput.includes('stack')) {
-                botText = "He specializes in Generative AI, LLMs, Python, React, and Next.js. A full-stack wizard with an AI focus!";
-            } else if (lowerInput.includes('contact') || lowerInput.includes('email') || lowerInput.includes('hire')) {
-                botText = "You can reach him at contact@saurabh.dev. He's always open to interesting opportunities.";
-            } else if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
-                botText = "Hello! How can I help you discover Saurabh's work today?";
+            if (lowerInput.includes('project') || lowerInput.includes('work') || lowerInput.includes('built')) {
+                botText = "Saurabh has built advanced Gen AI systems like a Deep RAG System, Autonomous Research Agents, and a Multi-Agent Orchestration platform. Check out the 'Selected Work' & 'Live Agents' sections!";
+            }
+            else if (lowerInput.includes('live') || lowerInput.includes('agent') || lowerInput.includes('demo')) {
+                botText = "You can try his live agents right now! Check out 'Travel Guru', '90-Day Launchpad', or the experimental 'DuduSL001' in the Live Agents section below.";
+            }
+            else if (lowerInput.includes('skill') || lowerInput.includes('stack') || lowerInput.includes('tech')) {
+                botText = "Core Expertise: Agentic AI Systems, LangGraph, Google ADK, Model Context Protocol (MCP). Proficient in Python, RAG Implementation, and Reasoning Models. A solid 1.8 years of specialized GenAI experience.";
+            }
+            else if (lowerInput.includes('contact') || lowerInput.includes('email') || lowerInput.includes('phone') || lowerInput.includes('hire')) {
+                botText = "Contact Saurabh directly: \nEmail: saurabhmj11@gmail.com \nPhone: +91-7767913887 \nStatus: Immediate Joiner (No Notice Period).";
+            }
+            else if (lowerInput.includes('resume') || lowerInput.includes('cv') || lowerInput.includes('background') || lowerInput.includes('experience')) {
+                botText = "Saurabh is an AI Agent Systems Developer with 1.8 years of experience. \n\nKey Highlights:\n• Specialized in LangGraph & Multi-Agent Orchestration.\n• Built Long-Running Agents & Reasoning Models.\n• Foundation in MCP Servers & Agent Memory.\n• Immediate Joiner.\n\nAsk for his 'full summary' if you want more details!";
+            }
+            else if (lowerInput.includes('full summary') || lowerInput.includes('summary')) {
+                botText = "Professional Summary: Highly focused AI Agent Systems Developer. \n\nExperience: 1.8 Years (Freelance & Pantech Solutions).\n\nProjects:\n• Quiz-Based Contextual Logic System (RAG + Memory).\n• Agent Execution Monitoring System.\n\nTech: Python, FastAPI, Docker, GCP/Vertex AI.\n\nHe is ready to deploy scalable solutions immediately.";
+            }
+            else if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
+                botText = "Hello! I'm your guide to Saurabh's portfolio. Ask me about his Resume, Skills, Live Agents, or Contact info!";
             }
 
             setMessages(prev => [...prev, { id: Date.now() + 1, text: botText, sender: 'bot' }]);
@@ -95,8 +107,8 @@ const Chatbot = () => {
                                 >
                                     <div
                                         className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.sender === 'user'
-                                                ? 'bg-white text-black rounded-tr-none'
-                                                : 'bg-white/10 text-gray-200 rounded-tl-none'
+                                            ? 'bg-white text-black rounded-tr-none'
+                                            : 'bg-white/10 text-gray-200 rounded-tl-none'
                                             }`}
                                     >
                                         {msg.text}

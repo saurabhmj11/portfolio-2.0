@@ -14,16 +14,31 @@ const AIParticles = () => {
     canvas.width = width;
     canvas.height = height;
 
-    const particles: { x: number; y: number; radius: number; vx: number; vy: number; alpha: number }[] = [];
+    canvas.width = width;
+    canvas.height = height;
+
+    let mouse = { x: -1000, y: -1000 };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+
+    const particles: { x: number; y: number; radius: number; vx: number; vy: number; alpha: number; originalVx: number; originalVy: number }[] = [];
     const particleCount = 60;
 
     for (let i = 0; i < particleCount; i++) {
+      const vx = (Math.random() - 0.5) * 0.2;
+      const vy = (Math.random() - 0.5) * 0.2;
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
         radius: Math.random() * 2 + 1,
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: (Math.random() - 0.5) * 0.2,
+        vx: vx,
+        vy: vy,
+        originalVx: vx,
+        originalVy: vy,
         alpha: Math.random() * 0.5 + 0.1
       });
     }
@@ -33,6 +48,29 @@ const AIParticles = () => {
       ctx.fillRect(0, 0, width, height);
 
       particles.forEach(p => {
+        // Mouse interaction
+        const dx = p.x - mouse.x;
+        const dy = p.y - mouse.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const maxDistance = 150;
+
+        if (distance < maxDistance) {
+          const forceDirectionX = dx / distance;
+          const forceDirectionY = dy / distance;
+          const force = (maxDistance - distance) / maxDistance;
+          const directionX = forceDirectionX * force * 2; // Strength
+          const directionY = forceDirectionY * force * 2;
+
+          p.vx += directionX;
+          p.vy += directionY;
+        } else {
+          // Return to original speed (friction)
+          if (p.vx > p.originalVx) p.vx -= 0.05;
+          if (p.vx < p.originalVx) p.vx += 0.05;
+          if (p.vy > p.originalVy) p.vy -= 0.05;
+          if (p.vy < p.originalVy) p.vy += 0.05;
+        }
+
         p.x += p.vx;
         p.y += p.vy;
 
@@ -43,7 +81,7 @@ const AIParticles = () => {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 60, 0, ${p.alpha})`;
+        ctx.fillStyle = `rgba(255, 60, 0, ${p.alpha})`; // Red/Orange "Ember" look
         ctx.shadowBlur = 15;
         ctx.shadowColor = "red";
         ctx.fill();
@@ -64,6 +102,7 @@ const AIParticles = () => {
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
     }
   }, []);
 

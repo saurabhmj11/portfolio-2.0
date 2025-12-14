@@ -4,8 +4,11 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
+import Experience from './components/Experience';
 import Projects from './components/Projects';
 import Blog from './components/Blog';
+import LiveAgents from './components/LiveAgents';
+import Terminal from './components/Terminal';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Preloader from './components/Preloader';
@@ -52,7 +55,9 @@ function App() {
             <main>
               <Hero />
               <About />
+              <Experience />
               <Projects />
+              <LiveAgents />
               <Blog />
               <Contact />
               {/* Footer is removed from here and placed outside */}
@@ -63,6 +68,7 @@ function App() {
           <Footer />
 
           <Chatbot />
+          <Terminal />
         </React.Fragment>
       )}
     </SmoothScroll>
