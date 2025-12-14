@@ -1,5 +1,9 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import TextReveal from './TextReveal';
+// import Hero3D from './Hero3D';
+// import VelocityText from './VelocityText';
+import ErrorBoundary from './ErrorBoundary';
 
 
 const Hero = () => {
@@ -34,6 +38,11 @@ const Hero = () => {
 
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />
 
+            {/* 3D Element */}
+            {/* <ErrorBoundary>
+                <Hero3D />
+            </ErrorBoundary> */}
+
             {/* Main Content */}
             <motion.div
                 style={{ y }}
@@ -49,26 +58,20 @@ const Hero = () => {
                     >
                         I'm a
                     </motion.span>
-                    <motion.h1
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-[10vw] md:text-[8vw] font-bold tracking-tighter"
-                    >
+                    {/* <VelocityText> */}
+                    <TextReveal el="h1" className="text-[10vw] md:text-[8vw] font-bold tracking-tighter">
                         GENERATIVE AI
-                    </motion.h1>
+                    </TextReveal>
+                    {/* </VelocityText> */}
                 </div>
 
                 {/* Row 2 */}
                 <div className="flex flex-col md:flex-row items-center md:items-baseline justify-center gap-4 md:gap-8 w-full leading-none -mt-4 md:-mt-6">
-                    <motion.h1
-                        initial={{ opacity: 0, x: 100 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-[10vw] md:text-[8vw] font-bold tracking-tighter"
-                    >
+                    {/* <VelocityText> */}
+                    <TextReveal el="h1" className="text-[10vw] md:text-[8vw] font-bold tracking-tighter">
                         ENGINEER
-                    </motion.h1>
+                    </TextReveal>
+                    {/* </VelocityText> */}
                     <motion.span
                         initial={{ opacity: 0, rotate: -20 }}
                         animate={{ opacity: 1, rotate: 0 }}
@@ -80,24 +83,16 @@ const Hero = () => {
                 </div>
 
                 {/* Row 3 */}
+                {/* <VelocityText> */}
                 <div className="flex flex-col items-center justify-center w-full leading-none -mt-4 md:-mt-6">
-                    <motion.h1
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.6 }}
-                        className="text-[10vw] md:text-[8vw] font-bold tracking-tighter"
-                    >
+                    <TextReveal el="h1" className="text-[10vw] md:text-[8vw] font-bold tracking-tighter">
                         SOFTWARE
-                    </motion.h1>
-                    <motion.h1
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.8 }}
-                        className="text-[10vw] md:text-[8vw] font-bold tracking-tighter"
-                    >
+                    </TextReveal>
+                    <TextReveal el="h1" className="text-[10vw] md:text-[8vw] font-bold tracking-tighter">
                         ENGINEER
-                    </motion.h1>
+                    </TextReveal>
                 </div>
+                {/* </VelocityText> */}
 
                 {/* Description & Buttons */}
                 <motion.div

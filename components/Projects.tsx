@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { X, ArrowUpRight } from 'lucide-react';
 import Magnetic from './Magnetic';
+// import DistortionImage from './DistortionImage';
+import ErrorBoundary from './ErrorBoundary';
 
 interface Project {
     title: string;
@@ -180,6 +182,23 @@ const Projects = () => {
                             }}
                             className="fixed top-0 left-0 pointer-events-none z-50 hidden lg:block w-[400px] h-[300px] overflow-hidden rounded-lg shadow-2xl bg-black"
                         >
+                            {/* WebGL Distortion Effect */}
+                            {/* <ErrorBoundary fallback={
+                                <motion.img
+                                    src={hoveredProject.image}
+                                    alt={hoveredProject.title}
+                                    className="w-full h-full object-cover"
+                                    initial={{ scale: 1.2, filter: "grayscale(100%)" }}
+                                    animate={{ scale: 1, filter: "grayscale(0%)" }}
+                                    exit={{ scale: 1.2 }}
+                                    transition={{ duration: 0.5 }}
+                                />
+                            }>
+                                <DistortionImage 
+                                    image={hoveredProject.image}
+                                    className="w-full h-full"
+                                />
+                            </ErrorBoundary> */}
                             <motion.img
                                 src={hoveredProject.image}
                                 alt={hoveredProject.title}

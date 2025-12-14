@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { ReactLenis } from '@studio-freight/react-lenis';
+import SmoothScroll from './components/SmoothScroll';
 import { AnimatePresence, motion } from 'framer-motion';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
 import Projects from './components/Projects';
+import Blog from './components/Blog';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Preloader from './components/Preloader';
+// import ScrollLine from './components/ScrollLine';
 import CustomCursor from './components/CustomCursor';
 import Chatbot from './components/Chatbot';
 
@@ -21,7 +23,7 @@ function App() {
   };
 
   return (
-    <ReactLenis root>
+    <SmoothScroll>
       <CustomCursor />
       <AnimatePresence mode="wait">
         {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
@@ -37,23 +39,33 @@ function App() {
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
             style={{ originY: 0 }}
           />
-          <div className={`min-h-screen ${isDark ? 'dark' : ''} bg-off-white`}>
+
+          {/* Main Content with Parallax Effect */}
+          <div className={`relative z-10 min-h-screen ${isDark ? 'dark' : ''} bg-off-white mb-[300px] md:mb-[400px] shadow-2xl`}>
             {/* Noise Overlay */}
             <div className="noise-overlay" />
+
+            {/* Visual Thread */}
+            {/* <ScrollLine /> */}
 
             <Header />
             <main>
               <Hero />
               <About />
               <Projects />
+              <Blog />
               <Contact />
-              <Footer />
-              <Chatbot />
+              {/* Footer is removed from here and placed outside */}
             </main>
           </div>
+
+          {/* Fixed Footer (Behind the content) */}
+          <Footer />
+
+          <Chatbot />
         </React.Fragment>
       )}
-    </ReactLenis>
+    </SmoothScroll>
   );
 }
 
