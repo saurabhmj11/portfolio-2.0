@@ -52,26 +52,26 @@ const Hero = () => {
                 className="relative z-20 flex flex-col items-center text-center w-full px-2 md:px-0"
             >
                 {/* Row 1 */}
-                <div className="flex flex-col md:flex-row items-center md:items-baseline justify-center gap-4 md:gap-8 w-full leading-none">
+                <div className="flex flex-col md:flex-row items-center md:items-baseline justify-center gap-2 md:gap-8 w-full leading-none">
                     <motion.span
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: 0.5 }}
-                        className="font-serif italic text-4xl md:text-5xl text-gray-300 md:mr-4"
+                        className="font-serif italic text-3xl md:text-5xl text-gray-300 md:mr-4 mb-2 md:mb-0"
                     >
                         I'm a
                     </motion.span>
                     {/* <VelocityText> */}
-                    <TextReveal el="h1" className="text-[10vw] md:text-[8vw] font-bold tracking-tighter">
+                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter">
                         GENERATIVE AI
                     </TextReveal>
                     {/* </VelocityText> */}
                 </div>
 
                 {/* Row 2 */}
-                <div className="flex flex-col md:flex-row items-center md:items-baseline justify-center gap-4 md:gap-8 w-full leading-none -mt-4 md:-mt-6">
+                <div className="flex flex-col md:flex-row items-center md:items-baseline justify-center gap-2 md:gap-8 w-full leading-none mt-2 md:-mt-6">
                     {/* <VelocityText> */}
-                    <TextReveal el="h1" className="text-[10vw] md:text-[8vw] font-bold tracking-tighter">
+                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter">
                         ENGINEER
                     </TextReveal>
                     {/* </VelocityText> */}
@@ -79,7 +79,7 @@ const Hero = () => {
                         initial={{ opacity: 0, rotate: -20 }}
                         animate={{ opacity: 1, rotate: 0 }}
                         transition={{ duration: 0.8, delay: 0.7 }}
-                        className="font-serif italic text-6xl md:text-7xl text-gray-300 md:ml-4"
+                        className="font-serif italic text-4xl md:text-7xl text-gray-300 md:ml-4 my-2 md:my-0"
                     >
                         &
                     </motion.span>
@@ -87,11 +87,11 @@ const Hero = () => {
 
                 {/* Row 3 */}
                 {/* <VelocityText> */}
-                <div className="flex flex-col items-center justify-center w-full leading-none -mt-4 md:-mt-6">
-                    <TextReveal el="h1" className="text-[10vw] md:text-[8vw] font-bold tracking-tighter">
+                <div className="flex flex-col items-center justify-center w-full leading-none mt-2 md:-mt-6">
+                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter">
                         SOFTWARE
                     </TextReveal>
-                    <TextReveal el="h1" className="text-[10vw] md:text-[8vw] font-bold tracking-tighter">
+                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter">
                         ENGINEER
                     </TextReveal>
                 </div>

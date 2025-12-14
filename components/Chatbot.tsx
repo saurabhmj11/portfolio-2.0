@@ -87,7 +87,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, setIsOpen }) => {
     };
 
     return (
-        <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 flex flex-col items-end pointer-events-none">
+        <div className="fixed bottom-24 left-0 right-0 md:bottom-8 md:left-auto md:right-8 z-50 flex flex-col items-center md:items-end pointer-events-none">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
