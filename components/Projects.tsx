@@ -133,7 +133,9 @@ const Projects = () => {
                 <div className="flex justify-center mt-24">
                     <Magnetic>
                         <a
-                            href="/work"
+                            href="https://www.linkedin.com/in/saurabhsl/recent-activity/all/"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="group flex items-center gap-4 px-10 py-5 border border-gray-300 rounded-full text-lg uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-500"
                         >
                             <span>View All Projects</span>
