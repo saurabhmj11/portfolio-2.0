@@ -1,28 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Terminal as TerminalIcon, Maximize2, Minimize2 } from 'lucide-react';
-
-interface TerminalLine {
-    type: 'input' | 'output' | 'system';
-    content: React.ReactNode;
-}
+import { X, Terminal as TerminalIcon, Maximize2, Minimize2, Activity } from 'lucide-react';
+import { useTerminal } from '../context/TerminalContext';
+import { soundManager } from '../utils/SoundManager';
 
 const Terminal = () => {
+    const { logs, addLog, clearLogs, systemStatus, setSystemStatus } = useTerminal();
     const [isOpen, setIsOpen] = useState(false);
     const [isMaximized, setIsMaximized] = useState(false);
     const [input, setInput] = useState('');
-    const [history, setHistory] = useState<TerminalLine[]>([
-        { type: 'system', content: 'Welcome to Saurabh\'s Agentic Terminal v1.0.0' },
-        { type: 'system', content: 'Type "help" to see available commands.' }
-    ]);
     const inputRef = useRef<HTMLInputElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const [autoScroll, setAutoScroll] = useState(true);
+
+    // Initial Welcome Log
+    useEffect(() => {
+        if (logs.length === 0) {
+            addLog("Initializing Neural Interface...", "system");
+            setTimeout(() => addLog("Saurabh's Core Systems [ONLINE]", "success"), 500);
+            setTimeout(() => addLog("Type 'help' for command list.", "info"), 800);
+        }
+    }, []);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
                 setIsOpen(prev => !prev);
+                soundManager.playHover(); // Sound on open
             }
         };
 
@@ -37,97 +42,99 @@ const Terminal = () => {
     }, [isOpen]);
 
     useEffect(() => {
-        if (scrollRef.current) {
+        if (scrollRef.current && autoScroll) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
-    }, [history]);
+    }, [logs, autoScroll, isOpen]);
 
     const handleCommand = (cmd: string) => {
         const cleanCmd = cmd.trim().toLowerCase();
-        const newHistory: TerminalLine[] = [...history, { type: 'input', content: cmd }];
+        addLog(cmd, 'info', 'USER');
 
         switch (cleanCmd) {
             case 'help':
-                newHistory.push({
-                    type: 'output',
-                    content: (
-                        <div className="grid grid-cols-[100px_1fr] gap-2">
-                            <span className="text-yellow-400">about</span> <span>Who is Saurabh?</span>
-                            <span className="text-yellow-400">projects</span> <span>List Gen AI Projects</span>
-                            <span className="text-yellow-400">agents</span> <span>List Live Agents</span>
-                            <span className="text-yellow-400">contact</span> <span>Show contact info</span>
-                            <span className="text-yellow-400">clear</span> <span>Clear terminal</span>
-                            <span className="text-yellow-400">exit</span> <span>Close terminal</span>
-                        </div>
-                    )
-                });
+                addLog("Available Commands:", "system");
+                addLog("  about     - Who is Saurabh?", "info");
+                addLog("  projects  - List Gen AI Projects", "info");
+                addLog("  agents    - List Live Agents", "info");
+                addLog("  contact   - Show contact info", "info");
+                addLog("  clear     - Clear terminal", "info");
+                addLog("  status    - Check System Status", "info");
+                addLog("  hack      - ???", "warning");
+                soundManager.playSuccess();
                 break;
             case 'about':
-                newHistory.push({
-                    type: 'output',
-                    content: "Saurabh Lokhande | AI Agent Systems Developer. 1.8+ Years Exp. Specialist in LangGraph, MCP, and Reasoning Agnets."
-                });
+                addLog("Saurabh Lokhande | AI Agent Systems Developer.", "success");
+                addLog("Specialist in LangGraph, MCP, and Reasoning Agents.", "success");
+                soundManager.playSuccess();
                 break;
             case 'projects':
-                newHistory.push({
-                    type: 'output',
-                    content: (
-                        <ul className="list-disc pl-4 space-y-1">
-                            <li>Deep RAG System (Finance/Legal)</li>
-                            <li>Autonomous Research Agent</li>
-                            <li>Multi-Agent Orchestration</li>
-                            <li>Generative UI Experience</li>
-                            <li>Multimodal Assistant</li>
-                        </ul>
-                    )
-                });
+                addLog("Fetching Project Database...", "system");
+                setTimeout(() => {
+                    addLog("• Deep RAG System (Finance/Legal)", "success");
+                    addLog("• Autonomous Research Agent", "success");
+                    addLog("• Multi-Agent Orchestration", "success");
+                    soundManager.playSuccess();
+                }, 300);
                 break;
             case 'agent':
             case 'agents':
-                newHistory.push({
-                    type: 'output',
-                    content: (
-                        <ul className="list-disc pl-4 space-y-1">
-                            <li><a href="https://agent.ai/agent/gurutravel" target="_blank" className="text-blue-400 hover:underline">Travel Guru</a></li>
-                            <li><a href="https://agent.ai/agent/90day" target="_blank" className="text-blue-400 hover:underline">90-Day Launchpad</a></li>
-                            <li><a href="https://agent.ai/agent/dudusl001" target="_blank" className="text-blue-400 hover:underline">DuduSL001</a></li>
-                            <li><a href="https://agent.ai/agent/Agentplan01" target="_blank" className="text-blue-400 hover:underline">Agent Plan 01</a></li>
-                            <li><a href="https://agent.ai/agent/S_L_011" target="_blank" className="text-blue-400 hover:underline">S L 011</a></li>
-                        </ul>
-                    )
-                });
+                addLog("Listing Active Agents...", "system");
+                setTimeout(() => {
+                    addLog("• Travel Guru [ONLINE]", "success");
+                    addLog("• 90-Day Launchpad [ONLINE]", "success");
+                    addLog("• DuduSL001 [EXPERIMENTAL]", "warning");
+                    soundManager.playSuccess();
+                }, 300);
                 break;
             case 'contact':
-                newHistory.push({
-                    type: 'output',
-                    content: (
-                        <div>
-                            <div>Email: saurabhmj11@gmail.com</div>
-                            <div>Phone: +91-7767913887</div>
-                        </div>
-                    )
-                });
+                addLog("Email: saurabhmj11@gmail.com", "info");
+                addLog("Phone: +91-7767913887", "info");
+                soundManager.playSuccess();
                 break;
             case 'clear':
-                setHistory([]);
-                return;
+                clearLogs();
+                soundManager.playHover();
+                break;
             case 'exit':
                 setIsOpen(false);
-                return;
+                break;
+            case 'status':
+                addLog(`System Status: ${systemStatus}`, "system");
+                soundManager.playHover();
+                break;
+            case 'hack':
+                addLog("Breaching Mainframe...", "warning");
+                setSystemStatus("PROCESSING");
+                setTimeout(() => {
+                    addLog("Access Granted. Welcome, Administrator.", "success");
+                    addLog("Just kidding. Security is tight here.", "info");
+                    setSystemStatus("IDLE");
+                    soundManager.playSuccess();
+                }, 2000);
+                break;
             case 'sudo':
-                newHistory.push({ type: 'output', content: <span className="text-red-500">Permission denied: You are not root.</span> });
+                addLog("Permission denied: You are not root.", "error");
+                soundManager.playError();
+                break;
+            case 'hire_me':
+            case 'hire':
+                addLog("Initiating Hiring Protocol...", "success");
+                addLog("Thank you for your interest! Please email me immediately.", "success");
+                soundManager.playSuccess();
                 break;
             default:
-                newHistory.push({ type: 'output', content: <span className="text-red-400">Command not found: {cmd}. Type 'help' for options.</span> });
+                addLog(`Command not found: ${cmd}`, "error");
+                soundManager.playError();
         }
-
-        setHistory(newHistory);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
             handleCommand(input);
             setInput('');
+        } else {
+            soundManager.playTyping();
         }
     };
 
@@ -154,7 +161,7 @@ const Terminal = () => {
                             height: isMaximized ? '95vh' : '500px'
                         }}
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        className="bg-black/90 text-green-500 font-mono text-sm md:text-base rounded-xl border border-white/10 shadow-2xl overflow-hidden flex flex-col pointer-events-auto relative"
+                        className="bg-black/90 font-mono text-sm md:text-base rounded-xl border border-white/10 shadow-2xl overflow-hidden flex flex-col pointer-events-auto relative"
                     >
                         {/* Terminal Header */}
                         <div className="bg-white/10 p-3 flex justify-between items-center select-none handle cursor-move">
@@ -167,6 +174,7 @@ const Terminal = () => {
                                 <div className="flex items-center gap-2 ml-4 text-gray-400">
                                     <TerminalIcon size={14} />
                                     <span>saurabh@portfolio:~</span>
+                                    {systemStatus === 'PROCESSING' && <Activity size={14} className="animate-pulse text-green-500" />}
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 text-gray-400">
@@ -185,19 +193,19 @@ const Terminal = () => {
                             className="flex-1 p-6 overflow-y-auto font-mono scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
                             onClick={() => inputRef.current?.focus()}
                         >
-                            {history.map((line, i) => (
-                                <div key={i} className="mb-2">
-                                    {line.type === 'input' ? (
-                                        <div className="flex gap-2 text-white">
-                                            <span className="text-green-500">➜</span>
-                                            <span className="text-blue-400">~</span>
-                                            <span>{line.content}</span>
-                                        </div>
-                                    ) : (
-                                        <div className="text-gray-300 ml-6 break-words whitespace-pre-wrap">
-                                            {typeof line.content === 'string' ? <Typewriter text={line.content} /> : line.content}
-                                        </div>
-                                    )}
+                            {logs.map((log) => (
+                                <div key={log.id} className="mb-1 flex gap-2">
+                                    <span className="text-gray-500 text-xs select-none">[{new Date(log.timestamp).toLocaleTimeString().split(' ')[0]}]</span>
+                                    <div className={`break-words whitespace-pre-wrap flex-1 ${log.type === 'error' ? 'text-red-500' :
+                                        log.type === 'success' ? 'text-green-400' :
+                                            log.type === 'warning' ? 'text-yellow-400' :
+                                                log.type === 'system' ? 'text-blue-400' :
+                                                    'text-gray-300'
+                                        }`}>
+                                        {log.source !== 'SYS' && log.source !== 'USER' && <span className="text-xs border border-white/10 px-1 rounded mr-2 text-gray-500">{log.source}</span>}
+                                        {log.source === 'USER' && <span className="text-green-500 mr-2">➜ ~</span>}
+                                        {log.message}
+                                    </div>
                                 </div>
                             ))}
 
@@ -223,32 +231,6 @@ const Terminal = () => {
             )}
         </AnimatePresence>
     );
-};
-
-const Typewriter = ({ text }: { text: string }) => {
-    const [displayedText, setDisplayedText] = useState('');
-    const index = useRef(0);
-
-    useEffect(() => {
-        index.current = 0;
-        setDisplayedText('');
-
-        const intervalId = setInterval(() => {
-            setDisplayedText((prev) => {
-                if (index.current < text.length) {
-                    const char = text.charAt(index.current);
-                    index.current++;
-                    return prev + char;
-                }
-                clearInterval(intervalId);
-                return prev;
-            });
-        }, 15); // Speed of typing
-
-        return () => clearInterval(intervalId);
-    }, [text]);
-
-    return <span>{displayedText}</span>;
 };
 
 export default Terminal;

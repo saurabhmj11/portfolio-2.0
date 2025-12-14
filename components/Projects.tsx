@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { X, ArrowUpRight } from 'lucide-react';
 import Magnetic from './Magnetic';
 // import DistortionImage from './DistortionImage';
 import ErrorBoundary from './ErrorBoundary';
+import { useTerminal } from '../context/TerminalContext';
 
 interface Project {
     title: string;
@@ -60,6 +61,7 @@ interface ProjectItemProps {
 
 const ProjectItem: React.FC<ProjectItemProps> = ({ project, index, setHoveredProject, setSelectedProject }) => {
     const ref = useRef(null);
+    const { addLog } = useTerminal();
     const { scrollYProgress } = useScroll({
         target: ref,
         offset: ["start end", "end start"]
@@ -73,9 +75,15 @@ const ProjectItem: React.FC<ProjectItemProps> = ({ project, index, setHoveredPro
         <motion.div
             ref={ref}
             style={{ x, opacity }}
-            onMouseEnter={() => setHoveredProject(project)}
+            onMouseEnter={() => {
+                setHoveredProject(project);
+                addLog(`Analying Project: ${project.title}`, 'system', 'SCANNER');
+            }}
             onMouseLeave={() => setHoveredProject(null)}
-            onClick={() => setSelectedProject(project)}
+            onClick={() => {
+                setSelectedProject(project);
+                addLog(`Opening Project Details: ${project.title}`, 'success', 'NAV');
+            }}
             className="group relative border-b border-gray-300 py-12 flex flex-col md:flex-row justify-between items-center cursor-pointer transition-colors hover:bg-white/50"
         >
             <div className="flex items-center gap-4 md:gap-8 w-full">
@@ -96,6 +104,32 @@ const ProjectItem: React.FC<ProjectItemProps> = ({ project, index, setHoveredPro
 const Projects = () => {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [hoveredProject, setHoveredProject] = useState<Project | null>(null);
+    const { addLog } = useTerminal();
+    const containerRef = useRef<HTMLElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start end", "end start"]
+    });
+
+    // Log when section comes into view
+    useEffect(() => {
+        const unsubscribe = scrollYProgress.onChange(v => {
+            if (v > 0.1 && v < 0.2) { // Just entered
+                // Debounce manual implementation or check if already logged? 
+                // For now, simpler: we'll trust React's batching or just log it. 
+                // Actually, scroll listener fires often. Let's use whileInView on a wrapper or just simple useEffect on mount if we want "loaded" 
+                // But "viewing" is better. Let's rely on user interaction mostly, or a single "entered" log?
+                // Let's just log "Accessing Project Database" once on mount to keep it clean.
+            }
+        });
+        return () => unsubscribe();
+    }, [scrollYProgress]);
+
+    // Better: Log on mount
+    useEffect(() => {
+        // addLog("Mounting Project Database...", "system", "SYS");
+    }, []);
+
 
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const handleMouseMove = (e: React.MouseEvent) => {
@@ -104,9 +138,11 @@ const Projects = () => {
 
     return (
         <section
-            className="py-24 px-4 md:px-8 bg-off-white relative z-10 overflow-hidden"
+            ref={containerRef}
+            className="py-16 md:py-24 px-4 md:px-8 bg-off-white relative z-10 overflow-hidden"
             id="work"
             onMouseMove={handleMouseMove}
+            onMouseEnter={() => addLog("Accessing Selected Work Database...", "system", "SYS")}
         >
             <div className="container mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-gray-300 pb-8">
@@ -163,23 +199,6 @@ const Projects = () => {
                             }}
                             className="fixed top-0 left-0 pointer-events-none z-50 hidden lg:block w-[400px] h-[300px] overflow-hidden rounded-lg shadow-2xl bg-black"
                         >
-                            {/* WebGL Distortion Effect */}
-                            {/* <ErrorBoundary fallback={
-                                <motion.img
-                                    src={hoveredProject.image}
-                                    alt={hoveredProject.title}
-                                    className="w-full h-full object-cover"
-                                    initial={{ scale: 1.2, filter: "grayscale(100%)" }}
-                                    animate={{ scale: 1, filter: "grayscale(0%)" }}
-                                    exit={{ scale: 1.2 }}
-                                    transition={{ duration: 0.5 }}
-                                />
-                            }>
-                                <DistortionImage 
-                                    image={hoveredProject.image}
-                                    className="w-full h-full"
-                                />
-                            </ErrorBoundary> */}
                             <motion.img
                                 src={hoveredProject.image}
                                 alt={hoveredProject.title}
