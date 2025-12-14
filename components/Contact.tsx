@@ -21,7 +21,7 @@ const Contact = () => {
           {[1, 2].map((i) => (
             <div key={i} className="flex gap-4 md:gap-8 px-2 md:px-4">
               {[1, 2, 3].map((j) => (
-                <span key={j} className="text-[15vw] leading-none font-bold tracking-tighter uppercase text-black">
+                <span key={j} className="text-[12vw] leading-none font-bold tracking-tighter uppercase text-black">
                   Say hello!
                 </span>
               ))}

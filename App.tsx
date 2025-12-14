@@ -16,12 +16,14 @@ import Preloader from './components/Preloader';
 import CustomCursor from './components/CustomCursor';
 import Chatbot from './components/Chatbot';
 import SystemHUD from './components/SystemHUD';
+import AgentDock from './components/AgentDock';
 
 import { TerminalProvider } from './context/TerminalContext';
 
 function App() {
   const [isDark, setIsDark] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const toggleTheme = () => {
     setIsDark(!isDark);
@@ -71,9 +73,10 @@ function App() {
             {/* Fixed Footer (Behind the content) */}
             <Footer />
 
-            <Chatbot />
+            <Chatbot isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
             <Terminal />
             <SystemHUD />
+            <AgentDock isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
           </React.Fragment>
         )}
       </SmoothScroll>

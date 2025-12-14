@@ -12,8 +12,13 @@ interface Message {
 import useHaptic from '../hooks/useHaptic';
 import { soundManager } from '../utils/SoundManager';
 
-const Chatbot = () => {
-    const [isOpen, setIsOpen] = useState(false);
+interface ChatbotProps {
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
+}
+
+const Chatbot: React.FC<ChatbotProps> = ({ isOpen, setIsOpen }) => {
+    // const [isOpen, setIsOpen] = useState(false); // Prop driven now
     const [input, setInput] = useState('');
     const { trigger: haptic } = useHaptic();
     const [messages, setMessages] = useState<Message[]>([
@@ -172,7 +177,7 @@ const Chatbot = () => {
                 <div className="pointer-events-auto">
                     <button
                         onClick={() => { setIsOpen(!isOpen); if (!isOpen) { soundManager.playHover(); haptic('medium'); } else { haptic('light'); } }}
-                        className="w-14 h-14 bg-white text-black rounded-full flex items-center justify-center shadow-lg hover:bg-gray-200 transition-all active:scale-95"
+                        className="hidden md:flex w-14 h-14 bg-white text-black rounded-full items-center justify-center shadow-lg hover:bg-gray-200 transition-all active:scale-95"
                     >
                         {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
                     </button>

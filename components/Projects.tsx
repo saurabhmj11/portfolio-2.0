@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { X, ArrowUpRight } from 'lucide-react';
+import { motion, AnimatePresence, useScroll, useTransform, PanInfo } from 'framer-motion';
+import { X, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import Magnetic from './Magnetic';
 // import DistortionImage from './DistortionImage';
 import ErrorBoundary from './ErrorBoundary';
 import { useTerminal } from '../context/TerminalContext';
+import useIsMobile from '../hooks/useIsMobile';
 
 interface Project {
     title: string;
@@ -136,6 +137,21 @@ const Projects = () => {
         setMousePosition({ x: e.clientX, y: e.clientY });
     }
 
+    const isMobile = useIsMobile();
+    const [activeProjectIndex, setActiveProjectIndex] = useState(0);
+
+    const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+        if (info.offset.x > 100) {
+            // Swipe Right (Prev)
+            setActiveProjectIndex(prev => Math.max(0, prev - 1));
+        } else if (info.offset.x < -100) {
+            // Swipe Left (Next)
+            setActiveProjectIndex(prev => Math.min(projects.length - 1, prev + 1));
+        }
+    };
+
+    const currentProject = projects[activeProjectIndex];
+
     return (
         <section
             ref={containerRef}
@@ -154,17 +170,66 @@ const Projects = () => {
                     </p>
                 </div>
 
-                <div className="flex flex-col">
-                    {projects.map((project, index) => (
-                        <ProjectItem
-                            key={project.title}
-                            project={project}
-                            index={index}
-                            setHoveredProject={setHoveredProject}
-                            setSelectedProject={setSelectedProject}
-                        />
-                    ))}
-                </div>
+                {/* Mobile Swipe Deck */}
+                {isMobile ? (
+                    <div className="h-[500px] flex items-center justify-center relative">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={activeProjectIndex}
+                                drag="x"
+                                dragConstraints={{ left: 0, right: 0 }}
+                                dragElastic={0.2}
+                                onDragEnd={handleDragEnd}
+                                initial={{ opacity: 0, x: 50, scale: 0.9 }}
+                                animate={{ opacity: 1, x: 0, scale: 1 }}
+                                exit={{ opacity: 0, x: -50, scale: 0.9 }}
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                className="w-full max-w-sm bg-white border border-gray-200 shadow-xl rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing"
+                            >
+                                <div className="h-48 overflow-hidden relative">
+                                    <img src={currentProject.image} alt={currentProject.title} className="w-full h-full object-cover" />
+                                    <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-mono border border-white/20">
+                                        {activeProjectIndex + 1} / {projects.length}
+                                    </div>
+                                </div>
+                                <div className="p-6">
+                                    <span className="text-xs font-mono text-gray-400 uppercase tracking-widest">{currentProject.category}</span>
+                                    <h3 className="text-2xl font-bold mt-2 mb-4 leading-tight">{currentProject.title}</h3>
+                                    <p className="text-sm text-gray-600 line-clamp-3 mb-6">{currentProject.description}</p>
+                                    <button
+                                        onClick={() => { setSelectedProject(currentProject); addLog(`Opening Project Details: ${currentProject.title}`, 'success', 'NAV'); }}
+                                        className="w-full py-3 bg-black text-white rounded-lg text-sm uppercase tracking-wider font-medium hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        View Case Study <ArrowUpRight size={16} />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+
+                        {/* Navigation Dots */}
+                        <div className="absolute bottom-[-40px] flex gap-2">
+                            {projects.map((_, idx) => (
+                                <div
+                                    key={idx}
+                                    className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === activeProjectIndex ? 'bg-black w-6' : 'bg-gray-300'}`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    /* Desktop List */
+                    <div className="flex flex-col">
+                        {projects.map((project, index) => (
+                            <ProjectItem
+                                key={project.title}
+                                project={project}
+                                index={index}
+                                setHoveredProject={setHoveredProject}
+                                setSelectedProject={setSelectedProject}
+                            />
+                        ))}
+                    </div>
+                )}
 
                 <div className="flex justify-center mt-24">
                     <Magnetic>

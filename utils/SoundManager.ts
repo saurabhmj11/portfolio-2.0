@@ -47,6 +47,27 @@ class SoundManager {
         osc.stop(this.ctx.currentTime + 0.05);
     }
 
+    // Standard UI click
+    playClick() {
+        if (!this.initialized || !this.ctx || !this.masterGain) return;
+
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.1);
+
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.1);
+    }
+
     // Mechanical click for typing
     playTyping() {
         if (!this.initialized || !this.ctx || !this.masterGain) return;
