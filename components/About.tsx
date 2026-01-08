@@ -3,7 +3,6 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTerminal } from '../context/TerminalContext';
 import { soundManager } from '../utils/SoundManager';
 import { ChevronRight } from 'lucide-react';
-
 import useHaptic from '../hooks/useHaptic';
 
 const ListItem = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => {
@@ -54,25 +53,29 @@ const JourneyItem = ({ role, year, description }: { role: string, year: string, 
 const About = () => {
   const containerRef = useRef(null);
   const { addLog } = useTerminal();
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 0.8", "start 0.25"]
   });
 
-  const bioText = "I’m an AI Engineer passionate about creating cutting-edge solutions that push the boundaries of what’s possible with artificial intelligence. With expertise in machine learning, natural language processing, and deep learning, I specialize in building innovative AI-driven applications that address complex business challenges across various industries.";
+  const bioText =
+    "I am an AI Engineer specializing in building production-grade LLM applications, RAG pipelines, and agentic systems. I design end-to-end AI products that combine retrieval, reasoning, tool use, and memory to solve real-world problems. My focus is on turning research concepts into scalable systems — from multi-document question answering and AI copilots to full-stack AI SaaS platforms.";
+
   const words = bioText.split(" ");
 
   return (
     <section
       className="py-20 md:py-32 px-4 md:px-8 bg-black text-off-white"
       id="about"
-      onMouseEnter={() => addLog("Parsing User Biography...", "system", "SYS")}
+      onMouseEnter={() => addLog("Parsing Engineer Profile...", "system", "SYS")}
     >
       <div className="container mx-auto">
 
+        {/* Hero Bio */}
         <div className="mb-24 flex flex-col md:flex-row items-center gap-12 border-t border-gray-800 pt-8" ref={containerRef}>
           <div className="flex-1">
-            <h2 className="text-[12px] uppercase tracking-widest mb-4">About Me</h2>
+            <h2 className="text-[12px] uppercase tracking-widest mb-4 text-gray-500">About Me</h2>
             <div className="text-xl md:text-3xl font-light leading-relaxed text-gray-300 flex flex-wrap gap-x-2">
               {words.map((word, i) => {
                 const start = i / words.length;
@@ -87,6 +90,7 @@ const About = () => {
               })}
             </div>
           </div>
+
           <div className="w-full md:w-1/3 flex justify-center md:justify-end">
             <motion.div
               style={{ opacity: scrollYProgress }}
@@ -100,48 +104,48 @@ const About = () => {
         {/* Info Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mt-24 border-t border-gray-800 pt-8">
 
-          {/* Column 1: Specializations */}
+          {/* Column 1: What I Specialize In */}
           <div className="md:col-span-4">
-            <h3 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500">Specializations</h3>
+            <h3 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500">Specialization</h3>
             <ul className="space-y-4 text-lg text-gray-300">
-              <ListItem>Machine Learning</ListItem>
-              <ListItem>Natural Language Processing (NLP)</ListItem>
-              <ListItem>Deep Learning & Neural Networks</ListItem>
-              <ListItem>Generative AI & Language Models</ListItem>
-              <ListItem>AI Integration & Solutions</ListItem>
+              <ListItem>LLM Application Development</ListItem>
+              <ListItem>RAG (Retrieval-Augmented Generation) Systems</ListItem>
+              <ListItem>Agentic AI & Tool-Using Systems</ListItem>
+              <ListItem>Vector Databases, Embeddings & Search</ListItem>
+              <ListItem>Full-Stack AI Products & SaaS</ListItem>
             </ul>
           </div>
 
-          {/* Column 2: My Journey */}
+          {/* Column 2: Journey */}
           <div className="md:col-span-4">
-            <h3 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500">My Journey</h3>
+            <h3 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500">Journey</h3>
             <ul className="space-y-8">
               <JourneyItem
-                role="Freelancer AI Developer"
-                year="2024"
-                description="Leading AI initiatives and developing cutting-edge solutions for diverse industries, specializing in AI-driven applications, NLP, and machine learning."
+                role="Freelance AI Engineer"
+                year="2024 — Present"
+                description="Building production-style LLM systems including RAG applications, agent workflows, and AI-powered web products with real-world use cases."
               />
               <JourneyItem
-                role="B.E. Computer Science"
+                role="Independent AI Systems Builder"
+                year="2022 — 2024"
+                description="Designed and shipped multiple end-to-end AI systems including document chat, intelligent agents, and automation tools."
+              />
+              <JourneyItem
+                role="B.E. in Computer Science"
                 year="2023"
-                description="Graduated from Amravati University with a focus on machine learning, deep learning, and AI technologies."
-              />
-              <JourneyItem
-                role="AI Research Award"
-                year="2020"
-                description="Recognized for innovative contributions to Natural Language Processing (NLP) research, advancing AI in language understanding."
+                description="Graduated with a strong focus on machine learning, deep learning, and applied AI engineering."
               />
             </ul>
           </div>
 
-          {/* Column 3: Industries */}
+          {/* Column 3: What I Build */}
           <div className="md:col-span-4">
-            <h3 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500">Industries</h3>
+            <h3 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500">What I Build</h3>
             <ul className="space-y-4 text-lg text-gray-300">
-              <ListItem>Healthcare AI</ListItem>
-              <ListItem>Finance & FinTech</ListItem>
-              <ListItem>Technology & Software Development</ListItem>
-              <ListItem>Education & E-Learning</ListItem>
+              <ListItem>AI Knowledge Assistants (Chat with Documents)</ListItem>
+              <ListItem>Autonomous & Semi-Autonomous Agents</ListItem>
+              <ListItem>AI Study, Planning & Reasoning Systems</ListItem>
+              <ListItem>Internal AI Tools & Copilots</ListItem>
             </ul>
           </div>
 
