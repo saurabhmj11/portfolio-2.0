@@ -1,7 +1,6 @@
 import React, { useRef, useLayoutEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import ScrollReveal from './ScrollReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -81,26 +80,24 @@ const Workflow = () => {
 
                 <div className="relative max-w-5xl mx-auto">
                     {/* Central Line */}
-                    <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-[1px] bg-gray-800 -translate-x-1/2 md:-translate-x-1/2">
+                    <div className="absolute left-[16px] md:left-1/2 top-0 bottom-0 w-[1px] bg-gray-800 -translate-x-1/2 md:-translate-x-1/2">
                         <div className="workflow-line w-full h-full bg-blue-500 origin-top" />
                     </div>
 
-                    <div className="space-y-16 md:space-y-24">
+                    <div className="space-y-12 md:space-y-24">
                         {steps.map((step, index) => (
-                            <ScrollReveal key={index} width="100%" threshold={0.1}>
-                                <div className={`workflow-item flex flex-col md:flex-row items-start gap-8 md:gap-24 relative ${index % 2 === 0 ? '' : 'md:flex-row-reverse'}`}>
+                            <div key={index} className={`workflow-item flex flex-col md:flex-row items-start gap-4 md:gap-24 relative ${index % 2 === 0 ? '' : 'md:flex-row-reverse'}`}>
 
-                                    {/* Timeline Dot */}
-                                    <div className="absolute left-[20px] md:left-1/2 w-4 h-4 bg-black border-2 border-blue-500 rounded-full z-10 -translate-x-1/2 top-0 mt-2" />
+                                {/* Timeline Dot */}
+                                <div className="absolute left-[16px] md:left-1/2 w-4 h-4 bg-black border-2 border-blue-500 rounded-full z-10 -translate-x-1/2 top-0 mt-1 md:mt-2" />
 
-                                    <div className={`w-full md:w-[45%] pl-12 md:pl-0 ${index % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
-                                        <span className="text-4xl md:text-6xl font-bold text-gray-800 opacity-50 block mb-2 md:mb-4">{step.num}</span>
-                                        <h4 className="text-xl md:text-2xl font-bold mb-2 md:mb-4">{step.title}</h4>
-                                        <p className="text-gray-400 leading-relaxed text-base md:text-lg">{step.desc}</p>
-                                    </div>
-                                    <div className="hidden md:block w-full md:w-[45%]" />
+                                <div className={`w-full md:w-[45%] pl-10 md:pl-0 pr-2 md:pr-0 ${index % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
+                                    <span className="text-3xl md:text-6xl font-bold text-gray-800 opacity-50 block mb-2 md:mb-4">{step.num}</span>
+                                    <h4 className="text-lg md:text-2xl font-bold mb-2 md:mb-4">{step.title}</h4>
+                                    <p className="text-gray-400 leading-relaxed text-sm md:text-lg">{step.desc}</p>
                                 </div>
-                            </ScrollReveal>
+                                <div className="hidden md:block w-full md:w-[45%]" />
+                            </div>
                         ))}
                     </div>
                 </div>

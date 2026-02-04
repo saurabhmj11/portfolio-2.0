@@ -80,7 +80,7 @@ const About = () => {
       )}
       <div className="container mx-auto">
 
-        <div className="mb-24 flex flex-col md:flex-row items-center gap-12 border-t border-gray-800 pt-8" ref={containerRef}>
+        <div className="mb-24 flex flex-col md:flex-row items-center gap-12 border-t border-gray-800 pt-8 relative" ref={containerRef}>
           <div className="flex-1">
             <h2 className="text-[12px] uppercase tracking-widest mb-4">About Me</h2>
             <div className="text-xl md:text-3xl font-light leading-relaxed text-gray-300 flex flex-wrap gap-x-2">

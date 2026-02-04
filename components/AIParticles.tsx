@@ -43,7 +43,8 @@ const AIParticles = () => {
     }
 
     const particles: { x: number; y: number; radius: number; vx: number; vy: number; alpha: number; originalVx: number; originalVy: number }[] = [];
-    const particleCount = 60;
+    const isMobile = width < 768;
+    const particleCount = isMobile ? 30 : 60;
 
     for (let i = 0; i < particleCount; i++) {
       const vx = (Math.random() - 0.5) * 0.2;
@@ -64,8 +65,13 @@ const AIParticles = () => {
       ctx.fillStyle = 'black';
       ctx.fillRect(0, 0, width, height);
 
+      // Optimization: Check mobile state once per frame or rely on initial config
+      // For resizing, we might just keep the initial count or reload.
+      // Simplicity: we stick to the initial count determine above.
+
       particles.forEach((p, index) => {
         // Interaction Logic
+        // ... (Keep existing logic)
         let forceDirectionX = 0;
         let forceDirectionY = 0;
         let force = 0;
@@ -124,20 +130,22 @@ const AIParticles = () => {
         ctx.shadowColor = "red";
         ctx.fill();
 
-        // Neural Connect: Draw lines between nearby particles
-        for (let j = index; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx2 = p.x - p2.x;
-          const dy2 = p.y - p2.y;
-          const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+        // Neural Connect: Draw lines between nearby particles ONLY ON DESKTOP
+        if (!isMobile) {
+          for (let j = index; j < particles.length; j++) {
+            const p2 = particles[j];
+            const dx2 = p.x - p2.x;
+            const dy2 = p.y - p2.y;
+            const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
 
-          if (dist2 < 100) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 60, 0, ${1 - dist2 / 100})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
+            if (dist2 < 100) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(255, 60, 0, ${1 - dist2 / 100})`;
+              ctx.lineWidth = 0.5;
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.stroke();
+            }
           }
         }
       });

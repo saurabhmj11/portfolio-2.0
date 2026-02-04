@@ -9,12 +9,14 @@ import CustomCursor from './components/CustomCursor';
 import Chatbot from './components/Chatbot';
 import SystemHUD from './components/SystemHUD';
 import AgentDock from './components/AgentDock';
+import ScrollToTop from './components/ScrollToTop';
 
 // Pages
 import Home from './pages/Home';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import AdminPage from './pages/Admin';
+import Resume from './pages/Resume';
 
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { TerminalProvider } from './context/TerminalContext';
@@ -87,6 +89,7 @@ function App() {
                     <Route path="/blog" element={<PageTransition><BlogPage /></PageTransition>} />
                     <Route path="/blog/:slug" element={<PageTransition><BlogPostPage /></PageTransition>} />
                     <Route path="/admin" element={<PageTransition><AdminPage /></PageTransition>} />
+                    <Route path="/resume" element={<PageTransition><Resume /></PageTransition>} />
                   </Routes>
                 </AnimatePresence>
               </div>
@@ -96,13 +99,15 @@ function App() {
 
               <Chatbot isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
               <Terminal />
+              <ScrollToTop />
+
               <SystemHUD />
               <AgentDock isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
             </React.Fragment>
           )}
         </SmoothScroll>
       </HelmetProvider>
-    </TerminalProvider>
+    </TerminalProvider >
   );
 }
 

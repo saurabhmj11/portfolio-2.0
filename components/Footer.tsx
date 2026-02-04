@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import ScrollReveal from './ScrollReveal';
 import { Canvas } from '@react-three/fiber';
 import Robot3D from './Robot3D';
-import { Github, Linkedin, Code2, Terminal, Cpu } from 'lucide-react';
+import { Github, Linkedin, Code2, Terminal, Cpu, FileText } from 'lucide-react';
 import Magnetic from './Magnetic';
+import { Link } from 'react-router-dom';
 
 const SolarSystem = () => {
   return (
@@ -22,22 +23,28 @@ const SolarSystem = () => {
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute w-[200px] h-[200px] rounded-full border border-gray-800"
+        className="absolute w-[180px] h-[180px] md:w-[200px] md:h-[200px] rounded-full border border-gray-800 inset-0 m-auto"
       >
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <Magnetic>
-            <a href="https://github.com/saurabhmj11" target="_blank" rel="noreferrer" className="w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block">
-              <motion.div animate={{ rotate: -360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }}>
+            <a href="https://github.com/saurabhmj11" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative">
+              <motion.div animate={{ rotate: -360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="relative flex items-center justify-center">
                 <Github size={18} />
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  GITHUB
+                </span>
               </motion.div>
             </a>
           </Magnetic>
         </div>
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2">
           <Magnetic>
-            <a href="https://www.linkedin.com/in/saurabh-lokhande-6d082ab5" target="_blank" rel="noreferrer" className="w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block">
-              <motion.div animate={{ rotate: -360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }}>
+            <a href="https://www.linkedin.com/in/saurabh-lokhande-6d082ab5" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative">
+              <motion.div animate={{ rotate: -360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="relative flex items-center justify-center">
                 <Linkedin size={18} />
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  LINKEDIN
+                </span>
               </motion.div>
             </a>
           </Magnetic>
@@ -48,31 +55,53 @@ const SolarSystem = () => {
       <motion.div
         animate={{ rotate: -360 }}
         transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        className="absolute w-[300px] h-[300px] rounded-full border border-gray-800/50"
+        className="absolute w-[260px] h-[260px] md:w-[300px] md:h-[300px] rounded-full border border-gray-800/50 inset-0 m-auto"
       >
+        {/* Resume Planet - Top Center of Outer Ring */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+          <Magnetic>
+            <Link to="/resume" className="group w-16 h-16 bg-blue-600 border-2 border-white rounded-full flex items-center justify-center hover:bg-white hover:text-blue-600 text-white transition-colors block shadow-[0_0_25px_rgba(37,99,235,1)] relative">
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="relative flex items-center justify-center">
+                <FileText size={28} />
+                <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-blue-600 text-white border border-white/20 text-xs font-bold px-3 py-1 rounded-full opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
+                  RESUME
+                </span>
+              </motion.div>
+            </Link>
+          </Magnetic>
+        </div>
         <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2">
           <Magnetic>
-            <a href="https://leetcode.com/u/saurabhmj11" target="_blank" rel="noreferrer" className="w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block">
-              <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }}>
+            <a href="https://leetcode.com/u/saurabhmj11" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative">
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="relative flex items-center justify-center">
                 <Code2 size={18} />
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  LEETCODE
+                </span>
               </motion.div>
             </a>
           </Magnetic>
         </div>
         <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2">
           <Magnetic>
-            <a href="https://www.hackerrank.com/profile/saurabhmj11" target="_blank" rel="noreferrer" className="w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block">
-              <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }}>
+            <a href="https://www.hackerrank.com/profile/saurabhmj11" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative">
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="relative flex items-center justify-center">
                 <Terminal size={18} />
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  HACKERRANK
+                </span>
               </motion.div>
             </a>
           </Magnetic>
         </div>
         <div className="absolute bottom-4 right-[15%]">
           <Magnetic>
-            <a href="https://www.credly.com/users/saurabh-lokhande.6d082ab5" target="_blank" rel="noreferrer" className="w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block">
-              <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }}>
+            <a href="https://www.credly.com/users/saurabh-lokhande.6d082ab5" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative">
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="relative flex items-center justify-center">
                 <Cpu size={18} />
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  CREDLY
+                </span>
               </motion.div>
             </a>
           </Magnetic>
