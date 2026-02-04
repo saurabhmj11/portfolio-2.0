@@ -46,7 +46,7 @@ const Hero = () => {
         <section
             id="home"
             ref={containerRef}
-            className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black text-white px-4"
+            className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-hidden bg-black text-white px-4 py-20 md:py-0"
         >
             {/* Background Video */}
             <div className="absolute inset-0 z-0">
@@ -69,21 +69,21 @@ const Hero = () => {
             {/* Main Content */}
             <motion.div
                 style={{ y }}
-                className="relative z-20 flex flex-col items-center text-center w-full px-2 md:px-0"
+                className="relative z-20 flex flex-col items-center text-center w-full px-2 md:px-0 max-w-[90vw]"
             >
                 {/* Row 1 */}
                 <div className="flex flex-col md:flex-row items-center md:items-baseline justify-center gap-2 md:gap-8 w-full leading-none">
                     <span className="hero-intro font-serif italic text-3xl md:text-5xl text-gray-300 md:mr-4 mb-2 md:mb-0 opacity-0">
                         I'm a
                     </span>
-                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter" delay={0.6}>
+                    <TextReveal el="h1" className="text-[clamp(3rem,12vw,10rem)] leading-[0.9] font-bold tracking-tighter" delay={0.6}>
                         GENERATIVE AI
                     </TextReveal>
                 </div>
 
                 {/* Row 2 */}
-                <div className="flex flex-col md:flex-row items-center md:items-baseline justify-center gap-2 md:gap-8 w-full leading-none mt-2 md:-mt-6">
-                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter" delay={0.8}>
+                <div className="flex flex-col md:flex-row items-center md:items-baseline justify-center gap-2 md:gap-8 w-full leading-none mt-2 md:-mt-4">
+                    <TextReveal el="h1" className="text-[clamp(3rem,12vw,10rem)] leading-[0.9] font-bold tracking-tighter" delay={0.8}>
                         ENGINEER
                     </TextReveal>
                     <span className="hero-connector font-serif italic text-4xl md:text-7xl text-gray-300 md:ml-4 my-2 md:my-0 opacity-0">
@@ -92,11 +92,11 @@ const Hero = () => {
                 </div>
 
                 {/* Row 3 */}
-                <div className="flex flex-col items-center justify-center w-full leading-none mt-2 md:-mt-6">
-                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter" delay={1.0}>
+                <div className="flex flex-col items-center justify-center w-full leading-none mt-2 md:-mt-4">
+                    <TextReveal el="h1" className="text-[clamp(3rem,12vw,10rem)] leading-[0.9] font-bold tracking-tighter" delay={1.0}>
                         SOFTWARE
                     </TextReveal>
-                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter" delay={1.2}>
+                    <TextReveal el="h1" className="text-[clamp(3rem,12vw,10rem)] leading-[0.9] font-bold tracking-tighter" delay={1.2}>
                         ENGINEER
                     </TextReveal>
                 </div>

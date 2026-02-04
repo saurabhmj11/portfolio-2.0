@@ -192,7 +192,7 @@ const Projects = () => {
                         <p className="text-gray-500">Swipe to explore projects.</p>
                     </div>
 
-                    <div className="h-[500px] flex items-center justify-center relative">
+                    <div className="min-h-[60vh] flex items-center justify-center relative">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={activeProjectIndex}
@@ -244,10 +244,10 @@ const Projects = () => {
                         </h2>
                     </div>
 
-                    <div ref={horizontalScrollRef} className="flex gap-24 px-24 items-center h-[70vh] w-max">
+                    <div ref={horizontalScrollRef} className="flex gap-12 md:gap-24 px-12 md:px-24 items-center h-[70vh] w-max">
                         {/* Intro Card */}
-                        <div className="w-[30vw] shrink-0">
-                            <p className="text-2xl leading-relaxed text-gray-600">
+                        <div className="w-[80vw] md:w-[30vw] shrink-0 max-w-md">
+                            <p className="text-xl md:text-2xl leading-relaxed text-gray-600">
                                 A curated collection of AI-driven applications, utilizing modern architectures like RAG, Multi-Agent Systems, and Generative UI to solve complex problems.
                             </p>
                         </div>
