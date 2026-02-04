@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import useIsMobile from '../hooks/useIsMobile';
+import ScrollReveal from './ScrollReveal';
 
 const experiences = [
     {
@@ -34,6 +36,8 @@ const experiences = [
 
 const Experience = () => {
     const targetRef = useRef(null);
+    const isMobile = useIsMobile();
+
     const { scrollYProgress } = useScroll({
         target: targetRef,
         offset: ["start start", "end end"]
@@ -42,27 +46,59 @@ const Experience = () => {
     const x = useTransform(scrollYProgress, [0, 1], ["0%", "-85%"]);
 
     return (
-        <section ref={targetRef} className="relative h-[250vh] bg-black text-white">
-            <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+        <>
+            {/* Mobile View - CSS Controlled (Visible on Mobile) */}
+            <div className="block md:hidden">
+                <section className="relative min-h-screen bg-black text-white py-20 px-4">
+                    <div className="mb-12">
+                        <h2 className="text-[12px] uppercase tracking-widest text-gray-500 mb-2">My Journey</h2>
+                        <h3 className="text-4xl font-bold">Experience Timeline</h3>
+                    </div>
 
-                {/* Background Elements */}
-                <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none z-0">
-                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
-                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl" />
-                </div>
+                    <div className="flex flex-col gap-8">
+                        {experiences.map((exp, i) => (
+                            <div key={i} className="relative group w-full bg-neutral-900 border border-white/10 p-8 rounded-3xl overflow-hidden">
+                                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${exp.color} opacity-20 blur-3xl rounded-full`} />
 
-                <div className="absolute top-10 left-10 z-10">
-                    <h2 className="text-[12px] uppercase tracking-widest text-gray-500 mb-2">My Journey</h2>
-                    <h3 className="text-4xl font-bold">Experience Timeline</h3>
-                </div>
-
-                <motion.div style={{ x }} className="flex gap-12 px-24 will-change-transform">
-                    {experiences.map((exp, i) => (
-                        <TiltCard key={i} exp={exp} index={i} total={experiences.length} />
-                    ))}
-                </motion.div>
+                                <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r ${exp.color} bg-clip-text text-transparent border border-white/10 mb-6`}>
+                                    {exp.year}
+                                </span>
+                                <h4 className="text-2xl font-bold mb-2">{exp.title}</h4>
+                                <p className="text-lg text-gray-400 mb-4">{exp.org}</p>
+                                <p className="text-gray-300 leading-relaxed text-sm">
+                                    {exp.desc}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
             </div>
-        </section>
+
+            {/* Desktop View - CSS Controlled (Visible on Desktop) */}
+            <div className="hidden md:block">
+                <section ref={targetRef} className="relative h-[250vh] bg-black text-white">
+                    <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+
+                        {/* Background Elements */}
+                        <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none z-0">
+                            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
+                            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl" />
+                        </div>
+
+                        <div className="absolute top-10 left-10 z-10">
+                            <h2 className="text-[12px] uppercase tracking-widest text-gray-500 mb-2">My Journey</h2>
+                            <h3 className="text-4xl font-bold">Experience Timeline</h3>
+                        </div>
+
+                        <motion.div style={{ x }} className="flex gap-12 px-24 will-change-transform">
+                            {experiences.map((exp, i) => (
+                                <TiltCard key={i} exp={exp} index={i} total={experiences.length} />
+                            ))}
+                        </motion.div>
+                    </div>
+                </section>
+            </div>
+        </>
     );
 };
 

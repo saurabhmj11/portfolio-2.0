@@ -1,6 +1,7 @@
 import React, { useRef, useLayoutEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ScrollReveal from './ScrollReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -71,33 +72,39 @@ const Workflow = () => {
     }, []);
 
     return (
-        <section ref={containerRef} className="py-32 bg-black text-white relative overflow-hidden">
+        <section ref={containerRef} className="py-20 md:py-32 bg-black text-white relative overflow-hidden">
             <div className="container mx-auto px-4 relative z-10">
-                <div className="mb-24 text-center">
+                <div className="mb-16 md:mb-24 text-center">
                     <h2 className="text-[12px] uppercase tracking-widest text-gray-500 mb-4">My Process</h2>
-                    <h3 className="text-4xl md:text-6xl font-bold tracking-tighter">How I Build</h3>
+                    <h3 className="text-[clamp(2.25rem,5vw,4.5rem)] font-bold tracking-tighter leading-none">How I Build</h3>
                 </div>
 
-                <div className="relative max-w-4xl mx-auto">
+                <div className="relative max-w-5xl mx-auto">
                     {/* Central Line */}
                     <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-[1px] bg-gray-800 -translate-x-1/2 md:-translate-x-1/2">
                         <div className="workflow-line w-full h-full bg-blue-500 origin-top" />
                     </div>
 
-                    <div className="space-y-24">
+                    import ScrollReveal from './ScrollReveal';
+
+                    // ... (code)
+
+                    <div className="space-y-16 md:space-y-24">
                         {steps.map((step, index) => (
-                            <div key={index} className={`workflow-item flex flex-col md:flex-row items-start gap-8 md:gap-24 relative ${index % 2 === 0 ? '' : 'md:flex-row-reverse'}`}>
+                            <ScrollReveal key={index} width="100%" threshold={0.1}>
+                                <div className={`workflow-item flex flex-col md:flex-row items-start gap-8 md:gap-24 relative ${index % 2 === 0 ? '' : 'md:flex-row-reverse'}`}>
 
-                                {/* Timeline Dot */}
-                                <div className="absolute left-[20px] md:left-1/2 w-4 h-4 bg-black border-2 border-blue-500 rounded-full z-10 -translate-x-1/2 top-0 mt-2" />
+                                    {/* Timeline Dot */}
+                                    <div className="absolute left-[20px] md:left-1/2 w-4 h-4 bg-black border-2 border-blue-500 rounded-full z-10 -translate-x-1/2 top-0 mt-2" />
 
-                                <div className={`w-full md:w-[45%] pl-12 md:pl-0 ${index % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
-                                    <span className="text-6xl font-bold text-gray-800 opacity-50 block mb-4">{step.num}</span>
-                                    <h4 className="text-2xl font-bold mb-4">{step.title}</h4>
-                                    <p className="text-gray-400 leading-relaxed text-lg">{step.desc}</p>
+                                    <div className={`w-full md:w-[45%] pl-12 md:pl-0 ${index % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
+                                        <span className="text-4xl md:text-6xl font-bold text-gray-800 opacity-50 block mb-2 md:mb-4">{step.num}</span>
+                                        <h4 className="text-xl md:text-2xl font-bold mb-2 md:mb-4">{step.title}</h4>
+                                        <p className="text-gray-400 leading-relaxed text-base md:text-lg">{step.desc}</p>
+                                    </div>
+                                    <div className="hidden md:block w-full md:w-[45%]" />
                                 </div>
-                                <div className="hidden md:block w-full md:w-[45%]" />
-                            </div>
+                            </ScrollReveal>
                         ))}
                     </div>
                 </div>

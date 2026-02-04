@@ -49,7 +49,13 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
             root
             ref={lenisRef}
             autoRaf={false}
-            options={{ lerp: 0.1, duration: 1.5, smoothWheel: true }}
+            options={{
+                lerp: 0.07,
+                duration: 1.2,
+                smoothWheel: true,
+                wheelMultiplier: 1.2,
+                touchMultiplier: 2,
+            }}
         >
             <div style={{ position: 'relative' }}>
                 {children}

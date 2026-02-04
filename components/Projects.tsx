@@ -8,6 +8,7 @@ import { useTerminal } from '../context/TerminalContext';
 import useIsMobile from '../hooks/useIsMobile';
 import { Helmet } from 'react-helmet-async';
 import { useInView } from 'react-intersection-observer';
+import ScrollReveal from './ScrollReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -188,8 +189,10 @@ const Projects = () => {
                 // Mobile Layout (Unchanged mostly, just structured better)
                 <div className="py-16 px-4">
                     <div className="mb-8">
-                        <h2 className="text-[10vw] font-bold leading-none tracking-tighter uppercase mb-2">Selected Work</h2>
-                        <p className="text-gray-500">Swipe to explore projects.</p>
+                        <ScrollReveal>
+                            <h2 className="text-[10vw] font-bold leading-none tracking-tighter uppercase mb-2">Selected Work</h2>
+                            <p className="text-gray-500">Swipe to explore projects.</p>
+                        </ScrollReveal>
                     </div>
 
                     <div className="min-h-[60vh] flex items-center justify-center relative">
@@ -239,17 +242,21 @@ const Projects = () => {
                 // Desktop Horizontal Scroll Layout
                 <div ref={triggerRef} className="h-screen w-full flex flex-col justify-center relative">
                     <div className="absolute top-12 left-12 z-20">
-                        <h2 className="text-[4vw] font-bold leading-none tracking-tighter uppercase">
-                            Selected Work <span className="text-lg font-normal text-gray-500 normal-case tracking-normal block mt-2">Scroll &rarr;</span>
-                        </h2>
+                        <ScrollReveal>
+                            <h2 className="text-[4vw] font-bold leading-none tracking-tighter uppercase">
+                                Selected Work <span className="text-lg font-normal text-gray-500 normal-case tracking-normal block mt-2">Scroll &rarr;</span>
+                            </h2>
+                        </ScrollReveal>
                     </div>
 
                     <div ref={horizontalScrollRef} className="flex gap-12 md:gap-24 px-12 md:px-24 items-center h-[70vh] w-max">
                         {/* Intro Card */}
                         <div className="w-[80vw] md:w-[30vw] shrink-0 max-w-md">
-                            <p className="text-xl md:text-2xl leading-relaxed text-gray-600">
-                                A curated collection of AI-driven applications, utilizing modern architectures like RAG, Multi-Agent Systems, and Generative UI to solve complex problems.
-                            </p>
+                            <ScrollReveal delay={0.2}>
+                                <p className="text-xl md:text-2xl leading-relaxed text-gray-600">
+                                    A curated collection of AI-driven applications, utilizing modern architectures like RAG, Multi-Agent Systems, and Generative UI to solve complex problems.
+                                </p>
+                            </ScrollReveal>
                         </div>
 
                         {/* Project Cards */}
