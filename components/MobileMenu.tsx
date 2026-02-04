@@ -5,9 +5,10 @@ import Magnetic from './Magnetic';
 interface MobileMenuProps {
     isOpen: boolean;
     onClose: () => void;
+    onNavClick: (e: React.MouseEvent, href: string) => void;
 }
 
-const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
+const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, onNavClick }) => {
     const menuVariants = {
         initial: {
             y: "-100%"
@@ -45,7 +46,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                             <Magnetic key={item.name}>
                                 <motion.a
                                     href={item.href}
-                                    onClick={onClose}
+                                    onClick={(e) => {
+                                        onClose();
+                                        onNavClick(e, item.href);
+                                    }}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{
                                         opacity: 1,

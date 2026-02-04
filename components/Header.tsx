@@ -81,7 +81,11 @@ const Header = () => {
         </button>
       </motion.header>
 
-      <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      <MobileMenu
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        onNavClick={handleNavClick}
+      />
     </>
   );
 };
