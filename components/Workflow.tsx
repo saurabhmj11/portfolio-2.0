@@ -85,10 +85,6 @@ const Workflow = () => {
                         <div className="workflow-line w-full h-full bg-blue-500 origin-top" />
                     </div>
 
-                    import ScrollReveal from './ScrollReveal';
-
-                    // ... (code)
-
                     <div className="space-y-16 md:space-y-24">
                         {steps.map((step, index) => (
                             <ScrollReveal key={index} width="100%" threshold={0.1}>
