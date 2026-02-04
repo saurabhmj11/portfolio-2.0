@@ -1,65 +1,60 @@
-import React, { useRef } from 'react';
-import { motion, useInView, Variants } from 'framer-motion';
+import React, { useRef, useLayoutEffect } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface TextRevealProps {
     children: string;
     className?: string;
-    el?: keyof JSX.IntrinsicElements; // Allow 'h1', 'p', etc.
+    el?: keyof JSX.IntrinsicElements;
+    delay?: number;
+    threshold?: number;
 }
 
-const TextReveal: React.FC<TextRevealProps> = ({ children, className, el: Wrapper = 'p' }) => {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-10%" });
+const TextReveal: React.FC<TextRevealProps> = ({ children, className, el: Wrapper = 'p', delay = 0, threshold = 0.85 }) => {
+    const ref = useRef<HTMLElement>(null);
+
+    useLayoutEffect(() => {
+        const ctx = gsap.context(() => {
+            const words = ref.current?.querySelectorAll('.word');
+            if (words) {
+                gsap.fromTo(words,
+                    {
+                        y: 100,
+                        opacity: 0,
+                        rotateX: 45
+                    },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        rotateX: 0,
+                        duration: 1.2,
+                        ease: 'power3.out',
+                        stagger: 0.05,
+                        delay: delay,
+                        scrollTrigger: {
+                            trigger: ref.current,
+                            start: `top ${threshold * 100}%`,
+                            toggleActions: 'play none none reverse'
+                        }
+                    }
+                );
+            }
+        }, ref);
+
+        return () => ctx.revert();
+    }, [delay, threshold, children]);
 
     const words = children.split(" ");
 
-    const container: Variants = {
-        hidden: { opacity: 0 },
-        visible: (i: number = 1) => ({
-            opacity: 1,
-            transition: { staggerChildren: 0.12, delayChildren: 0.04 * i },
-        }),
-    };
-
-    const child: Variants = {
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                type: "spring",
-                damping: 12,
-                stiffness: 100,
-            },
-        },
-        hidden: {
-            opacity: 0,
-            y: 20,
-            transition: {
-                type: "spring",
-                damping: 12,
-                stiffness: 100,
-            },
-        },
-    };
-
     return (
-        <Wrapper ref={ref} className={className}>
-            <motion.span
-                variants={container}
-                initial="hidden"
-                animate={isInView ? "visible" : "hidden"}
-                className="inline-block"
-            >
-                {words.map((word, index) => (
-                    <motion.span
-                        variants={child}
-                        key={index}
-                        className="inline-block mr-[0.2em] whitespace-nowrap"
-                    >
-                        {word}
-                    </motion.span>
-                ))}
-            </motion.span>
+        <Wrapper ref={ref} className={`${className} overflow-hidden leading-tight`}>
+            {words.map((word, index) => (
+                <span key={index} className="word inline-block mr-[0.25em] will-change-transform transform-gpu">
+                    {word}
+                </span>
+            ))}
         </Wrapper>
     );
 };

@@ -1,11 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useLayoutEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import TextReveal from './TextReveal';
 import AIParticles from './AIParticles';
-// import Hero3D from './Hero3D';
-// import VelocityText from './VelocityText';
-import ErrorBoundary from './ErrorBoundary';
 
+gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
     const containerRef = useRef(null);
@@ -16,6 +16,31 @@ const Hero = () => {
 
     // Slight parallax for the text
     const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+
+    useLayoutEffect(() => {
+        const ctx = gsap.context(() => {
+            // Sequence for non-TextReveal elements (like the description and "I'm a")
+            const tl = gsap.timeline({ delay: 0.5 });
+
+            tl.fromTo('.hero-intro',
+                { opacity: 0, x: -50 },
+                { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' }
+            )
+                .fromTo('.hero-connector',
+                    { opacity: 0, rotation: -20, scale: 0.8 },
+                    { opacity: 1, rotation: 0, scale: 1, duration: 0.8, ease: 'back.out(1.7)' },
+                    "-=0.4"
+                )
+                .fromTo('.hero-desc',
+                    { opacity: 0, y: 30 },
+                    { opacity: 1, y: 0, duration: 1, ease: 'power3.out' },
+                    "-=0.2"
+                );
+
+        }, containerRef);
+
+        return () => ctx.revert();
+    }, []);
 
     return (
         <section
@@ -41,11 +66,6 @@ const Hero = () => {
 
             <AIParticles />
 
-            {/* 3D Element */}
-            {/* <ErrorBoundary>
-                <Hero3D />
-            </ErrorBoundary> */}
-
             {/* Main Content */}
             <motion.div
                 style={{ y }}
@@ -53,68 +73,44 @@ const Hero = () => {
             >
                 {/* Row 1 */}
                 <div className="flex flex-col md:flex-row items-center md:items-baseline justify-center gap-2 md:gap-8 w-full leading-none">
-                    <motion.span
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, delay: 0.5 }}
-                        className="font-serif italic text-3xl md:text-5xl text-gray-300 md:mr-4 mb-2 md:mb-0"
-                    >
+                    <span className="hero-intro font-serif italic text-3xl md:text-5xl text-gray-300 md:mr-4 mb-2 md:mb-0 opacity-0">
                         I'm a
-                    </motion.span>
-                    {/* <VelocityText> */}
-                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter">
+                    </span>
+                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter" delay={0.6}>
                         GENERATIVE AI
                     </TextReveal>
-                    {/* </VelocityText> */}
                 </div>
 
                 {/* Row 2 */}
                 <div className="flex flex-col md:flex-row items-center md:items-baseline justify-center gap-2 md:gap-8 w-full leading-none mt-2 md:-mt-6">
-                    {/* <VelocityText> */}
-                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter">
+                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter" delay={0.8}>
                         ENGINEER
                     </TextReveal>
-                    {/* </VelocityText> */}
-                    <motion.span
-                        initial={{ opacity: 0, rotate: -20 }}
-                        animate={{ opacity: 1, rotate: 0 }}
-                        transition={{ duration: 0.8, delay: 0.7 }}
-                        className="font-serif italic text-4xl md:text-7xl text-gray-300 md:ml-4 my-2 md:my-0"
-                    >
+                    <span className="hero-connector font-serif italic text-4xl md:text-7xl text-gray-300 md:ml-4 my-2 md:my-0 opacity-0">
                         &
-                    </motion.span>
+                    </span>
                 </div>
 
                 {/* Row 3 */}
-                {/* <VelocityText> */}
                 <div className="flex flex-col items-center justify-center w-full leading-none mt-2 md:-mt-6">
-                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter">
+                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter" delay={1.0}>
                         SOFTWARE
                     </TextReveal>
-                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter">
+                    <TextReveal el="h1" className="text-[12vw] md:text-[8vw] font-bold tracking-tighter" delay={1.2}>
                         ENGINEER
                     </TextReveal>
                 </div>
-                {/* </VelocityText> */}
 
                 {/* Description & Buttons */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 1 }}
-                    className="mt-12 max-w-2xl"
-                >
+                <div className="hero-desc mt-12 max-w-2xl opacity-0">
                     <p className="text-lg md:text-xl text-gray-200 mb-8 leading-relaxed">
                         <span className="font-bold text-white block mb-2">Hi, I'm Saurabh Lokhande</span>
                         An AI/Software Developer transforming ideas into intelligent solutions.
                         <br /><br />
                         I specialize in creating AI-driven applications, crafting innovative generative AI models, and building scalable software solutions. Passionate about learning and pushing the boundaries of technology.
                     </p>
-
-
-                </motion.div>
+                </div>
             </motion.div>
-
         </section>
     );
 };

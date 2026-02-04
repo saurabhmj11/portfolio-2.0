@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import TextReveal from './TextReveal';
 
@@ -10,32 +10,23 @@ interface BlogPost {
     image?: string; // Optional preview image
 }
 
-const posts: BlogPost[] = [
-    {
-        title: "The Future of Generative AI in Software Engineering",
-        date: "2024",
-        category: "AI",
-        link: "https://www.linkedin.com/",
-        image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop"
-    },
-    {
-        title: "Building Scalable Systems with Next.js",
-        date: "2024",
-        category: "Development",
-        link: "https://www.linkedin.com/",
-        image: "https://images.unsplash.com/photo-1618477247222-ac5913054c90?q=80&w=1000&auto=format&fit=crop"
-    },
-    {
-        title: "Mastering TypeScript for Enterprise",
-        date: "2023",
-        category: "Tech",
-        link: "https://www.linkedin.com/",
-        image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=1000&auto=format&fit=crop"
-    }
-];
+import postsData from '../data/posts.json';
+
+// ...
 
 const Blog = () => {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    // @ts-ignore
+    const posts = postsData
+        .filter((p: any) => p.status === 'published')
+        .slice(0, 3)
+        .map((p: any) => ({
+            title: p.title,
+            date: p.publishedAt,
+            category: p.tags?.[0] || 'Research',
+            link: `/blog/${p.slug}`,
+            image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop"
+        }));
 
     return (
         <section id="insights" className="py-32 px-6 md:px-12 bg-off-white relative z-10">
@@ -51,8 +42,7 @@ const Blog = () => {
                     {posts.map((post, index) => (
                         <motion.a
                             href={post.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            // key is index in map
                             key={index}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ExternalLink, Bot } from 'lucide-react';
+import LiveStatus from './LiveStatus';
 
 interface Agent {
     name: string;
@@ -60,7 +61,7 @@ const LiveAgents = () => {
             </div>
 
             <div className="container mx-auto relative z-20">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-white/20 pb-8">
+                <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-white/20 pb-8">
                     <h2 className="text-[10vw] md:text-[6vw] font-bold leading-none tracking-tighter uppercase">
                         Live<br />Agents
                     </h2>
@@ -68,6 +69,8 @@ const LiveAgents = () => {
                         Interact with deployed autonomous agents running in production environments.
                     </p>
                 </div>
+
+                <LiveStatus />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {agents.map((agent, index) => (

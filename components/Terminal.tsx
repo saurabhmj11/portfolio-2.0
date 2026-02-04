@@ -71,9 +71,11 @@ const Terminal = () => {
             case 'projects':
                 addLog("Fetching Project Database...", "system");
                 setTimeout(() => {
-                    addLog("• Deep RAG System (Finance/Legal)", "success");
-                    addLog("• Autonomous Research Agent", "success");
-                    addLog("• Multi-Agent Orchestration", "success");
+                    addLog("• HireMeOS (AI Operating System)", "success");
+                    addLog("• OCR Pipeline (Production Grade)", "success");
+                    addLog("• Student RecSys (ML Engine)", "success");
+                    addLog("• SubMaster (SaaS Backend)", "success");
+                    addLog("• Web Intel Agent (Automation)", "success");
                     soundManager.playSuccess();
                 }, 300);
                 break;

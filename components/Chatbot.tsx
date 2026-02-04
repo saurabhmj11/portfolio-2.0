@@ -58,7 +58,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, setIsOpen }) => {
             }
             // Projects
             else if (lowerInput.includes('project') || lowerInput.includes('work') || lowerInput.includes('built') || lowerInput.includes('portfolio')) {
-                botText = "Saurabh has built advanced Gen AI systems like a Deep RAG System, Autonomous Research Agents, and a Multi-Agent Orchestration platform. Check out the 'Selected Work' & 'Live Agents' sections!";
+                botText = "Saurabh's Flagships:\n• HireMeOS: Autonomous AI Operating System.\n• OCR Pipeline: Production-grade doc processing.\n• Student RecSys: ML-driven recommendations.\n• SubMaster: SaaS Backend.\n• Web Intel Agent: Autonomous researcher.";
+            }
+            // Workflow
+            else if (lowerInput.includes('workflow') || lowerInput.includes('process') || lowerInput.includes('method') || lowerInput.includes('build')) {
+                botText = "Saurabh's System Workflow:\n1. Deep Discovery (Problem Framing)\n2. System Design (Event-driven/Agentic Arch)\n3. Implementation (Precise Engineering)\n4. Deployment (Edge/Production Scaling)";
             }
             // Live Agents
             else if (lowerInput.includes('live') || lowerInput.includes('agent') || lowerInput.includes('demo') || lowerInput.includes('try')) {
@@ -74,11 +78,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, setIsOpen }) => {
             }
             // Detailed Summary
             else if (lowerInput.includes('full summary') || lowerInput.includes('summary')) {
-                botText = "Professional Summary: Highly focused AI Agent Systems Developer. \n\nExperience: 1.8 Years (Freelance & Pantech Solutions).\n\nProjects:\n• Quiz-Based Contextual Logic System (RAG + Memory).\n• Agent Execution Monitoring System.\n\nTech: Python, FastAPI, Docker, GCP/Vertex AI.\n\nHe is ready to deploy scalable solutions immediately.";
+                botText = "Professional Summary: Highly focused AI Agent Systems Developer. \n\nExperience: 1.8 Years (Freelance & Pantech Solutions).\n\nProjects:\n• HireMeOS (Multi-Agent OS)\n• OCR Pipeline (Production System)\n• Student RecSys (ML Engine)\n\nTech: Python, FastAPI, Docker, GCP/Vertex AI.\n\nHe is ready to deploy scalable solutions immediately.";
             }
             // Greetings
             else if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey') || lowerInput.includes('good morning') || lowerInput.includes('good evening')) {
-                botText = "Hello! I'm your guide to Saurabh's portfolio. Ask me about his Resume, Skills, Live Agents, or Contact info!";
+                botText = "Hello! I'm your guide to Saurabh's portfolio. Ask me about his Projects (HireMeOS, OCR), Workflow, or Contact info!";
             }
 
             setMessages(prev => [...prev, { id: Date.now() + 1, text: botText, sender: 'bot' }]);

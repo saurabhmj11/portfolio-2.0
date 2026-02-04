@@ -1,0 +1,86 @@
+[
+    {
+        "slug": "generative-ai-software-engineering",
+        "title": "The Future of Generative AI in Software Engineering",
+        "excerpt": "Exploring how LLMs are shifting the paradigm from writing code to intent-based programming.",
+        "content": "# The Shift to Intent\n\nTraditional software engineering focuses on syntax and logic construction. Generative AI is moving us towards **intent-based programming**, where the engineer defines the *what* and the *why*, and the model handles the *how*.\n\n## Key Observations\n\n1.  **Boilerplate is Dead**: Writing repetitive CRUD operations is no longer a human task.\n2.  **System Design Supremacy**: As coding becomes cheaper, architectural decisions become more expensive and critical.\n3.  **Verification > Creation**: The engineer's role shifts to verifying AI output rather than generating it from scratch.\n\n```python\n# The old way: Writing the logic\ndef get_user(id):\n    return db.query(f\"SELECT * FROM users WHERE id = {id}\")\n\n# The new way: Defining the intent\n# \"Create a secure user retrieval function ensuring no SQL injection\"\n```\n\n## Conclusion\n\nWe are not being replaced; we are being promoted to architects.",
+        "tags": [
+            "AI",
+            "Research",
+            "Software Engineering"
+        ],
+        "publishedAt": "2024-02-15",
+        "readTime": "5 min",
+        "status": "published"
+    },
+    {
+        "slug": "scalable-systems-nextjs",
+        "title": "Building Scalable Systems with Next.js",
+        "excerpt": "A deep dive into server components, streaming, and edge functions for performance.",
+        "content": "# Rendering Patterns\n\nNext.js 14 introduced significant changes to how we think about rendering. The move to **Server Components** by default is a game changer for reducing client-side bundle size.\n\n## The Edge\n\nDeploying to the edge allows for lower latency but introduces challenges with database connections.\n\n> \"The network is the computer.\" - Cloudflare\n\n## Architecture\n\n![Architecture Diagram](https://placehold.co/600x400/121212/FFF?text=System+Architecture)\n\nWe must design specifically for cold starts and data locality.",
+        "tags": [
+            "Development",
+            "Next.js",
+            "Systems"
+        ],
+        "publishedAt": "2024-01-20",
+        "readTime": "8 min",
+        "status": "published"
+    },
+    {
+        "slug": "agentic-workflows-langgraph",
+        "title": "Agentic Workflows with LangGraph",
+        "excerpt": "Why linear chains are insufficient and how cyclic graphs enable true agent autonomy.",
+        "content": "# Beyond the Chain\n\nStandard RAG (Retrieval-Augmented Generation) is often linear: Retrieve -> Generate. But real-world tasks require loops, error correction, and multi-step reasoning. Enter **LangGraph**.\n\n## State Management\n\nAgents need memory that persists across steps. LangGraph treats the agent's state as a graph node passed between functions.\n\n```python\n# Cyclic Graph Definition\nworkflow = StateGraph(AgentState)\nworkflow.add_node(\"agent\", run_agent)\nworkflow.add_node(\"tools\", execute_tools)\nworkflow.set_entry_point(\"agent\")\nworkflow.add_conditional_edges(\"agent\", should_continue)\n```\n\n## Self-Correction\n\nBy allowing the model to see its own output and tool results in a loop, it can correct hallucinated arguments or retry failed API calls without human intervention.",
+        "tags": [
+            "AI",
+            "Agents",
+            "LangChain"
+        ],
+        "publishedAt": "2024-03-10",
+        "readTime": "12 min",
+        "status": "published"
+    },
+    {
+        "slug": "engineering-reliability-llm",
+        "title": "Engineering Reliability in LLM Apps",
+        "excerpt": "Moving from 'it works on my prompt' to production-grade evaluation frameworks.",
+        "content": "# The reliability Gap\n\nStochasticity is a feature of LLMs, but a bug for software engineering. To utilize LLMs in production, we need **Evaluation Driven Development (EDD)**.\n\n## Unit Testing Prompts\n\nWe cannot assert string equality. We must assert semantic similarity or factual correctness.\n\n### Frameworks\n- **DeepEval**: For unit testing RAG pipelines.\n- **Ragas**: For component-wise scores (Faithfulness, Answer Relevance).\n\n> \"If you can't measure it, you can't improve it.\"\n\n## Guardrails\n\nImplementing strict output parsing (Pydantic) and semantic guardrails prevents the model from generating unsafe or malformed responses.",
+        "tags": [
+            "Production",
+            "LLMOps",
+            "Testing"
+        ],
+        "publishedAt": "2024-03-05",
+        "readTime": "7 min",
+        "status": "published"
+    },
+    {
+        "slug": "optimizing-rag-pipelines",
+        "title": "Optimizing RAG Pipelines for Scale",
+        "excerpt": "Hybrid search, naive reranking, and chunking strategies that actually work.",
+        "content": "# Vector Search is Not Enough\n\nStandard cosine similarity fails when the query doesn't match the keyword density of the chunks. A production RAG pipeline requires a **Hybrid Search** approach.\n\n## 1. Sparse + Dense\nCombine BM25 (Keyword) with Embeddings (Semantics). \n\n## 2. Reranking\nUse a Cross-Encoder (like Cohere Rerank) to re-score the top 50 retrieved documents. This provides a massive boost in accuracy.\n\n## 3. Late Interaction\nColBERT allows for token-level interaction between query and document, preserving nuance that single-vector embeddings lose.",
+        "tags": [
+            "RAG",
+            "Search",
+            "Performance"
+        ],
+        "publishedAt": "2024-02-28",
+        "readTime": "9 min",
+        "status": "published"
+    },
+    {
+        "slug": "death-of-localhost",
+        "title": "The Death of Localhost",
+        "excerpt": "Why cloud development environments (CDEs) are replacing the local machine for complex microservices.",
+        "content": "# It Works on My Cloud\n\nWith the rise of microservices, Kubernetes, and massive AI models, the 16GB MacBook Air is no longer a viable runtime target.\n\n## Benefits of CDEs\n\n1.  **Onboarding**: `git clone` -> Ready to code in minutes, not days.\n2.  **Parity**: Dev environment matches Production environment exactly.\n3.  **Power**: Spin up a 64-core instance for compilation, then shut it down.\n\nTools like GitHub Codespaces, distinct, and Daytona are leading this shift.",
+        "tags": [
+            "DevOps",
+            "Cloud",
+            "Productivity"
+        ],
+        "publishedAt": "2024-01-05",
+        "readTime": "6 min",
+        "status": "published"
+    }
+]

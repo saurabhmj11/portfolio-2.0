@@ -59,24 +59,7 @@ const Contact = () => {
             </motion.a>
           </Magnetic>
 
-          <div className="flex flex-wrap justify-center gap-8 mt-16">
-            {[
-              { name: 'LinkedIn', url: 'https://www.linkedin.com/in/saurabhsl/' },
-              { name: 'HackerRank', url: 'https://www.hackerrank.com/profile/saurabhmj11' },
-              { name: 'LeetCode', url: 'https://leetcode.com/u/saurabhmj11/' },
-              { name: 'GitHub', url: 'https://github.com/saurabhmj11' }
-            ].map((social) => (
-              <a
-                key={social.name}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm uppercase tracking-widest hover:line-through transition-all"
-              >
-                {social.name}
-              </a>
-            ))}
-          </div>
+
 
         </div>
       </div>

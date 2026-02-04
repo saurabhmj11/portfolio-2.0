@@ -2,30 +2,49 @@ import React, { useState } from 'react';
 import SmoothScroll from './components/SmoothScroll';
 import { AnimatePresence, motion } from 'framer-motion';
 import Header from './components/Header';
-import Hero from './components/Hero';
-import About from './components/About';
-import Experience from './components/Experience';
-import Projects from './components/Projects';
-import Blog from './components/Blog';
-import LiveAgents from './components/LiveAgents';
 import Terminal from './components/Terminal';
-import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Preloader from './components/Preloader';
-// import ScrollLine from './components/ScrollLine';
 import CustomCursor from './components/CustomCursor';
 import Chatbot from './components/Chatbot';
 import SystemHUD from './components/SystemHUD';
 import AgentDock from './components/AgentDock';
 
+// Pages
+import Home from './pages/Home';
+import BlogPage from './pages/BlogPage';
+import BlogPostPage from './pages/BlogPostPage';
+import AdminPage from './pages/Admin';
+
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { TerminalProvider } from './context/TerminalContext';
 import { HelmetProvider } from 'react-helmet-async';
 import Seo from './components/Seo';
+
+
 
 function App() {
   const [isDark, setIsDark] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const location = useLocation();
+
+  // Scroll logic on route change
+  React.useEffect(() => {
+    if (location.hash) {
+      // If there is a hash, give a small delay for page load then scroll
+      setTimeout(() => {
+        const element = document.getElementById(location.hash.substring(1));
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      // Otherwise scroll to top
+      window.scrollTo(0, 0);
+    }
+  }, [location]);
+
 
   const toggleTheme = () => {
     setIsDark(!isDark);
@@ -58,20 +77,14 @@ function App() {
                 {/* Noise Overlay */}
                 <div className="noise-overlay" />
 
-                {/* Visual Thread */}
-                {/* <ScrollLine /> */}
-
                 <Header />
-                <main>
-                  <Hero />
-                  <About />
-                  <Experience />
-                  <Projects />
-                  <LiveAgents />
-                  <Blog />
-                  <Contact />
-                  {/* Footer is removed from here and placed outside */}
-                </main>
+
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/blog" element={<BlogPage />} />
+                  <Route path="/blog/:slug" element={<BlogPostPage />} />
+                  <Route path="/admin" element={<AdminPage />} />
+                </Routes>
               </div>
 
               {/* Fixed Footer (Behind the content) */}
