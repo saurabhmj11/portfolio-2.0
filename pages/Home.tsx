@@ -10,11 +10,14 @@ import Testimonials from '../components/Testimonials';
 import Workflow from '../components/Workflow';
 // import ScrollLine from '../components/ScrollLine';
 
+import Skills from '../components/Skills';
+
 const Home = () => {
     return (
         <main>
             <Hero />
             <About />
+            <Skills />
             <Experience />
             <Projects />
             <Testimonials />

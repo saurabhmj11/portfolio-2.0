@@ -5,6 +5,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import TextReveal from './TextReveal';
 import AIParticles from './AIParticles';
 
+import Hero3D from './Hero3D';
+
 gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
@@ -63,6 +65,11 @@ const Hero = () => {
             </div>
 
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />
+
+            {/* 3D Crystal Background - Disabled for Debugging */}
+            {/* <div className="absolute inset-0 z-10 opacity-80 pointer-events-none mix-blend-screen">
+                <Hero3D />
+            </div> */}
 
             <AIParticles />
 

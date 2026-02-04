@@ -23,6 +23,8 @@ import Seo from './components/Seo';
 
 
 
+import PageTransition from './components/PageTransition';
+
 function App() {
   const [isDark, setIsDark] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,19 +74,21 @@ function App() {
                 style={{ originY: 0 }}
               />
 
-              {/* Main Content with Parallax Effect */}
-              <div className={`relative z-10 min-h-screen ${isDark ? 'dark' : ''} bg-off-white mb-[300px] md:mb-[400px] shadow-2xl`}>
+              {/* Main Content */}
+              <div className={`relative z-10 min-h-screen ${isDark ? 'dark' : ''} bg-off-white shadow-2xl`}>
                 {/* Noise Overlay */}
                 <div className="noise-overlay" />
 
                 <Header />
 
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/blog" element={<BlogPage />} />
-                  <Route path="/blog/:slug" element={<BlogPostPage />} />
-                  <Route path="/admin" element={<AdminPage />} />
-                </Routes>
+                <AnimatePresence mode="wait">
+                  <Routes location={location} key={location.pathname}>
+                    <Route path="/" element={<PageTransition><Home /></PageTransition>} />
+                    <Route path="/blog" element={<PageTransition><BlogPage /></PageTransition>} />
+                    <Route path="/blog/:slug" element={<PageTransition><BlogPostPage /></PageTransition>} />
+                    <Route path="/admin" element={<PageTransition><AdminPage /></PageTransition>} />
+                  </Routes>
+                </AnimatePresence>
               </div>
 
               {/* Fixed Footer (Behind the content) */}

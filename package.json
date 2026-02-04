@@ -10,12 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@gsap/react": "^2.1.2",
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.4.2",
+    "@gsap/react": "^2.1.0",
+    "@react-three/drei": "^9.102.0",
+    "@react-three/fiber": "^8.16.1",
     "@studio-freight/lenis": "^1.0.42",
     "@studio-freight/react-lenis": "^0.0.47",
-    "@types/three": "^0.182.0",
+    "@types/three": "^0.160.0",
     "body-parser": "^1.20.3",
     "clsx": "^2.1.1",
     "cors": "^2.8.5",
@@ -33,7 +33,7 @@
     "react-router-dom": "^6.22.3",
     "rehype-highlight": "^7.0.2",
     "tailwind-merge": "^3.4.0",
-    "three": "^0.182.0",
+    "three": "^0.160.0",
     "use-sound": "^5.0.0"
   },
   "devDependencies": {

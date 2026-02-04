@@ -9,15 +9,8 @@ const Crystal = () => {
     useFrame((state) => {
         const time = state.clock.getElapsedTime();
         if (meshRef.current) {
-            // Auto rotation
             meshRef.current.rotation.x = time * 0.2;
             meshRef.current.rotation.y = time * 0.1;
-
-            // Mouse interaction (parallax)
-            const mouseX = state.mouse.x * 0.5;
-            const mouseY = state.mouse.y * 0.5;
-            meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, mouseX, 0.1);
-            meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, mouseY, 0.1);
         }
     });
 
