@@ -6,7 +6,7 @@ export const resumeData = {
         email: "saurabhmj11@gmail.com",
         phone: "+91-7767913887",
         github: "github.com/saurabhmj11",
-        linkedin: "linkedin.com/in/saurabhmj11",
+        linkedin: "linkedin.com/in/saurabhsl",
         portfolio: "saurabh-anil-lokhande.netlify.app"
     },
     summary: "LLM Engineer with ~2 years of hands-on experience building production-grade AI systems using Large Language Models, Retrieval-Augmented Generation (RAG), and multi-agent architectures. Specialized in local-first LLM deployment (Ollama), agentic workflows (LangChain / LangGraph), and scalable FastAPI backends. Experienced in designing end-to-end AI pipelines including document ingestion, semantic chunking, embeddings, vector search, agent orchestration, and grounded answer generation.",

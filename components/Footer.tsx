@@ -39,7 +39,7 @@ const SolarSystem = () => {
         </div>
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-50">
           <Magnetic>
-            <a href="https://www.linkedin.com/in/saurabh-lokhande-6d082ab5" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative z-50 pointer-events-auto">
+            <a href="https://www.linkedin.com/in/saurabhsl/" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative z-50 pointer-events-auto">
               <motion.div animate={{ rotate: -360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="relative flex items-center justify-center">
                 <Linkedin size={18} />
                 <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">

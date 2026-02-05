@@ -33,7 +33,7 @@ const Seo: React.FC<SeoProps> = ({
         "sameAs": [
             // Add actual social links if known, otherwise placeholders or omit
             "https://github.com/saurabhlokhande",
-            "https://linkedin.com/in/saurabhlokhande"
+            "https://linkedin.com/in/saurabhsl"
         ]
     };
 
