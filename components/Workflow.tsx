@@ -44,8 +44,8 @@ const Workflow = () => {
                         ease: 'power3.out',
                         scrollTrigger: {
                             trigger: item,
-                            start: 'top 90%',
-                            toggleActions: 'play none none reverse'
+                            start: 'top bottom', // Trigger as soon as it hits viewport
+                            toggleActions: 'play none none none' // Never hide once shown
                         }
                     }
                 );
@@ -92,8 +92,8 @@ const Workflow = () => {
                                 <div className="absolute left-4 md:left-1/2 w-4 h-4 bg-black border-2 border-blue-500 rounded-full z-10 -translate-x-1/2 top-0 mt-1 md:mt-2" />
 
                                 <div className={`w-full md:w-[45%] pl-14 md:pl-0 pr-2 md:pr-0 ${index % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
-                                    <span className="text-3xl md:text-6xl font-bold text-gray-800 opacity-50 block mb-2 md:mb-4">{step.num}</span>
-                                    <h4 className="text-lg md:text-2xl font-bold mb-2 md:mb-4">{step.title}</h4>
+                                    <span className="text-3xl md:text-6xl font-bold text-gray-600 opacity-50 block mb-2 md:mb-4">{step.num}</span>
+                                    <h4 className="text-lg md:text-2xl font-bold mb-2 md:mb-4 text-white">{step.title}</h4>
                                     <p className="text-gray-400 leading-relaxed text-sm md:text-lg">{step.desc}</p>
                                 </div>
                                 <div className="hidden md:block w-full md:w-[45%]" />
