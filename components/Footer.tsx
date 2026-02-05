@@ -25,9 +25,9 @@ const SolarSystem = () => {
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         className="absolute w-[180px] h-[180px] md:w-[200px] md:h-[200px] rounded-full border border-gray-800 inset-0 m-auto"
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
           <Magnetic>
-            <a href="https://github.com/saurabhmj11" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative">
+            <a href="https://github.com/saurabhmj11" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative z-50">
               <motion.div animate={{ rotate: -360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="relative flex items-center justify-center">
                 <Github size={18} />
                 <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
@@ -37,9 +37,9 @@ const SolarSystem = () => {
             </a>
           </Magnetic>
         </div>
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-50">
           <Magnetic>
-            <a href="https://www.linkedin.com/in/saurabh-lokhande-6d082ab5" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative">
+            <a href="https://www.linkedin.com/in/saurabh-lokhande-6d082ab5" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative z-50">
               <motion.div animate={{ rotate: -360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="relative flex items-center justify-center">
                 <Linkedin size={18} />
                 <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
