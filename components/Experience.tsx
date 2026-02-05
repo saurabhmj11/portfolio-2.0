@@ -6,7 +6,7 @@ import ScrollReveal from './ScrollReveal';
 const experiences = [
     {
         year: '2020-2023',
-        title: 'B.Tech Copmuter Science',
+        title: 'B.Tech Computer Science',
         org: 'Amravati University',
         desc: 'Specialized in Machine Learning & Deep Learning. Published research on NLP.',
         color: 'from-purple-500 to-indigo-500'

@@ -44,7 +44,7 @@ const Workflow = () => {
                         ease: 'power3.out',
                         scrollTrigger: {
                             trigger: item,
-                            start: 'top 80%',
+                            start: 'top 90%',
                             toggleActions: 'play none none reverse'
                         }
                     }
@@ -80,7 +80,7 @@ const Workflow = () => {
 
                 <div className="relative max-w-5xl mx-auto">
                     {/* Central Line */}
-                    <div className="absolute left-[16px] md:left-1/2 top-0 bottom-0 w-[1px] bg-gray-800 -translate-x-1/2 md:-translate-x-1/2">
+                    <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[1px] bg-gray-800 -translate-x-1/2 md:-translate-x-1/2">
                         <div className="workflow-line w-full h-full bg-blue-500 origin-top" />
                     </div>
 
@@ -89,9 +89,9 @@ const Workflow = () => {
                             <div key={index} className={`workflow-item flex flex-col md:flex-row items-start gap-4 md:gap-24 relative ${index % 2 === 0 ? '' : 'md:flex-row-reverse'}`}>
 
                                 {/* Timeline Dot */}
-                                <div className="absolute left-[16px] md:left-1/2 w-4 h-4 bg-black border-2 border-blue-500 rounded-full z-10 -translate-x-1/2 top-0 mt-1 md:mt-2" />
+                                <div className="absolute left-4 md:left-1/2 w-4 h-4 bg-black border-2 border-blue-500 rounded-full z-10 -translate-x-1/2 top-0 mt-1 md:mt-2" />
 
-                                <div className={`w-full md:w-[45%] pl-10 md:pl-0 pr-2 md:pr-0 ${index % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
+                                <div className={`w-full md:w-[45%] pl-14 md:pl-0 pr-2 md:pr-0 ${index % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
                                     <span className="text-3xl md:text-6xl font-bold text-gray-800 opacity-50 block mb-2 md:mb-4">{step.num}</span>
                                     <h4 className="text-lg md:text-2xl font-bold mb-2 md:mb-4">{step.title}</h4>
                                     <p className="text-gray-400 leading-relaxed text-sm md:text-lg">{step.desc}</p>

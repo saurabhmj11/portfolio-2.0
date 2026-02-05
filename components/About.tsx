@@ -62,13 +62,13 @@ const About = () => {
 
   const [ref, inView] = useInView({ threshold: 0.3 });
 
-  const bioText = "I’m an AI Engineer passionate about creating cutting-edge solutions that push the boundaries of what’s possible with artificial intelligence. With expertise in machine learning, natural language processing, and deep learning, I specialize in building innovative AI-driven applications that address complex business challenges across various industries.";
+  const bioText = "I am an AI Engineer passionate about creating cutting-edge solutions that push the boundaries of what’s possible with artificial intelligence. With expertise in machine learning, natural language processing, and deep learning, I specialize in building innovative AI-driven applications that address complex business challenges across various industries.";
   const words = bioText.split(" ");
 
   return (
     <section
       ref={ref}
-      className="py-20 md:py-32 px-4 md:px-8 bg-black text-off-white"
+      className="py-20 md:py-32 px-6 md:px-8 bg-black text-off-white"
       id="about"
       onMouseEnter={() => addLog("Parsing User Biography...", "system", "SYS")}
     >
