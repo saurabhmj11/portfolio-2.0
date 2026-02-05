@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Analytics from './src/components/Analytics';
 import SmoothScroll from './components/SmoothScroll';
 import { AnimatePresence, motion } from 'framer-motion';
 import Header from './components/Header';
@@ -58,6 +59,7 @@ function App() {
   return (
     <TerminalProvider>
       <HelmetProvider>
+        <Analytics />
         <Seo />
         <SmoothScroll>
           <CustomCursor />
