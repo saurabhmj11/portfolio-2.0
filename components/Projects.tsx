@@ -188,7 +188,7 @@ const Projects = () => {
             {isMobile ? (
                 // Mobile Layout (Unchanged mostly, just structured better)
                 <div className="py-16 px-4">
-                    <div className="mb-8">
+                    <div className="mb-8 text-center">
                         <ScrollReveal>
                             <h2 className="text-[10vw] font-bold leading-none tracking-tighter uppercase mb-2">Selected Work</h2>
                             <p className="text-gray-500">Swipe to explore projects.</p>

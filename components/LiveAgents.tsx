@@ -61,11 +61,11 @@ const LiveAgents = () => {
             </div>
 
             <div className="container mx-auto relative z-20">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-white/20 pb-8">
-                    <h2 className="text-[10vw] md:text-[6vw] font-bold leading-none tracking-tighter uppercase">
+                <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 border-b border-white/20 pb-8">
+                    <h2 className="text-[10vw] md:text-[6vw] font-bold leading-none tracking-tighter uppercase text-center md:text-left">
                         Live<br />Agents
                     </h2>
-                    <p className="text-gray-400 text-lg md:max-w-xs text-right mt-8 md:mt-0">
+                    <p className="text-gray-400 text-lg md:max-w-xs text-center md:text-right mt-8 md:mt-0">
                         Interact with deployed autonomous agents running in production environments.
                     </p>
                 </div>

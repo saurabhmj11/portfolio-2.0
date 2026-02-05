@@ -31,7 +31,9 @@ const Workflow = () => {
     const containerRef = useRef<HTMLElement>(null);
 
     useLayoutEffect(() => {
-        const ctx = gsap.context(() => {
+        let mm = gsap.matchMedia();
+
+        mm.add("(min-width: 768px)", () => {
             const items = gsap.utils.toArray('.workflow-item');
 
             items.forEach((item: any, i) => {
@@ -44,14 +46,14 @@ const Workflow = () => {
                         ease: 'power3.out',
                         scrollTrigger: {
                             trigger: item,
-                            start: 'top bottom', // Trigger as soon as it hits viewport
-                            toggleActions: 'play none none none' // Never hide once shown
+                            start: 'top 90%',
+                            toggleActions: 'play none none reverse'
                         }
                     }
                 );
             });
 
-            // Draw line
+            // Draw line animation only on desktop
             gsap.fromTo('.workflow-line',
                 { scaleY: 0 },
                 {
@@ -65,9 +67,9 @@ const Workflow = () => {
                     }
                 }
             );
+        });
 
-        }, containerRef);
-        return () => ctx.revert();
+        return () => mm.revert();
     }, []);
 
     return (
