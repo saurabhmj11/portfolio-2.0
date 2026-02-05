@@ -9,9 +9,9 @@ import { Link } from 'react-router-dom';
 
 const SolarSystem = () => {
   return (
-    <div className="relative w-[300px] h-[300px] md:w-[400px] md:h-[400px] flex items-center justify-center my-12">
+    <div className="relative w-[300px] h-[300px] md:w-[400px] md:h-[400px] flex items-center justify-center my-12 pointer-events-none">
       {/* Sun (Robot) */}
-      <div className="relative z-10 w-32 h-32 md:w-40 md:h-40">
+      <div className="relative z-10 w-32 h-32 md:w-40 md:h-40 pointer-events-auto">
         <Canvas camera={{ position: [0, 0, 4], fov: 45 }} gl={{ alpha: true }}>
           <ambientLight intensity={0.5} />
           <pointLight position={[10, 10, 10]} intensity={1} />
@@ -23,11 +23,11 @@ const SolarSystem = () => {
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute w-[180px] h-[180px] md:w-[200px] md:h-[200px] rounded-full border border-gray-800 inset-0 m-auto"
+        className="absolute w-[180px] h-[180px] md:w-[200px] md:h-[200px] rounded-full border border-gray-800 inset-0 m-auto pointer-events-none"
       >
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
           <Magnetic>
-            <a href="https://github.com/saurabhmj11" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative z-50">
+            <a href="https://github.com/saurabhmj11" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative z-50 pointer-events-auto">
               <motion.div animate={{ rotate: -360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="relative flex items-center justify-center">
                 <Github size={18} />
                 <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
@@ -39,7 +39,7 @@ const SolarSystem = () => {
         </div>
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-50">
           <Magnetic>
-            <a href="https://www.linkedin.com/in/saurabh-lokhande-6d082ab5" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative z-50">
+            <a href="https://www.linkedin.com/in/saurabh-lokhande-6d082ab5" target="_blank" rel="noreferrer" className="group w-10 h-10 bg-[#121212] border border-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-colors block relative z-50 pointer-events-auto">
               <motion.div animate={{ rotate: -360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="relative flex items-center justify-center">
                 <Linkedin size={18} />
                 <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
@@ -55,7 +55,7 @@ const SolarSystem = () => {
       <motion.div
         animate={{ rotate: -360 }}
         transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        className="absolute w-[260px] h-[260px] md:w-[300px] md:h-[300px] rounded-full border border-gray-800/50 inset-0 m-auto"
+        className="absolute w-[260px] h-[260px] md:w-[300px] md:h-[300px] rounded-full border border-gray-800/50 inset-0 m-auto pointer-events-none"
       >
         {/* Resume Planet - Top Center of Outer Ring */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
@@ -114,7 +114,7 @@ const SolarSystem = () => {
 
 const Footer = () => {
   return (
-    <footer className="relative bg-[#050505] text-white py-20 px-6 overflow-hidden z-0">
+    <footer className="relative bg-[#050505] text-white py-20 px-6 overflow-hidden z-50">
       <ScrollReveal width="100%">
         <div className="container mx-auto max-w-7xl flex flex-col items-center gap-12">
 
