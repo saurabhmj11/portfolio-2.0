@@ -1,6 +1,6 @@
-import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
-import { motion, AnimatePresence, PanInfo, useScroll, useTransform } from 'framer-motion';
-import { X, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useRef, useLayoutEffect, useEffect } from 'react';
+import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { X, ArrowUpRight } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Magnetic from './Magnetic';
@@ -107,28 +107,50 @@ const Projects = () => {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const { addLog } = useTerminal();
 
-    // Lock body scroll when modal is open
-    useEffect(() => {
-        if (selectedProject) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-        return () => {
-            document.body.style.overflow = '';
-        }
-    }, [selectedProject]);
-
     // GSAP Refs
     const sectionRef = useRef<HTMLElement>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
     const horizontalScrollRef = useRef<HTMLDivElement>(null);
+    // Accessibility: Ref to focus prompt modal
+    const modalRef = useRef<HTMLDivElement>(null);
+
+    // Accessibility & Body Lock Effect
+    useEffect(() => {
+        let lastActiveElement: HTMLElement | null = null;
+
+        if (selectedProject) {
+            // 1. Lock Body
+            document.body.style.overflow = 'hidden';
+            // 2. Save current focus
+            lastActiveElement = document.activeElement as HTMLElement;
+            // 3. Focus modal (next tick to ensure mount)
+            requestAnimationFrame(() => {
+                modalRef.current?.focus();
+            });
+
+            // 4. Escape Key Handler
+            const handleKeyDown = (e: KeyboardEvent) => {
+                if (e.key === 'Escape') setSelectedProject(null);
+            };
+            window.addEventListener('keydown', handleKeyDown);
+
+            return () => {
+                window.removeEventListener('keydown', handleKeyDown);
+                document.body.style.overflow = '';
+                // 5. Restore focus
+                if (lastActiveElement) lastActiveElement.focus();
+            };
+        } else {
+            // Cleanup if needed (redundant usually due to return above, but safe)
+            document.body.style.overflow = '';
+        }
+    }, [selectedProject]);
 
     const isMobile = useIsMobile();
     const [activeProjectIndex, setActiveProjectIndex] = useState(0);
 
     // Mobile Swipe Handler
-    const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
         if (info.offset.x > 100) {
             setActiveProjectIndex(prev => Math.max(0, prev - 1));
         } else if (info.offset.x < -100) {
@@ -316,6 +338,11 @@ const Projects = () => {
                         exit={{ opacity: 0 }}
                         onClick={() => setSelectedProject(null)}
                         className="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center z-[1000] p-0 md:p-6"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label={selectedProject.title}
+                        tabIndex={-1}
+                        ref={modalRef}
                     >
                         <motion.div
                             initial={{ y: 50, opacity: 0 }}

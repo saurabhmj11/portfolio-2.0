@@ -1,11 +1,11 @@
-import React, { useRef, useLayoutEffect } from 'react';
+import React, { useRef, useLayoutEffect, Suspense } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import TextReveal from './TextReveal';
 import AIParticles from './AIParticles';
 
-import Hero3D from './Hero3D';
+const Hero3D = React.lazy(() => import('./Hero3D'));
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -68,7 +68,9 @@ const Hero = () => {
 
             {/* 3D Crystal Background - Disabled for Debugging */}
             {/* <div className="absolute inset-0 z-10 opacity-80 pointer-events-none mix-blend-screen">
-                <Hero3D />
+                 <Suspense fallback={null}>
+                    <Hero3D />
+                 </Suspense>
             </div> */}
 
             <AIParticles />

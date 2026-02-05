@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { motion } from 'framer-motion';
 import ScrollReveal from './ScrollReveal';
 import { Canvas } from '@react-three/fiber';
-import Robot3D from './Robot3D';
+const Robot3D = React.lazy(() => import('./Robot3D'));
 import { Github, Linkedin, Code2, Terminal, Cpu, FileText } from 'lucide-react';
 import Magnetic from './Magnetic';
 import { Link } from 'react-router-dom';
@@ -11,11 +11,13 @@ const SolarSystem = () => {
   return (
     <div className="relative w-[300px] h-[300px] md:w-[400px] md:h-[400px] flex items-center justify-center my-12 pointer-events-none">
       {/* Sun (Robot) */}
-      <div className="relative z-10 w-32 h-32 md:w-40 md:h-40 pointer-events-auto">
+      <div className="relative z-10 w-32 h-32 md:w-40 md:h-40 pointer-events-auto" role="img" aria-label="Interactive 3D Robot Model">
         <Canvas camera={{ position: [0, 0, 4], fov: 45 }} gl={{ alpha: true }}>
           <ambientLight intensity={0.5} />
           <pointLight position={[10, 10, 10]} intensity={1} />
-          <Robot3D />
+          <Suspense fallback={null}>
+            <Robot3D />
+          </Suspense>
         </Canvas>
       </div>
 

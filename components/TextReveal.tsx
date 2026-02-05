@@ -49,7 +49,7 @@ const TextReveal: React.FC<TextRevealProps> = ({ children, className, el: Wrappe
     const words = children.split(" ");
 
     return (
-        <Wrapper ref={ref} className={`${className} overflow-hidden leading-tight`}>
+        <Wrapper ref={ref as any} className={`${className} overflow-hidden leading-tight`}>
             {words.map((word, index) => (
                 <span key={index} className="word inline-block mr-[0.25em] will-change-transform transform-gpu">
                     {word}
