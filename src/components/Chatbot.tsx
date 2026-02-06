@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, User, Bot } from 'lucide-react';
+import { MessageSquare, X, Send, Bot } from 'lucide-react';
 import Magnetic from './Magnetic';
 
 interface Message {
@@ -54,15 +54,15 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, setIsOpen }) => {
 
             // Capabilities & Skills
             if (lowerInput.includes('skill') || lowerInput.includes('stack') || lowerInput.includes('tech') || lowerInput.includes('what can you do') || lowerInput.includes('expert')) {
-                botText = "Core Expertise: Agentic AI Systems, LangGraph, Google ADK, Model Context Protocol (MCP). Proficient in Python, RAG Implementation, and Reasoning Models. A solid 1.8 years of specialized GenAI experience.";
+                botText = "Core Expertise: LLM Systems & RAG (End-to-end architectures, Semantic Chunking), AI Agents (LangChain, LangGraph, CrewAI). Proficient in Python (FastAPI), Local LLMs (Ollama), and Vector DBs. ~2 years of specialized GenAI experience.";
             }
             // Projects
             else if (lowerInput.includes('project') || lowerInput.includes('work') || lowerInput.includes('built') || lowerInput.includes('portfolio')) {
-                botText = "Saurabh's Flagships:\n• HireMeOS: Autonomous AI Operating System.\n• OCR Pipeline: Production-grade doc processing.\n• Student RecSys: ML-driven recommendations.\n• SubMaster: SaaS Backend.\n• Web Intel Agent: Autonomous researcher.";
+                botText = "Saurabh's Flagships:\n• HireMeOS: Autonomous AI Career System (Multi-agent).\n• Autonomous Research Agent: Planning & Report writing with LangGraph.\n• DataOS: Local-first dataset analysis assistant.\n• NeuroAdaptive Quiz Engine: Context-aware learning system.";
             }
             // Workflow
             else if (lowerInput.includes('workflow') || lowerInput.includes('process') || lowerInput.includes('method') || lowerInput.includes('build')) {
-                botText = "Saurabh's System Workflow:\n1. Deep Discovery (Problem Framing)\n2. System Design (Event-driven/Agentic Arch)\n3. Implementation (Precise Engineering)\n4. Deployment (Edge/Production Scaling)";
+                botText = "Saurabh's System Workflow:\n1. Deep Discovery (Problem Framing)\n2. Agentic Architecture Design (LangGraph)\n3. Precision Implementation (Python/FastAPI)\n4. Reliable Deployment (Docker/Edge)";
             }
             // Live Agents
             else if (lowerInput.includes('live') || lowerInput.includes('agent') || lowerInput.includes('demo') || lowerInput.includes('try')) {
@@ -70,19 +70,19 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, setIsOpen }) => {
             }
             // Contact
             else if (lowerInput.includes('contact') || lowerInput.includes('email') || lowerInput.includes('phone') || lowerInput.includes('hire') || lowerInput.includes('reach')) {
-                botText = "Contact Saurabh directly: \nEmail: saurabhmj11@gmail.com \nPhone: +91-7767913887 \nStatus: Immediate Joiner (No Notice Period).";
+                botText = "Contact Saurabh directly: \nEmail: saurabhmj11@gmail.com \nPhone: +91-7767913887 \nLocation: Open to Relocation \nStatus: Immediate Joiner.";
             }
             // Resume/Background
             else if (lowerInput.includes('resume') || lowerInput.includes('cv') || lowerInput.includes('background') || lowerInput.includes('experience') || lowerInput.includes('job')) {
-                botText = "Saurabh is an AI Agent Systems Developer with 1.8 years of experience. \n\nKey Highlights:\n• Specialized in LangGraph & Multi-Agent Orchestration.\n• Built Long-Running Agents & Reasoning Models.\n• Foundation in MCP Servers & Agent Memory.\n• Immediate Joiner.\n\nAsk for his 'full summary' if you want more details!";
+                botText = "Saurabh is an LLM Engineer with ~2 years of experience. \n\nKey Highlights:\n• Specialized in RAG & Multi-Agent Orchestration.\n• Built Production-grade Document Processing pipelines.\n• Expert in Local LLM Deployment (Ollama).\n• Immediate Joiner.\n\nAsk for his 'full summary' if you want more details!";
             }
             // Detailed Summary
             else if (lowerInput.includes('full summary') || lowerInput.includes('summary')) {
-                botText = "Professional Summary: Highly focused AI Agent Systems Developer. \n\nExperience: 1.8 Years (Freelance & Pantech Solutions).\n\nProjects:\n• HireMeOS (Multi-Agent OS)\n• OCR Pipeline (Production System)\n• Student RecSys (ML Engine)\n\nTech: Python, FastAPI, Docker, GCP/Vertex AI.\n\nHe is ready to deploy scalable solutions immediately.";
+                botText = "Professional Summary: LLM Engineer building production-grade AI systems. \n\nExperience: ~2 Years (Freelance & Product Projects).\n\nFocus:\n• RAG Architectures & Vector Search\n• Multi-Agent Systems (LangGraph)\n• Scalable Backends (FastAPI)\n\nHe is ready to build scalable AI solutions immediately.";
             }
             // Greetings
             else if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey') || lowerInput.includes('good morning') || lowerInput.includes('good evening')) {
-                botText = "Hello! I'm your guide to Saurabh's portfolio. Ask me about his Projects (HireMeOS, OCR), Workflow, or Contact info!";
+                botText = "Hello! I'm your guide to Saurabh's portfolio. Ask me about his AI Projects (HireMeOS, Research Agent), RAG expertise, or Contact info!";
             }
 
             setMessages(prev => [...prev, { id: Date.now() + 1, text: botText, sender: 'bot' }]);

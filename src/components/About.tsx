@@ -6,6 +6,7 @@ import { ChevronRight } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useInView } from 'react-intersection-observer';
 import useHaptic from '../hooks/useHaptic';
+import MouseParallax from './MouseParallax';
 
 const ListItem = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => {
   const { trigger: haptic } = useHaptic();
@@ -97,13 +98,16 @@ const About = () => {
               })}
             </div>
           </div>
+
           <div className="w-full md:w-1/3 flex justify-center md:justify-end">
-            <motion.div
-              style={{ opacity: scrollYProgress }}
-              className="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-2 border-gray-800 grayscale hover:grayscale-0 transition-all duration-500"
-            >
-              <img src="/profile.jpg" alt="Saurabh Lokhande" className="w-full h-full object-cover" loading="lazy" />
-            </motion.div>
+            <MouseParallax strength={15}>
+              <motion.div
+                style={{ opacity: scrollYProgress }}
+                className="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-2 border-gray-800 grayscale hover:grayscale-0 transition-all duration-500"
+              >
+                <img src="/profile.jpg" alt="Saurabh Lokhande" className="w-full h-full object-cover" loading="lazy" />
+              </motion.div>
+            </MouseParallax>
           </div>
         </div>
 

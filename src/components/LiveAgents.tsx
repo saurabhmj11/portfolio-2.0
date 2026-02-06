@@ -1,7 +1,8 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
+import { motion } from 'framer-motion';
 import { ExternalLink, Bot } from 'lucide-react';
 import LiveStatus from './LiveStatus';
+import MouseParallax from './MouseParallax';
 
 interface Agent {
     name: string;
@@ -45,12 +46,8 @@ const agents: Agent[] = [
 
 const LiveAgents = () => {
     const containerRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start end", "end start"]
-    });
 
-    const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+
 
     return (
         <section ref={containerRef} className="py-32 px-4 md:px-8 bg-black text-white relative z-10 overflow-hidden">
@@ -74,36 +71,39 @@ const LiveAgents = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {agents.map((agent, index) => (
-                        <motion.a
-                            href={agent.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            key={agent.name}
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
-                            className="group relative bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-colors duration-500 flex flex-col justify-between min-h-[300px]"
-                        >
-                            <div>
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                                        <Bot className="text-white w-6 h-6" />
-                                    </div>
-                                    <span className="text-xs font-mono text-gray-500 border border-white/10 px-2 py-1 rounded-full uppercase tracking-wider">
-                                        {agent.role}
-                                    </span>
-                                </div>
-                                <h3 className="text-2xl font-bold mb-3 group-hover:text-blue-400 transition-colors">{agent.name}</h3>
-                                <p className="text-gray-400 leading-relaxed text-sm">
-                                    {agent.description}
-                                </p>
-                            </div>
 
-                            <div className="mt-8 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white/50 group-hover:text-white transition-colors">
-                                Try Live Agent <ExternalLink className="w-4 h-4 ml-1" />
-                            </div>
-                        </motion.a>
+
+                        <MouseParallax key={agent.name} strength={10} className="h-full">
+                            <motion.a
+                                href={agent.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.1 }}
+                                className="group relative bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-colors duration-500 flex flex-col justify-between min-h-[300px] h-full"
+                            >
+                                <div>
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                                            <Bot className="text-white w-6 h-6" />
+                                        </div>
+                                        <span className="text-xs font-mono text-gray-500 border border-white/10 px-2 py-1 rounded-full uppercase tracking-wider">
+                                            {agent.role}
+                                        </span>
+                                    </div>
+                                    <h3 className="text-2xl font-bold mb-3 group-hover:text-blue-400 transition-colors">{agent.name}</h3>
+                                    <p className="text-gray-400 leading-relaxed text-sm">
+                                        {agent.description}
+                                    </p>
+                                </div>
+
+                                <div className="mt-8 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white/50 group-hover:text-white transition-colors">
+                                    Try Live Agent <ExternalLink className="w-4 h-4 ml-1" />
+                                </div>
+                            </motion.a>
+                        </MouseParallax>
                     ))}
                 </div>
             </div>

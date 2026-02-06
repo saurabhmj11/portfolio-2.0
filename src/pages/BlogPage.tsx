@@ -15,6 +15,8 @@ interface BlogPost {
 
 import postsData from '../data/posts.json';
 
+import Seo from '../components/Seo';
+
 const BlogPage = () => {
     // Static filter for published posts
     // @ts-ignore - Importing json directly
@@ -24,6 +26,11 @@ const BlogPage = () => {
 
     return (
         <div className="min-h-screen pt-32 pb-20 px-6 md:px-12 max-w-5xl mx-auto">
+            <Seo
+                title="Research Log - Saurabh Lokhande"
+                description="Internal engineering notes, architectural decisions, and failure postmortems on AI and Software Engineering."
+                keywords="AI Blog, Software Engineering, Research Log, Saurabh Lokhande"
+            />
             <div className="mb-16 border-b border-black/10 pb-8">
                 <TextReveal el="h1" className="text-5xl md:text-7xl font-bold tracking-tighter uppercase mb-4">
                     Research Log

@@ -23,6 +23,8 @@ import postsData from '../data/posts.json';
 
 // ... (interface remains)
 
+import Seo from '../components/Seo';
+
 const BlogPostPage = () => {
     const { slug } = useParams();
     // @ts-ignore
@@ -35,6 +37,12 @@ const BlogPostPage = () => {
 
     return (
         <article className="min-h-screen pt-32 pb-20 px-6 md:px-12 max-w-4xl mx-auto">
+            <Seo
+                title={post.title}
+                description={post.excerpt}
+                keywords={post.tags?.join(', ')}
+                type="article"
+            />
             <Link to="/blog" className="inline-flex items-center text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-black mb-12 transition-colors">
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back to Log
             </Link>

@@ -67,11 +67,11 @@ const Hero = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />
 
             {/* 3D Crystal Background - Disabled for Debugging */}
-            {/* <div className="absolute inset-0 z-10 opacity-80 pointer-events-none mix-blend-screen">
-                 <Suspense fallback={null}>
+            <div className="absolute inset-0 z-10 opacity-80 pointer-events-none mix-blend-screen">
+                <Suspense fallback={null}>
                     <Hero3D />
-                 </Suspense>
-            </div> */}
+                </Suspense>
+            </div>
 
             <AIParticles />
 

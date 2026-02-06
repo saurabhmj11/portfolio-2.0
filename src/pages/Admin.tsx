@@ -78,7 +78,6 @@ const AdminPage = () => {
 
     const handleSave = async () => {
         if (!editingPost) return;
-        const isNew = !posts.find(p => p.slug === editingPost.slug); // Basic check, slightly flawed if slug changes but ok for now
         // Better: check if we started with a post or new
         // Actually, if we change slug, it's tricky. Let's assume slug is key.
         // If we are editing, we use PUT. If new, POST.
@@ -137,32 +136,76 @@ const AdminPage = () => {
 
     if (view === 'list') {
         return (
-            <div className="min-h-screen pt-32 px-6 max-w-5xl mx-auto">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold">Dashboard</h1>
+            <div className="min-h-screen pt-32 px-6 max-w-7xl mx-auto pb-20">
+                <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
+                    <div>
+                        <h1 className="text-4xl font-bold tracking-tight mb-2">Mission Control</h1>
+                        <p className="text-gray-500">Welcome back, Commander. System status: <span className="text-green-600 font-bold">NOMINAL</span></p>
+                    </div>
                     <div className="gap-4 flex">
-                        <button onClick={handleNew} className="bg-black text-white px-4 py-2 rounded">New Post</button>
-                        <button onClick={handleLogout} className="bg-gray-200 text-black px-4 py-2 rounded">Logout</button>
+                        <button onClick={handleNew} className="bg-black text-white dark:bg-white dark:text-black px-6 py-2 rounded-full font-bold hover:opacity-80 transition-opacity">
+                            + New Frequency
+                        </button>
+                        <button onClick={handleLogout} className="bg-gray-200 text-black px-6 py-2 rounded-full font-bold hover:bg-gray-300 transition-colors">
+                            Logout
+                        </button>
                     </div>
                 </div>
-                <div className="bg-white rounded shadow text-black/80">
-                    {posts.map(post => (
-                        <div key={post.slug} className="flex items-center justify-between p-4 border-b">
-                            <div>
-                                <div className="font-bold flex items-center gap-2">
-                                    {post.title}
-                                    <span className={`text-xs px-2 py-0.5 rounded ${post.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                                        {post.status}
-                                    </span>
-                                </div>
-                                <div className="text-sm text-gray-500">{post.slug}</div>
-                            </div>
-                            <div className="flex gap-2">
-                                <button onClick={() => handleEdit(post)} className="text-blue-600 hover:underline">Edit</button>
-                                <button onClick={() => handleDelete(post.slug)} className="text-red-600 hover:underline">Delete</button>
-                            </div>
+
+                {/* Dashboard Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    {/* Stat Card 1 */}
+                    <div className="bg-white dark:bg-white/5 p-6 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm">
+                        <h3 className="text-gray-500 text-sm font-bold uppercase tracking-widest mb-4">Total Traffic</h3>
+                        <div className="text-4xl font-bold mb-2">12,405</div>
+                        <div className="text-green-500 text-sm font-medium flex items-center gap-1">
+                            <span className="w-2 h-2 rounded-full bg-green-500" />
+                            +18% vs last week
                         </div>
-                    ))}
+                    </div>
+                    {/* Stat Card 2 */}
+                    <div className="bg-white dark:bg-white/5 p-6 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm">
+                        <h3 className="text-gray-500 text-sm font-bold uppercase tracking-widest mb-4">Active Agents</h3>
+                        <div className="text-4xl font-bold mb-2">5</div>
+                        <div className="text-blue-500 text-sm font-medium flex items-center gap-1">
+                            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                            All Systems Operational
+                        </div>
+                    </div>
+                    {/* Stat Card 3 */}
+                    <div className="bg-white dark:bg-white/5 p-6 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm">
+                        <h3 className="text-gray-500 text-sm font-bold uppercase tracking-widest mb-4">Uptime</h3>
+                        <div className="text-4xl font-bold mb-2">99.9%</div>
+                        <div className="text-gray-500 text-sm font-medium">
+                            Last restart: 14d ago
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-white dark:bg-white/5 rounded-2xl border border-black/5 dark:border-white/10 shadow-sm overflow-hidden text-black/80 dark:text-white/80">
+                    <div className="p-6 border-b border-black/5 dark:border-white/10">
+                        <h2 className="text-xl font-bold">Transmission Log (Blog Posts)</h2>
+                    </div>
+                    <div>
+                        {posts.map(post => (
+                            <div key={post.slug} className="flex items-center justify-between p-6 border-b border-black/5 dark:border-white/10 last:border-0 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                                <div>
+                                    <div className="font-bold flex items-center gap-3 text-lg">
+                                        {post.title}
+                                        <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded-full ${post.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                            {post.status}
+                                        </span>
+                                    </div>
+                                    <div className="text-sm text-gray-400 mt-1 font-mono">{post.publishedAt} • {post.slug}</div>
+                                </div>
+                                <div className="flex gap-4">
+                                    <button onClick={() => handleEdit(post)} className="text-sm font-bold uppercase tracking-wide hover:text-blue-500 transition-colors">Edit</button>
+                                    <button onClick={() => handleDelete(post.slug)} className="text-sm font-bold uppercase tracking-wide text-red-500 hover:text-red-600 transition-colors">Delete</button>
+                                </div>
+                            </div>
+                        ))}
+                        {posts.length === 0 && <div className="p-8 text-center text-gray-500">No data found within local parameters.</div>}
+                    </div>
                 </div>
             </div>
         );

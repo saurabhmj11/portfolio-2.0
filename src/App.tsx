@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Analytics from './src/components/Analytics';
+import Analytics from './components/Analytics';
 import SmoothScroll from './components/SmoothScroll';
 import { AnimatePresence, motion } from 'framer-motion';
 import Header from './components/Header';
@@ -18,6 +18,7 @@ import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import AdminPage from './pages/Admin';
 import Resume from './pages/Resume';
+import NotFound from './pages/NotFound';
 
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { TerminalProvider } from './context/TerminalContext';
@@ -92,6 +93,7 @@ function App() {
                     <Route path="/blog/:slug" element={<PageTransition><BlogPostPage /></PageTransition>} />
                     <Route path="/admin" element={<PageTransition><AdminPage /></PageTransition>} />
                     <Route path="/resume" element={<PageTransition><Resume /></PageTransition>} />
+                    <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
                   </Routes>
                 </AnimatePresence>
               </div>
