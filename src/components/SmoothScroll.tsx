@@ -29,7 +29,7 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
     useEffect(() => {
         if (shouldDisable) return;
 
-        const update = (time: number, deltaTime: number, frame: number) => {
+        const update = (time: number) => {
             lenisRef.current?.lenis?.raf(time * 1000);
         };
 
@@ -50,7 +50,7 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
             ref={lenisRef}
             autoRaf={false}
             options={{
-                lerp: 0.07,
+                lerp: 0.1,
                 duration: 1.2,
                 smoothWheel: true,
                 wheelMultiplier: 1.2,

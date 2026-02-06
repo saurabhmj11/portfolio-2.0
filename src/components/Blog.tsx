@@ -1,14 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import TextReveal from './TextReveal';
 
-interface BlogPost {
-    title: string;
-    date: string;
-    link: string;
-    category: string;
-    image?: string; // Optional preview image
-}
+
 
 import postsData from '../data/posts.json';
 
@@ -32,7 +26,12 @@ const Blog = () => {
         <section id="insights" className="py-32 px-6 md:px-12 bg-off-white relative z-10">
             <div className="max-w-7xl mx-auto">
                 <div className="mb-20">
-                    <TextReveal el="h2" className="text-4xl md:text-6xl font-bold tracking-tighter uppercase mb-4">
+                    {/* Mobile Title (Static) to ensure visibility */}
+                    <h2 className="md:hidden text-4xl font-bold tracking-tighter uppercase mb-4">
+                        Selected Insights
+                    </h2>
+                    {/* Desktop Title (Animated) */}
+                    <TextReveal el="h2" className="hidden md:block text-6xl font-bold tracking-tighter uppercase mb-4">
                         Selected Insights
                     </TextReveal>
                     <div className="h-[1px] w-full bg-black/10 mt-8" />
@@ -65,7 +64,7 @@ const Blog = () => {
                             </div>
 
                             <div className="md:w-1/4 flex justify-end">
-                                <span className="text-sm font-medium uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <span className="text-sm font-medium uppercase tracking-widest opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
                                     Read Article
                                 </span>
                             </div>

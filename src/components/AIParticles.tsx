@@ -37,7 +37,8 @@ const AIParticles = () => {
 
     const particles: { x: number; y: number; radius: number; vx: number; vy: number; alpha: number; originalVx: number; originalVy: number }[] = [];
     const isMobile = width < 768;
-    const particleCount = isMobile ? 30 : 60;
+    // Reduced particle count for performance
+    const particleCount = isMobile ? 15 : 40;
 
     for (let i = 0; i < particleCount; i++) {
       const vx = (Math.random() - 0.5) * 0.2;
@@ -57,6 +58,7 @@ const AIParticles = () => {
     let animationFrameId: number;
 
     const render = () => {
+      if (!ctx || !canvas) return;
       ctx.fillStyle = 'black';
       ctx.fillRect(0, 0, width, height);
 
@@ -109,19 +111,32 @@ const AIParticles = () => {
         ctx.fill();
 
         if (!isMobile) {
+          // Connections optimization
+          const connectionDist = 7000; // Squared distance
+
           for (let j = index + 1; j < particles.length; j++) {
             const p2 = particles[j];
-            const dx2 = p.x - p2.x;
-            const dy2 = p.y - p2.y;
-            const dist2 = dx2 * dx2 + dy2 * dy2;
 
-            if (dist2 < 10000) {
+            // AABB Check
+            const dx = p.x - p2.x;
+            if (dx > 100 || dx < -100) continue;
+
+            const dy = p.y - p2.y;
+            if (dy > 100 || dy < -100) continue;
+
+            const dist2 = dx * dx + dy * dy;
+
+            if (dist2 < connectionDist) {
               ctx.beginPath();
-              ctx.strokeStyle = `rgba(255, 60, 0, ${1 - Math.sqrt(dist2) / 100})`;
-              ctx.lineWidth = 0.5;
-              ctx.moveTo(p.x, p.y);
-              ctx.lineTo(p2.x, p2.y);
-              ctx.stroke();
+              // Linear fade calculation
+              const opacity = 1 - dist2 / connectionDist;
+              if (opacity > 0) {
+                ctx.strokeStyle = `rgba(255, 60, 0, ${opacity})`;
+                ctx.lineWidth = 0.5;
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+              }
             }
           }
         }

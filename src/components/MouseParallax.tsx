@@ -19,14 +19,24 @@ const MouseParallax: React.FC<MouseParallaxProps> = ({ children, className = "",
 
     const transform = useMotionTemplate`translateX(${xSpring}px) translateY(${ySpring}px)`;
 
+    const rectRef = useRef<DOMRect | null>(null);
+
+    const handleMouseEnter = () => {
+        if (ref.current) {
+            rectRef.current = ref.current.getBoundingClientRect();
+        }
+    };
+
     const handleMouseMove = (e: React.MouseEvent) => {
-        if (!ref.current) return;
+        if (!rectRef.current) return;
 
-        const { left, top, width, height } = ref.current.getBoundingClientRect();
+        const { left, top, width, height } = rectRef.current;
+        const clientX = e.clientX;
+        const clientY = e.clientY;
 
-        // Calculate relative position (-0.5 to 0.5)
-        const relativeX = (e.clientX - left) / width - 0.5;
-        const relativeY = (e.clientY - top) / height - 0.5;
+        // Use motion value directly for best performance
+        const relativeX = (clientX - left) / width - 0.5;
+        const relativeY = (clientY - top) / height - 0.5;
 
         x.set(relativeX * strength);
         y.set(relativeY * strength);
@@ -35,11 +45,13 @@ const MouseParallax: React.FC<MouseParallaxProps> = ({ children, className = "",
     const handleMouseLeave = () => {
         x.set(0);
         y.set(0);
+        rectRef.current = null;
     };
 
     return (
         <motion.div
             ref={ref}
+            onMouseEnter={handleMouseEnter}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             style={{ transformStyle: "preserve-3d", transform, willChange: 'transform' }}

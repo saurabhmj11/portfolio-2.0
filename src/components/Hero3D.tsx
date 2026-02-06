@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, MeshTransmissionMaterial } from '@react-three/drei';
 import * as THREE from 'three';
@@ -22,7 +22,7 @@ const Crystal = () => {
                   // @ts-ignore - MeshTransmissionMaterial types can be missing in some versions
                 */}
                 <MeshTransmissionMaterial
-                    resolution={1024}
+                    resolution={512}
                     thickness={0.2}
                     roughness={0}
                     transmission={1}
@@ -38,7 +38,7 @@ const Crystal = () => {
 const Hero3D = () => {
     return (
         <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
-            <Canvas camera={{ position: [0, 0, 5] }} gl={{ alpha: true }}>
+            <Canvas camera={{ position: [0, 0, 5] }} gl={{ alpha: true }} dpr={[1, 2]}>
                 <ambientLight intensity={0.5} />
                 <directionalLight position={[10, 10, 5]} intensity={2} />
                 <Crystal />
