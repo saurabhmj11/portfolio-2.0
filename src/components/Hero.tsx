@@ -114,7 +114,7 @@ const Hero = () => {
                 <div className="hero-desc mt-12 max-w-2xl opacity-0">
                     <p className="text-lg md:text-xl text-gray-200 mb-8 leading-relaxed">
                         <span className="font-bold text-white block mb-2">Hi, I'm Saurabh Lokhande</span>
-                        An AI/Software Developer transforming ideas into intelligent solutions.
+                        An AI Engineer & Software Developer transforming ideas into intelligent solutions.
                         <br /><br />
                         I specialize in creating AI-driven applications, crafting innovative generative AI models, and building scalable software solutions. Passionate about learning and pushing the boundaries of technology.
                     </p>
