@@ -1,0 +1,139 @@
+
+> ai-developer-portfolio@0.0.0 lint
+> eslint .
+
+
+F:\portfolio-2.0-main\src\App.tsx
+  55:9  error  'toggleTheme' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\AIParticles.tsx
+  17:9  error  'mouse' is never reassigned. Use 'const' instead  prefer-const
+  18:9  error  'tilt' is never reassigned. Use 'const' instead   prefer-const
+
+F:\portfolio-2.0-main\src\components\About.tsx
+  91:33  error  React Hook "useTransform" cannot be called inside a callback. React Hooks must be called in a React function component or a custom React Hook function  react-hooks/rules-of-hooks
+
+F:\portfolio-2.0-main\src\components\AgentDock.tsx
+  2:16  error  'Terminal' is defined but never used  @typescript-eslint/no-unused-vars
+  2:47  error  'Menu' is defined but never used      @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\Blog.tsx
+  13:5   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  15:21  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  17:18  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\components\CustomCursor.tsx
+  2:45  error  'AnimatePresence' is defined but never used     @typescript-eslint/no-unused-vars
+  9:12  error  'hoverText' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\DistortionImage.tsx
+   1:25  error  'useMemo' is defined but never used                @typescript-eslint/no-unused-vars
+  58:5   error  ES2015 module syntax is preferred over namespaces  @typescript-eslint/no-namespace
+  74:15  error  'state' is defined but never used                  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\ErrorBoundary.tsx
+   1:8   error  'React' is defined but never used  @typescript-eslint/no-unused-vars
+  17:44  error  '_' is defined but never used      @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\Experience.tsx
+    1:25  error  'useState' is defined but never used           @typescript-eslint/no-unused-vars
+    1:35  error  'useEffect' is defined but never used          @typescript-eslint/no-unused-vars
+    4:8   error  'ScrollReveal' is defined but never used       @typescript-eslint/no-unused-vars
+   39:11  error  'isMobile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  105:49  error  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\components\Footer.test.tsx
+  20:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  21:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  22:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\components\LiveStatus.tsx
+  22:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\components\Overlay.tsx
+  4:20  error  'containerRef' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\Projects.tsx
+    2:44  error  'useScroll' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+    2:55  error  'useTransform' is defined but never used                                                                             @typescript-eslint/no-unused-vars
+  181:17  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+F:\portfolio-2.0-main\src\components\ScrollLine.tsx
+  1:17  error  'useRef' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\ScrollReveal.tsx
+  2:18  error  'useInView' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\ScrollyCanvas.tsx
+  2:21  error  'useTransform' is defined but never used         @typescript-eslint/no-unused-vars
+  2:35  error  'useMotionValueEvent' is defined but never used  @typescript-eslint/no-unused-vars
+  8:12  error  'images' is assigned a value but never used      @typescript-eslint/no-unused-vars
+  8:20  error  'setImages' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\Skills.tsx
+  1:17  error  'useRef' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\SmoothScroll.tsx
+  14:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\components\SystemHUD.tsx
+  26:11  error  'generateSparkline' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\Terminal.tsx
+  14:24  error    'setAutoScroll' is assigned a value but never used                                                                             @typescript-eslint/no-unused-vars
+  23:8   warning  React Hook useEffect has missing dependencies: 'addLog' and 'logs.length'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+F:\portfolio-2.0-main\src\components\Testimonials.tsx
+  35:13  error  'ctx' is never reassigned. Use 'const' instead   prefer-const
+  40:23  error  'totalWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\TextReveal.tsx
+  52:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\components\VelocityText.tsx
+  1:17  error  'useRef' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\Workflow.tsx
+  34:13  error  'mm' is never reassigned. Use 'const' instead  prefer-const
+  39:34  error  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  39:39  error  'i' is defined but never used                  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\context\TerminalContext.tsx
+  55:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+F:\portfolio-2.0-main\src\hooks\useIsMobile.test.ts
+  2:32  error  'vi' is defined but never used         @typescript-eslint/no-unused-vars
+  2:36  error  'beforeAll' is defined but never used  @typescript-eslint/no-unused-vars
+  2:47  error  'afterAll' is defined but never used   @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\hooks\usePerformance.ts
+  30:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\pages\Admin.tsx
+   7:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:18  error  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  51:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\pages\BlogPage.tsx
+   6:11  error  'BlogPost' is defined but never used                                                                                 @typescript-eslint/no-unused-vars
+  22:5   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  23:40  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\pages\BlogPostPage.tsx
+  13:11  error  'BlogPost' is defined but never used                                                                                 @typescript-eslint/no-unused-vars
+  30:5   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  31:37  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\pages\Resume.tsx
+  2:10  error  'motion' is defined but never used  @typescript-eslint/no-unused-vars
+  4:55  error  'Globe' is defined but never used   @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\utils\SoundManager.ts
+  18:73  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  24:18  error  'e' is defined but never used             @typescript-eslint/no-unused-vars
+
+✖ 67 problems (65 errors, 2 warnings)
+  4 errors and 0 warnings potentially fixable with the `--fix` option.
+

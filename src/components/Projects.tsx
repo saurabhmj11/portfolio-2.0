@@ -9,10 +9,13 @@ import useIsMobile from '../hooks/useIsMobile';
 import { Helmet } from 'react-helmet-async';
 import { useInView } from 'react-intersection-observer';
 import ScrollReveal from './ScrollReveal';
+import VelocityText from './VelocityText';
+import ScrambleText from './ScrambleText';
 
 gsap.registerPlugin(ScrollTrigger);
 
 interface Project {
+    id: string;
     title: string;
     category: string;
     description: string;
@@ -30,10 +33,11 @@ interface Project {
 
 const projects: Project[] = [
     {
+        id: 'hiremeos',
         title: 'HireMeOS',
         category: 'LLM Systems • AI Agents',
         description: 'An autonomous AI operating system that plans, executes, and explains complex data analysis using LLM agents.',
-        image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2670&auto=format&fit=crop', // Replace with real screenshot later
+        image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2670&auto=format&fit=crop',
         technologies: ['Python', 'OpenAI', 'LangChain', 'FastAPI', 'React'],
         details: {
             problem: 'Data analysis is often fragmented, manual, and time-consuming, requiring constant context switching between tools.',
@@ -44,8 +48,8 @@ const projects: Project[] = [
         repo: 'https://github.com/saurabhmj11/hiremeos',
         link: 'https://www.linkedin.com/posts/activity-7415710665358614528-0h3Z?utm_source=share&utm_medium=member_desktop&rcm=ACoAABwgLI0BRQLx3hnGIPqSoEG7kFgdRf91h6g'
     },
-
     {
+        id: 'ocr-pipeline',
         title: 'OCR Pipeline',
         category: 'Production • Automation',
         description: 'Production-grade OCR pipeline with validation, confidence scoring, and human-in-the-loop review.',
@@ -60,6 +64,7 @@ const projects: Project[] = [
         repo: 'https://github.com/saurabhmj11/ocr-pipeline'
     },
     {
+        id: 'student-recsys',
         title: 'Student RecSys',
         category: 'Applied ML • Analytics',
         description: 'ML-driven student recommendations based on quiz performance and learning patterns.',
@@ -74,6 +79,7 @@ const projects: Project[] = [
         repo: 'https://github.com/saurabhmj11/recsys-engine'
     },
     {
+        id: 'submaster',
         title: 'SubMaster SaaS',
         category: 'SaaS • Backend',
         description: 'Subscription-based SaaS backend with authentication, Stripe billing, and secure session management.',
@@ -88,6 +94,7 @@ const projects: Project[] = [
         repo: 'https://github.com/saurabhmj11/submaster'
     },
     {
+        id: 'web-intel',
         title: 'Web Intel Agent',
         category: 'Agents • Web Automation',
         description: 'Autonomous agent that researches, validates, and summarizes information from the web.',
@@ -111,45 +118,32 @@ const Projects = () => {
     const sectionRef = useRef<HTMLElement>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
     const horizontalScrollRef = useRef<HTMLDivElement>(null);
-    // Accessibility: Ref to focus prompt modal
     const modalRef = useRef<HTMLDivElement>(null);
 
     // Accessibility & Body Lock Effect
     useEffect(() => {
         let lastActiveElement: HTMLElement | null = null;
-
         if (selectedProject) {
-            // 1. Lock Body
             document.body.style.overflow = 'hidden';
-            // 2. Save current focus
             lastActiveElement = document.activeElement as HTMLElement;
-            // 3. Focus modal (next tick to ensure mount)
             requestAnimationFrame(() => {
                 modalRef.current?.focus();
             });
-
-            // 4. Escape Key Handler
             const handleKeyDown = (e: KeyboardEvent) => {
                 if (e.key === 'Escape') setSelectedProject(null);
             };
             window.addEventListener('keydown', handleKeyDown);
-
             return () => {
                 window.removeEventListener('keydown', handleKeyDown);
                 document.body.style.overflow = '';
-                // 5. Restore focus
                 if (lastActiveElement) lastActiveElement.focus();
             };
-        } else {
-            // Cleanup if needed (redundant usually due to return above, but safe)
-            document.body.style.overflow = '';
         }
     }, [selectedProject]);
 
     const isMobile = useIsMobile();
     const [activeProjectIndex, setActiveProjectIndex] = useState(0);
 
-    // Mobile Swipe Handler
     const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
         if (info.offset.x > 100) {
             setActiveProjectIndex(prev => Math.max(0, prev - 1));
@@ -159,18 +153,22 @@ const Projects = () => {
     };
     const currentProject = projects[activeProjectIndex];
 
-    // GSAP Horizontal Scroll Setup
     useLayoutEffect(() => {
-        if (isMobile) return; // Don't run GSAP on mobile for this section, use swipe
+        if (isMobile) return;
 
         const ctx = gsap.context(() => {
             const container = horizontalScrollRef.current;
-            const totalWidth = container?.scrollWidth;
-            const viewportWidth = window.innerWidth;
 
-            if (container && totalWidth) {
+            // Force refresh to ensure correct dimensions
+            ScrollTrigger.refresh();
+
+            if (container) {
+                const totalWidth = container.scrollWidth;
+                const viewportWidth = window.innerWidth;
+                const scrollDistance = totalWidth - viewportWidth;
+
                 gsap.to(container, {
-                    x: () => -(totalWidth - viewportWidth),
+                    x: -scrollDistance,
                     ease: "none",
                     scrollTrigger: {
                         trigger: triggerRef.current,
@@ -179,7 +177,7 @@ const Projects = () => {
                         scrub: 1,
                         pin: true,
                         invalidateOnRefresh: true,
-                        anticipatePin: 1
+                        anticipatePin: 1,
                     }
                 });
             }
@@ -197,8 +195,8 @@ const Projects = () => {
                 sectionRef.current = node;
                 ref(node);
             }}
-            className="bg-off-white relative z-10 overflow-hidden"
-            id="work"
+            className="bg-black relative z-10 overflow-hidden"
+            id="projects"
         >
             {inView && (
                 <Helmet>
@@ -208,11 +206,12 @@ const Projects = () => {
             )}
 
             {isMobile ? (
-                // Mobile Layout (Unchanged mostly, just structured better)
                 <div className="py-16 px-4">
                     <div className="mb-8 text-center">
                         <ScrollReveal>
-                            <h2 className="text-[10vw] font-bold leading-none tracking-tighter uppercase mb-2">Selected Work</h2>
+                            <h2 className="text-[10vw] font-display font-bold leading-none tracking-tighter uppercase mb-2">
+                                <ScrambleText text="Selected Work" />
+                            </h2>
                             <p className="text-gray-500">Swipe to explore projects.</p>
                         </ScrollReveal>
                     </div>
@@ -239,7 +238,7 @@ const Projects = () => {
                                 </div>
                                 <div className="p-6">
                                     <span className="text-xs font-mono text-gray-400 uppercase tracking-widest">{currentProject.category}</span>
-                                    <h3 className="text-2xl font-bold mt-2 mb-4 leading-tight">{currentProject.title}</h3>
+                                    <h3 className="text-2xl font-display font-bold mt-2 mb-4 leading-tight">{currentProject.title}</h3>
                                     <p className="text-sm text-gray-600 line-clamp-3 mb-6">{currentProject.description}</p>
                                     <button
                                         onClick={() => { setSelectedProject(currentProject); addLog(`Opening Project Details: ${currentProject.title}`, 'success', 'NAV'); }}
@@ -261,21 +260,30 @@ const Projects = () => {
                     </div>
                 </div>
             ) : (
-                // Desktop Horizontal Scroll Layout
-                <div ref={triggerRef} className="h-screen w-full flex flex-col justify-center relative">
-                    <div className="absolute top-12 left-12 z-20">
+                <div ref={triggerRef} className="h-screen w-full flex flex-col justify-center relative bg-black">
+                    {/* Background Marquee - High Visibility */}
+                    <div className="absolute top-64 left-0 w-full z-0 pointer-events-none select-none overflow-hidden">
+                        <div className="opacity-100 text-[#333] text-[15vw] font-black leading-none whitespace-nowrap">
+                            <VelocityText baseVelocity={-2}>SELECTED WORK — SELECTED WORK —</VelocityText>
+                        </div>
+                    </div>
+
+                    {/* Static Header */}
+                    <div className="absolute top-32 left-0 w-full text-center z-20 pointer-events-none">
                         <ScrollReveal>
-                            <h2 className="text-[4vw] font-bold leading-none tracking-tighter uppercase">
-                                Selected Work <span className="text-lg font-normal text-gray-500 normal-case tracking-normal block mt-2">Scroll &rarr;</span>
+                            <h2 className="text-sm md:text-base font-mono text-blue-400 uppercase tracking-[0.4em] mb-2">
+                                <ScrambleText text="Featured Projects" />
                             </h2>
                         </ScrollReveal>
                     </div>
 
-                    <div ref={horizontalScrollRef} className="flex gap-12 md:gap-24 px-12 md:px-24 items-center h-[70vh] w-max">
+                    <div ref={horizontalScrollRef} className="flex gap-12 md:gap-24 px-12 md:px-24 items-center h-[70vh] w-max relative z-10">
                         {/* Intro Card */}
-                        <div className="w-[80vw] md:w-[30vw] shrink-0 max-w-md">
+                        <div className="w-[80vw] md:w-[30vw] shrink-0 max-w-md relative">
+                            {/* Optional subtle glow behind text for contrast */}
+                            <div className="absolute inset-0 bg-black/40 blur-2xl z[-1]" />
                             <ScrollReveal delay={0.2}>
-                                <p className="text-xl md:text-2xl leading-relaxed text-gray-600">
+                                <p className="text-xl md:text-2xl leading-relaxed text-gray-200 font-light drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                                     A curated collection of AI-driven applications, utilizing modern architectures like RAG, Multi-Agent Systems, and Generative UI to solve complex problems.
                                 </p>
                             </ScrollReveal>
@@ -283,33 +291,43 @@ const Projects = () => {
 
                         {/* Project Cards */}
                         {projects.map((project, index) => (
-                            <div
+                            <motion.div
                                 key={index}
-                                className="group relative w-[60vh] h-[40vh] md:w-[70vh] md:h-[50vh] shrink-0 bg-white border border-gray-200 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer overflow-hidden"
+                                layoutId={`project-container-${project.id}`}
+                                whileHover={{ y: -20, scale: 1.02 }}
+                                transition={{ duration: 0.4, ease: "easeOut" }}
+                                className="group relative w-[80vw] md:w-[70vh] max-w-[600px] h-[40vh] md:h-[50vh] min-h-[400px] shrink-0 bg-[#0a0a0a] border border-white/10 shadow-xl hover:shadow-2xl hover:shadow-blue-900/20 transition-all duration-500 cursor-pointer overflow-hidden rounded-2xl"
                                 onClick={() => { setSelectedProject(project); addLog(`Opening Project: ${project.title}`, 'success', 'NAV'); }}
                             >
                                 <div className="absolute inset-0 overflow-hidden">
-                                    <img
+                                    <motion.img
+                                        layoutId={`project-image-${project.id}`}
                                         src={project.image}
                                         alt={project.title}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 will-change-transform"
                                     />
-                                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500" />
                                 </div>
 
                                 <div className="absolute bottom-0 left-0 w-full p-8 text-white z-10 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                                     <div className="flex justify-between items-end">
-                                        <div>
-                                            <span className="text-xs font-mono uppercase tracking-widest bg-white/20 backdrop-blur-sm px-2 py-1 mb-4 inline-block">{project.category}</span>
-                                            <h3 className="text-4xl font-bold tracking-tight mb-2">{project.title}</h3>
+                                        <div className="flex-1">
+                                            <span className="text-xs font-mono uppercase tracking-widest bg-white/10 backdrop-blur-md px-3 py-1 mb-4 inline-block border border-white/20 rounded-full text-blue-300 shadow-glow">{project.category}</span>
+                                            <div className="overflow-hidden">
+                                                <motion.h3 layoutId={`project-title-${project.id}`} className="text-4xl font-display font-bold tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
+                                                    {project.title}
+                                                </motion.h3>
+                                            </div>
                                         </div>
-                                        <ArrowUpRight className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mb-2" />
+                                        <div className="p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:text-black mb-2">
+                                            <ArrowUpRight className="w-6 h-6" />
+                                        </div>
                                     </div>
-                                    <p className="text-gray-200 line-clamp-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                                    <p className="text-gray-300 line-clamp-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 font-light">
                                         {project.description}
                                     </p>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
 
                         {/* View All / End Card */}
@@ -319,7 +337,7 @@ const Projects = () => {
                                     href="https://github.com/saurabhmj11"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="w-48 h-48 rounded-full bg-black text-white flex items-center justify-center text-xl font-bold uppercase tracking-widest hover:scale-110 transition-transform duration-300"
+                                    className="w-48 h-48 rounded-full bg-white text-black flex items-center justify-center text-xl font-display font-bold uppercase tracking-widest hover:scale-110 transition-transform duration-300"
                                 >
                                     View All
                                 </a>
@@ -345,17 +363,14 @@ const Projects = () => {
                         ref={modalRef}
                     >
                         <motion.div
-                            initial={{ y: 50, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: 50, opacity: 0 }}
+                            layoutId={`project-container-${selectedProject.id}`}
                             onClick={e => e.stopPropagation()}
                             className="bg-white w-full max-w-5xl h-full md:h-auto md:max-h-[90vh] md:rounded-2xl overflow-hidden relative flex flex-col"
                         >
-                            {/* Sticky Header */}
                             <div className="sticky top-0 left-0 right-0 z-50 flex justify-between items-center p-6 bg-white/90 backdrop-blur-md border-b border-gray-100">
                                 <div>
                                     <span className="text-xs font-mono text-blue-600 uppercase tracking-widest block md:hidden">{selectedProject.category}</span>
-                                    <h3 className="text-xl md:text-2xl font-bold tracking-tight md:hidden">{selectedProject.title}</h3>
+                                    <h3 className="text-xl md:text-2xl font-display font-bold tracking-tight md:hidden">{selectedProject.title}</h3>
                                 </div>
                                 <button
                                     onClick={() => setSelectedProject(null)}
@@ -365,12 +380,11 @@ const Projects = () => {
                                 </button>
                             </div>
 
-                            {/* Scrollable Content */}
                             <div className="overflow-y-auto p-6 md:p-12 pb-24 flex-1">
                                 <div className="grid md:grid-cols-2 gap-12">
                                     <div>
                                         <span className="text-sm font-mono text-blue-600 uppercase tracking-widest mb-4 hidden md:block">{selectedProject.category}</span>
-                                        <h3 className="text-4xl md:text-5xl font-bold tracking-tighter mb-6 hidden md:block">{selectedProject.title}</h3>
+                                        <motion.h3 layoutId={`project-title-${selectedProject.id}`} className="text-4xl md:text-5xl font-display font-bold tracking-tighter mb-6 hidden md:block">{selectedProject.title}</motion.h3>
                                         <p className="text-lg leading-relaxed text-gray-700 mb-8 font-medium">{selectedProject.description}</p>
 
                                         <div className="space-y-8 mb-12">
@@ -397,19 +411,23 @@ const Projects = () => {
 
                                         <div className="flex flex-col md:flex-row gap-4">
                                             {selectedProject.link && (
-                                                <a href={selectedProject.link} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center items-center gap-2 bg-black text-white px-8 py-4 rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform duration-300 shadow-xl hover:shadow-2xl">
-                                                    View Live Demo <ArrowUpRight className="w-4 h-4" />
-                                                </a>
+                                                <Magnetic>
+                                                    <a href={selectedProject.link} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center items-center gap-2 bg-black text-white px-8 py-4 rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform duration-300 shadow-xl hover:shadow-2xl">
+                                                        View Live Demo <ArrowUpRight className="w-4 h-4" />
+                                                    </a>
+                                                </Magnetic>
                                             )}
-                                            <a href={selectedProject.repo || "#"} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center items-center gap-2 bg-white text-black border border-gray-200 px-8 py-4 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-gray-50 transition-colors">
-                                                GitHub Repo <ArrowUpRight className="w-4 h-4" />
-                                            </a>
+                                            <Magnetic>
+                                                <a href={selectedProject.repo || "#"} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center items-center gap-2 bg-white text-black border border-gray-200 px-8 py-4 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-gray-50 transition-colors">
+                                                    GitHub Repo <ArrowUpRight className="w-4 h-4" />
+                                                </a>
+                                            </Magnetic>
                                         </div>
                                     </div>
 
                                     <div className="space-y-8">
                                         <div className="aspect-video bg-gray-100 overflow-hidden rounded-xl shadow-lg border border-gray-200">
-                                            <img src={selectedProject.image} alt={selectedProject.title} className="w-full h-full object-cover" />
+                                            <motion.img layoutId={`project-image-${selectedProject.id}`} src={selectedProject.image} alt={selectedProject.title} className="w-full h-full object-cover" />
                                         </div>
 
                                         <div className="grid grid-cols-1 gap-6">

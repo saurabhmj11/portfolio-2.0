@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useParams, Link } from 'react-router-dom';
 import Markdown from 'react-markdown'; // Changed from ReactMarkdown to Markdown (default export)
 import rehypeHighlight from 'rehype-highlight';
@@ -10,14 +10,7 @@ import 'highlight.js/styles/github-dark.css'; // Import highlight styles
 // I will just use a simple custom CSS for code blocks if the import fails.
 import { ArrowLeft } from 'lucide-react';
 
-interface BlogPost {
-    title: string;
-    slug: string;
-    content: string;
-    tags: string[];
-    publishedAt: string;
-    readTime: string;
-}
+
 
 import postsData from '../data/posts.json';
 

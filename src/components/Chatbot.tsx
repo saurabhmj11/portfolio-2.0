@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Bot } from 'lucide-react';
+import { X, Send, Bot } from 'lucide-react';
 import Magnetic from './Magnetic';
 
 interface Message {
@@ -178,12 +178,23 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, setIsOpen }) => {
             </AnimatePresence>
 
             <Magnetic>
-                <div className="pointer-events-auto">
+                <div className="relative pointer-events-auto group mt-4 md:mt-0">
+                    {/* Live Agent Pulsing Aura */}
+                    {!isOpen && (
+                        <>
+                            <span className="absolute inset-0 rounded-full bg-blue-400 opacity-60 animate-ping" style={{ animationDuration: '3s' }}></span>
+                            <span className="absolute inset-[-10px] rounded-full bg-purple-500 opacity-20 animate-pulse" style={{ animationDuration: '2s' }}></span>
+                            <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black/80 text-xs text-white px-3 py-1 rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap backdrop-blur-sm">
+                                <span className="inline-block w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse" />
+                                Live Agent Online
+                            </div>
+                        </>
+                    )}
                     <button
                         onClick={() => { setIsOpen(!isOpen); if (!isOpen) { soundManager.playHover(); haptic('medium'); } else { haptic('light'); } }}
-                        className="hidden md:flex w-14 h-14 bg-white text-black rounded-full items-center justify-center shadow-lg hover:bg-gray-200 transition-all active:scale-95"
+                        className="hidden md:flex relative z-10 w-16 h-16 bg-white text-black rounded-full items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:scale-110 hover:shadow-[0_0_50px_rgba(255,255,255,0.5)] transition-all duration-300 active:scale-95"
                     >
-                        {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
+                        {isOpen ? <X size={24} /> : <Bot size={28} className="text-black" />}
                     </button>
                 </div>
             </Magnetic>

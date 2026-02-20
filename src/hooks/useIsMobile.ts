@@ -9,7 +9,7 @@ const useIsMobile = () => {
             const mobile = Boolean(
                 userAgent.match(
                     /Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i
-                ) || window.innerWidth <= 768
+                ) || window.innerWidth < 1024
             );
             setIsMobile(mobile);
         };

@@ -21,7 +21,7 @@ class SoundManager {
             this.masterGain.gain.value = 0.3; // Low volume by default
             this.masterGain.connect(this.ctx.destination);
             this.initialized = true;
-        } catch (e) {
+        } catch {
             console.error("AudioContext not supported");
         }
     }

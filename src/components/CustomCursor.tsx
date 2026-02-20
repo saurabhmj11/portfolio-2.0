@@ -1,75 +1,77 @@
-import React, { useEffect, useState } from 'react';
-import { motion, useSpring, useMotionValue, AnimatePresence } from 'framer-motion';
-import { soundManager } from '../utils/SoundManager';
+import { useEffect, useState } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 const CustomCursor = () => {
-    const cursorX = useMotionValue(-100);
-    const cursorY = useMotionValue(-100);
     const [isHovering, setIsHovering] = useState(false);
-    const [hoverText, setHoverText] = useState('');
 
-    const springConfig = { damping: 25, stiffness: 700 };
-    const cursorXSpring = useSpring(cursorX, springConfig);
-    const cursorYSpring = useSpring(cursorY, springConfig);
+    const cursorSize = isHovering ? 20 : 15;
+
+    const mouse = {
+        x: useMotionValue(0),
+        y: useMotionValue(0)
+    }
+
+    // Smooth physics for the main cursor
+    const smoothOptions = { damping: 20, stiffness: 300, mass: 0.5 }
+    const smoothMouse = {
+        x: useSpring(mouse.x, smoothOptions),
+        y: useSpring(mouse.y, smoothOptions)
+    }
 
     useEffect(() => {
-        const moveCursor = (e: MouseEvent) => {
-            cursorX.set(e.clientX - 16);
-            cursorY.set(e.clientY - 16);
+        const manageMouseMove = (e: MouseEvent) => {
+            const { clientX, clientY } = e;
+            mouse.x.set(clientX - cursorSize / 2);
+            mouse.y.set(clientY - cursorSize / 2);
         }
 
-        const handleMouseOver = (e: MouseEvent) => {
+        const manageMouseOver = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-            if (target.tagName.toLowerCase() === 'a' || target.closest('a') || target.tagName.toLowerCase() === 'button' || target.closest('button')) {
+            if (target.tagName.toLowerCase() === 'a' || target.closest('a') ||
+                target.tagName.toLowerCase() === 'button' || target.closest('button') ||
+                target.classList.contains('magnetic-target')) {
                 setIsHovering(true);
-                setHoverText('LINK DETECTED');
-                soundManager.playHover();
             } else {
                 setIsHovering(false);
-                setHoverText('');
             }
-        };
+        }
 
-        window.addEventListener('mousemove', moveCursor);
-        window.addEventListener('mouseover', handleMouseOver);
+        window.addEventListener("mousemove", manageMouseMove);
+        window.addEventListener("mouseover", manageMouseOver);
 
         return () => {
-            window.removeEventListener('mousemove', moveCursor);
-            window.removeEventListener('mouseover', handleMouseOver);
+            window.removeEventListener("mousemove", manageMouseMove);
+            window.removeEventListener("mouseover", manageMouseOver);
         }
-    }, [cursorX, cursorY]);
+    }, [isHovering, cursorSize]);
 
     return (
-        <motion.div
-            className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference flex items-center gap-2"
-            style={{
-                translateX: cursorXSpring,
-                translateY: cursorYSpring,
-            }}
-        >
+        <>
             <motion.div
-                animate={{
-                    scale: isHovering ? 1.5 : 1,
-                    rotate: isHovering ? 45 : 0
+                style={{
+                    left: smoothMouse.x,
+                    top: smoothMouse.y,
                 }}
-                className={`w-8 h-8 border border-white rounded-full flex items-center justify-center transition-colors duration-300 ${isHovering ? 'border-dashed' : ''}`}
+                className="fixed z-[9999] pointer-events-none mix-blend-difference"
             >
-                <div className={`w-1.5 h-1.5 bg-white rounded-full ${isHovering ? 'animate-ping' : ''}`} />
+                <motion.div
+                    animate={{
+                        scale: isHovering ? 4 : 1
+                    }}
+                    transition={{ duration: 0.3, ease: "backOut" }}
+                    className="w-[20px] h-[20px] bg-white rounded-full"
+                />
             </motion.div>
-
-            <AnimatePresence>
-                {isHovering && (
-                    <motion.span
-                        initial={{ opacity: 0, x: 10 }}
-                        animate={{ opacity: 1, x: 20 }}
-                        exit={{ opacity: 0, x: 10 }}
-                        className="text-[10px] font-mono font-bold text-white bg-black/50 px-2 py-1 rounded"
-                    >
-                        {hoverText}
-                    </motion.span>
-                )}
-            </AnimatePresence>
-        </motion.div>
+            <motion.div
+                style={{
+                    left: mouse.x,
+                    top: mouse.y,
+                }}
+                className="fixed z-[9999] pointer-events-none mix-blend-difference"
+            >
+                <div className="w-[10px] h-[10px] bg-white rounded-full" />
+            </motion.div>
+        </>
     );
 };
 

@@ -1,7 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
-import useIsMobile from '../hooks/useIsMobile';
-import ScrollReveal from './ScrollReveal';
+import VelocityText from './VelocityText';
 
 const experiences = [
     {
@@ -36,7 +35,6 @@ const experiences = [
 
 const Experience = () => {
     const targetRef = useRef(null);
-    const isMobile = useIsMobile();
 
     const { scrollYProgress } = useScroll({
         target: targetRef,
@@ -85,6 +83,15 @@ const Experience = () => {
                             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl" />
                         </div>
 
+                        {/* Kinetic Typography Background */}
+                        <div className="absolute top-[10%] left-0 w-full opacity-5 pointer-events-none z-0 mix-blend-overlay">
+                            <VelocityText baseVelocity={-1.5}>
+                                <span className="text-[150px] font-display font-black tracking-tighter text-white uppercase">
+                                    Experience Timeline
+                                </span>
+                            </VelocityText>
+                        </div>
+
                         <div className="absolute top-10 left-10 z-10">
                             <h2 className="text-[12px] uppercase tracking-widest text-gray-500 mb-2">My Journey</h2>
                             <h3 className="text-4xl font-bold">Experience Timeline</h3>
@@ -92,7 +99,7 @@ const Experience = () => {
 
                         <motion.div style={{ x }} className="flex gap-12 px-24 will-change-transform">
                             {experiences.map((exp, i) => (
-                                <TiltCard key={i} exp={exp} index={i} total={experiences.length} />
+                                <TiltCard key={i} exp={exp} index={i} total={experiences.length} progress={scrollYProgress} />
                             ))}
                         </motion.div>
                     </div>
@@ -102,7 +109,7 @@ const Experience = () => {
     );
 };
 
-const TiltCard = ({ exp, index, total }: { exp: any, index: number, total: number }) => {
+const TiltCard = ({ exp, index, total, progress }: { exp: any, index: number, total: number, progress: any }) => {
     const x = useMotionValue(0);
     const y = useMotionValue(0);
 
@@ -111,6 +118,13 @@ const TiltCard = ({ exp, index, total }: { exp: any, index: number, total: numbe
 
     const rotateX = useTransform(mouseY, [-0.5, 0.5], ["15deg", "-15deg"]);
     const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-15deg", "15deg"]);
+
+    // Calculate line fill based on global scroll progress
+    // We want the line to fill as this card moves out of center and the next comes in
+    // Approximate range for each card's "active" state
+    const start = index / total;
+    const end = (index + 1) / total;
+    const lineFill = useTransform(progress, [start, end], [0, 1]);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -163,9 +177,14 @@ const TiltCard = ({ exp, index, total }: { exp: any, index: number, total: numbe
                 </span>
             </motion.div>
 
-            {/* Connecting Line */}
+            {/* Connecting Line (Animated) */}
             {index < total - 1 && (
-                <div className="absolute top-1/2 right-[-24px] w-12 h-[1px] bg-white/20 z-0" />
+                <div className="absolute top-1/2 right-[-48px] w-24 h-[2px] bg-white/10 z-0 overflow-hidden">
+                    <motion.div
+                        style={{ scaleX: lineFill }}
+                        className={`h-full w-full origin-left bg-gradient-to-r ${exp.color}`}
+                    />
+                </div>
             )}
         </div>
     );

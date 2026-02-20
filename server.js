@@ -12,7 +12,22 @@ dotenv.config(); // Load environment variables
 const app = express();
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173', // Local Vite development
+  'http://localhost:3000',
+  process.env.FRONTEND_URL // Will be injected by Render environment variables
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin) || origin.includes('netlify.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(bodyParser.json({ limit: '10mb' })); // Increased limit for images/markdown
 
 const __filename = fileURLToPath(import.meta.url);

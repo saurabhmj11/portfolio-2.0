@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, MeshTransmissionMaterial } from '@react-three/drei';
+import { Float, MeshTransmissionMaterial, Environment, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 
 const Crystal = () => {
@@ -9,39 +9,75 @@ const Crystal = () => {
     useFrame((state) => {
         const time = state.clock.getElapsedTime();
         if (meshRef.current) {
-            meshRef.current.rotation.x = time * 0.2;
-            meshRef.current.rotation.y = time * 0.1;
+            meshRef.current.rotation.x = Math.sin(time * 0.3) * 0.2;
+            meshRef.current.rotation.y = time * 0.15;
         }
     });
 
     return (
-        <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-            <mesh ref={meshRef} scale={1.5}>
-                <icosahedronGeometry args={[1, 0]} />
-                {/* 
-                  // @ts-ignore - MeshTransmissionMaterial types can be missing in some versions
-                */}
-                <MeshTransmissionMaterial
-                    resolution={512}
-                    thickness={0.2}
-                    roughness={0}
-                    transmission={1}
-                    ior={1.5}
-                    chromaticAberration={0.06}
-                    backside={true}
-                />
-            </mesh>
-        </Float>
+        <group>
+            <Float speed={2} rotationIntensity={1} floatIntensity={1}>
+                <mesh ref={meshRef} scale={1.2}>
+                    <icosahedronGeometry args={[1, 0]} />
+                    <MeshTransmissionMaterial
+                        backside
+                        resolution={1024}
+                        thickness={0.3}
+                        roughness={0}
+                        transmission={1}
+                        ior={1.5}
+                        chromaticAberration={0.1}
+                        anisotropy={1}
+                        distortion={0.2}
+                        distortionScale={0.3}
+                        temporalDistortion={0.1}
+                        color={"#a8c7ff"}
+                    />
+                </mesh>
+            </Float>
+            <Float speed={1.5} rotationIntensity={2} floatIntensity={0.5} position={[2, 1, -2]}>
+                <mesh scale={0.5}>
+                    <octahedronGeometry />
+                    <MeshTransmissionMaterial
+                        backside
+                        resolution={512}
+                        thickness={0.1}
+                        roughness={0}
+                        transmission={1}
+                        ior={1.5}
+                        chromaticAberration={0.2}
+                        color={"#ffb8d9"}
+                    />
+                </mesh>
+            </Float>
+            <Float speed={1.8} rotationIntensity={1.5} floatIntensity={0.7} position={[-2, -1, -1]}>
+                <mesh scale={0.6}>
+                    <dodecahedronGeometry />
+                    <MeshTransmissionMaterial
+                        backside
+                        resolution={512}
+                        thickness={0.15}
+                        roughness={0.1}
+                        transmission={1}
+                        ior={1.5}
+                        chromaticAberration={0.1}
+                        color={"#d9f99d"}
+                    />
+                </mesh>
+            </Float>
+        </group>
     );
 };
 
 const Hero3D = () => {
     return (
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
-            <Canvas camera={{ position: [0, 0, 5] }} gl={{ alpha: true }} dpr={[1, 2]}>
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-80">
+            <Canvas camera={{ position: [0, 0, 6], fov: 45 }} gl={{ alpha: true }} dpr={[1, 2]}>
                 <ambientLight intensity={0.5} />
-                <directionalLight position={[10, 10, 5]} intensity={2} />
+                <Environment preset="city" />
+                <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
                 <Crystal />
+                {/* Add a subtle spotlight following mouse could be cool, but maybe too heavy */}
             </Canvas>
         </div>
     );

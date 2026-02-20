@@ -14,9 +14,13 @@ module.exports = {
             },
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
+                display: ['Outfit', 'sans-serif'],
             },
             letterSpacing: {
                 tightest: '-0.02em',
+            },
+            animation: {
+                'spin-slow': 'spin 8s linear infinite',
             },
         },
     },

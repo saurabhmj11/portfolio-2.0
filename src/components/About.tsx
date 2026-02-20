@@ -1,167 +1,154 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useTerminal } from '../context/TerminalContext';
-import { soundManager } from '../utils/SoundManager';
-import { ChevronRight } from 'lucide-react';
-import { Helmet } from 'react-helmet-async';
-import { useInView } from 'react-intersection-observer';
-import useHaptic from '../hooks/useHaptic';
-import MouseParallax from './MouseParallax';
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const ListItem = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => {
-  const { trigger: haptic } = useHaptic();
-
-  return (
-    <motion.li
-      className={`flex items-center gap-2 cursor-pointer group ${className}`}
-      onMouseEnter={() => { soundManager.playHover(); haptic('light'); }}
-      initial={{ x: 0 }}
-      whileHover={{ x: 10 }}
-    >
-      <span className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <ChevronRight size={16} />
-      </span>
-      <span className="group-hover:text-green-400 group-hover:shadow-[0_0_10px_rgba(74,222,128,0.5)] transition-all duration-300">
-        {children}
-      </span>
-    </motion.li>
-  );
-};
-
-const JourneyItem = ({ role, year, description }: { role: string, year: string, description: string }) => {
-  const { trigger: haptic } = useHaptic();
-
-  return (
-    <motion.li
-      className="border-b border-gray-900 pb-4 cursor-pointer group"
-      onMouseEnter={() => { soundManager.playHover(); haptic('light'); }}
-      initial={{ opacity: 0.8 }}
-      whileHover={{ opacity: 1, backgroundColor: 'rgba(255, 255, 255, 0.02)', paddingLeft: 10, paddingRight: 10 }}
-      transition={{ type: "spring", stiffness: 400, damping: 20 }}
-    >
-      <div className="flex justify-between items-baseline mb-2">
-        <div className="flex items-center gap-2">
-          <span className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <ChevronRight size={16} />
-          </span>
-          <span className="text-xl font-medium group-hover:text-green-400 transition-colors">{role}</span>
-        </div>
-        <span className="text-sm text-gray-500 font-mono group-hover:text-white transition-colors">{year}</span>
-      </div>
-      <p className="text-sm text-gray-400 pl-6 border-l-2 border-transparent group-hover:border-green-500/30 transition-all">{description}</p>
-    </motion.li>
-  )
-}
+gsap.registerPlugin(ScrollTrigger);
 
 const About = () => {
-  const containerRef = useRef(null);
-  const { addLog } = useTerminal();
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 0.8", "start 0.25"]
-  });
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLDivElement>(null);
+  const bioRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const [ref, inView] = useInView({ threshold: 0.3 });
+  useEffect(() => {
+    // Ensure all refs are present before animating
+    if (!sectionRef.current || !headlineRef.current || !bioRef.current || !imageRef.current) return;
 
-  const bioText = "I am an AI Engineer passionate about creating cutting-edge solutions that push the boundaries of what’s possible with artificial intelligence. With expertise in machine learning, natural language processing, and deep learning, I specialize in building innovative AI-driven applications that address complex business challenges across various industries.";
-  const words = bioText.split(" ");
+    const ctx = gsap.context(() => {
+      // --- 1. SETUP TEXT (Dynamic Injection) ---
+      const headlineText = "CREATING THE FUTURE OF AI";
+      const bioText = "Hi, I'm Saurabh — An AI Engineer & Full Stack Developer. My focus is on building intelligent, scalable, and immersive applications that bridge the gap between human creativity and artificial intelligence.";
+
+      // Clear existing content to avoid duplication on re-renders
+      if (headlineRef.current) headlineRef.current.innerHTML = '';
+      if (bioRef.current) bioRef.current.innerHTML = '';
+
+      // Generate Headline Spans (for explosion)
+      headlineText.split(' ').forEach(word => {
+        const wordDiv = document.createElement('div');
+        wordDiv.className = 'inline-flex mx-[1vw] overflow-visible';
+        word.split('').forEach(char => {
+          const span = document.createElement('span');
+          span.innerText = char;
+          // Large, bold, white text that will explode
+          span.className = 'large-char text-[8vw] md:text-[10vw] font-black text-[#ffffff] leading-none uppercase inline-block will-change-transform will-change-opacity';
+          wordDiv.appendChild(span);
+        });
+        headlineRef.current?.appendChild(wordDiv);
+      });
+
+      // Generate Bio Spans (for implosion)
+      bioText.split(' ').forEach(word => {
+        const wordDiv = document.createElement('div');
+        wordDiv.className = 'inline-flex mr-[0.4rem] overflow-visible';
+        word.split('').forEach(char => {
+          const span = document.createElement('span');
+          span.innerText = char;
+          // Gray text that will assemble itself
+          span.className = 'bio-char inline-block will-change-transform will-change-opacity opacity-0 text-gray-400 text-base md:text-xl font-medium tracking-wide';
+          wordDiv.appendChild(span);
+        });
+        bioRef.current?.appendChild(wordDiv);
+      });
+
+      const largeChars = headlineRef.current!.querySelectorAll('.large-char');
+      const bioChars = bioRef.current!.querySelectorAll('.bio-char');
+
+      // --- 2. CREATE TIMELINE ---
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "+=30%", // Drastically reduced from 80% to eliminate dead space
+          pin: true,
+          scrub: 0.5,
+        }
+      });
+
+      // STEP A: Explode Large Headline (Starts readable, explodes away)
+      largeChars.forEach(char => {
+        const randomX = (Math.random() - 0.5) * window.innerWidth * 1.5;
+        const randomY = (Math.random() - 0.5) * window.innerHeight * 1.5;
+        const randomRot = (Math.random() - 0.5) * 360;
+
+        tl.to(char, {
+          x: randomX,
+          y: randomY,
+          rotation: randomRot,
+          opacity: 0,
+          duration: 2,
+          ease: "power3.in"
+        }, 0);
+      });
+
+      // STEP B: Reveal Profile Image (Scale up)
+      gsap.set(imageRef.current, { scale: 0.5, opacity: 0 });
+      tl.to(imageRef.current, {
+        scale: 1,
+        opacity: 1,
+        duration: 1.5,
+        ease: "power2.out"
+      }, 0.5);
+
+      // STEP C: Assemble Bio Text (Implosion - Starts scattered, comes together)
+      bioChars.forEach(char => {
+        const randomX = (Math.random() - 0.5) * 500;
+        const randomY = (Math.random() - 0.5) * 500;
+        const randomZ = (Math.random() - 0.5) * 200;
+
+        // Initial scattered state
+        gsap.set(char, {
+          x: randomX,
+          y: randomY,
+          z: randomZ,
+          opacity: 0
+        });
+
+        // Animate to neutral state
+        tl.to(char, {
+          x: 0,
+          y: 0,
+          z: 0,
+          opacity: 1,
+          duration: 1.5,
+          ease: "power3.out"
+        }, 0.5);
+      });
+
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section
-      ref={ref}
-      className="py-20 md:py-32 px-6 md:px-8 bg-black text-off-white"
-      id="about"
-      onMouseEnter={() => addLog("Parsing User Biography...", "system", "SYS")}
-    >
-      {inView && (
-        <Helmet>
-          <title>About | Saurabh Lokhande</title>
-          <meta name="description" content="AI Engineer with expertise in machine learning, NLP, and deep learning. Building innovative AI-driven applications." />
-        </Helmet>
-      )}
-      <div className="container mx-auto">
+    <div ref={containerRef} className="bg-[#050505] relative z-10" id="about">
+      <section ref={sectionRef} className="relative w-full h-screen bg-[#050505] overflow-hidden flex justify-center items-center">
 
-        <div className="mb-24 flex flex-col md:flex-row items-center gap-12 border-t border-gray-800 pt-8 relative" ref={containerRef}>
-          <div className="flex-1">
-            <h2 className="text-[12px] uppercase tracking-widest mb-4">About Me</h2>
-            <div className="text-xl md:text-3xl font-light leading-relaxed text-gray-300 flex flex-wrap gap-x-2">
-              {words.map((word, i) => {
-                const start = i / words.length;
-                const end = start + (1 / words.length);
-                const opacity = useTransform(scrollYProgress, [start, end], [0.3, 1]);
+        {/* 1. Exploding Headline Container */}
+        <div ref={headlineRef} className="absolute inset-0 flex flex-wrap content-center justify-center pointer-events-none p-8 z-10 w-full h-full text-center">
+          {/* JS Injects Spans Here */}
+        </div>
 
-                return (
-                  <motion.span key={i} style={{ opacity }} className="relative">
-                    {word}
-                  </motion.span>
-                )
-              })}
-            </div>
-          </div>
+        {/* 2. Central Content (Image + Bio) */}
+        <div className="relative z-20 text-center max-w-2xl w-full flex flex-col items-center px-4">
+          <img
+            ref={imageRef}
+            src="/profile.jpg"
+            alt="Profile"
+            className="w-64 h-64 object-cover mb-8 rounded-full shadow-2xl border-4 border-white/10 hover:scale-105 transition-transform duration-500 bg-[#111]"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop";
+            }}
+          />
 
-          <div className="w-full md:w-1/3 flex justify-center md:justify-end">
-            <MouseParallax strength={15}>
-              <motion.div
-                style={{ opacity: scrollYProgress }}
-                className="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-2 border-gray-800 grayscale hover:grayscale-0 transition-all duration-500"
-              >
-                <img src="/profile.jpg" alt="Saurabh Lokhande" className="w-full h-full object-cover" loading="lazy" />
-              </motion.div>
-            </MouseParallax>
+          <div ref={bioRef} className="flex flex-wrap justify-center gap-y-2 gap-x-1 text-center font-medium leading-relaxed appercase relative z-30 mix-blend-difference">
+            {/* JS Injects Bio Here */}
           </div>
         </div>
 
-        {/* Info Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mt-24 border-t border-gray-800 pt-8">
-
-          {/* Column 1: Specializations */}
-          <div className="md:col-span-4">
-            <h3 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500">Specializations</h3>
-            <ul className="space-y-4 text-lg text-gray-300">
-              <ListItem>Machine Learning</ListItem>
-              <ListItem>Natural Language Processing (NLP)</ListItem>
-              <ListItem>Deep Learning & Neural Networks</ListItem>
-              <ListItem>Generative AI & Language Models</ListItem>
-              <ListItem>AI Integration & Solutions</ListItem>
-            </ul>
-          </div>
-
-          {/* Column 2: My Journey */}
-          <div className="md:col-span-4">
-            <h3 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500">My Journey</h3>
-            <ul className="space-y-8">
-              <JourneyItem
-                role="Freelancer AI Developer"
-                year="2024"
-                description="Leading AI initiatives and developing cutting-edge solutions for diverse industries, specializing in AI-driven applications, NLP, and machine learning."
-              />
-              <JourneyItem
-                role="B.E. Computer Science"
-                year="2023"
-                description="Graduated from Amravati University with a focus on machine learning, deep learning, and AI technologies."
-              />
-              <JourneyItem
-                role="AI Research Award"
-                year="2020"
-                description="Recognized for innovative contributions to Natural Language Processing (NLP) research, advancing AI in language understanding."
-              />
-            </ul>
-          </div>
-
-          {/* Column 3: Industries */}
-          <div className="md:col-span-4">
-            <h3 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500">Industries</h3>
-            <ul className="space-y-4 text-lg text-gray-300">
-              <ListItem>Healthcare AI</ListItem>
-              <ListItem>Finance & FinTech</ListItem>
-              <ListItem>Technology & Software Development</ListItem>
-              <ListItem>Education & E-Learning</ListItem>
-            </ul>
-          </div>
-
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };
 

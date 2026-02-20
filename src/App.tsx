@@ -8,9 +8,9 @@ import Footer from './components/Footer';
 import Preloader from './components/Preloader';
 import CustomCursor from './components/CustomCursor';
 import Chatbot from './components/Chatbot';
-import SystemHUD from './components/SystemHUD';
 import AgentDock from './components/AgentDock';
 import ScrollToTop from './components/ScrollToTop';
+import Spotlight from './components/Spotlight';
 
 // Pages
 import Home from './pages/Home';
@@ -30,7 +30,7 @@ import Seo from './components/Seo';
 import PageTransition from './components/PageTransition';
 
 function App() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const location = useLocation();
@@ -52,10 +52,7 @@ function App() {
   }, [location]);
 
 
-  const toggleTheme = () => {
-    setIsDark(!isDark);
-    document.documentElement.classList.toggle('dark');
-  };
+
 
   return (
     <TerminalProvider>
@@ -63,6 +60,7 @@ function App() {
         <Analytics />
         <Seo />
         <SmoothScroll>
+          <Spotlight />
           <CustomCursor />
           <AnimatePresence mode="wait">
             {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
@@ -105,7 +103,6 @@ function App() {
               <Terminal />
               <ScrollToTop />
 
-              <SystemHUD />
               <AgentDock isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
             </React.Fragment>
           )}
