@@ -195,7 +195,7 @@ const Projects = () => {
                 sectionRef.current = node;
                 ref(node);
             }}
-            className="bg-black relative z-10 overflow-hidden"
+            className="bg-black relative z-10 overflow-hidden w-full max-w-full"
             id="projects"
         >
             {inView && (
@@ -206,7 +206,7 @@ const Projects = () => {
             )}
 
             {isMobile ? (
-                <div className="py-16 px-4">
+                <div className="py-16 px-4 w-full">
                     <div className="mb-8 text-center">
                         <ScrollReveal>
                             <h2 className="text-[10vw] font-display font-bold leading-none tracking-tighter uppercase mb-2">
@@ -216,7 +216,7 @@ const Projects = () => {
                         </ScrollReveal>
                     </div>
 
-                    <div className="min-h-[60vh] flex items-center justify-center relative">
+                    <div className="min-h-[60vh] flex items-center justify-center relative w-full overflow-hidden">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={activeProjectIndex}
@@ -228,9 +228,9 @@ const Projects = () => {
                                 animate={{ opacity: 1, x: 0, scale: 1 }}
                                 exit={{ opacity: 0, x: -50, scale: 0.9 }}
                                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                className="w-full max-w-sm bg-white border border-gray-200 shadow-xl rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing"
+                                className="w-full max-w-[90vw] sm:max-w-sm bg-white border border-gray-200 shadow-xl rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing"
                             >
-                                <div className="h-48 overflow-hidden relative">
+                                <div className="h-48 overflow-hidden relative w-full">
                                     <img src={currentProject.image} alt={currentProject.title} className="w-full h-full object-cover" />
                                     <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-mono border border-white/20">
                                         {activeProjectIndex + 1} / {projects.length}
