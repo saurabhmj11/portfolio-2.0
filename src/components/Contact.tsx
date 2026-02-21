@@ -72,7 +72,7 @@ const Contact = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-24">
           {/* Left Column: Info */}
           <div>
-            <h2 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500">
+            <h2 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500 font-mono">
               <ScrambleText text="INITIALIZE CONNECTION" className="" />
             </h2>
             <h3 className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">

@@ -209,10 +209,10 @@ const Projects = () => {
                 <div className="py-16 px-4 w-full">
                     <div className="mb-8 text-center">
                         <ScrollReveal>
-                            <h2 className="text-[10vw] font-display font-bold leading-none tracking-tighter uppercase mb-2">
+                            <h2 className="text-[12vw] sm:text-[10vw] font-display font-bold leading-[0.9] tracking-tighter uppercase mb-2 text-white">
                                 <ScrambleText text="Selected Work" />
                             </h2>
-                            <p className="text-gray-500">Swipe to explore projects.</p>
+                            <p className="text-gray-400 font-medium">Swipe to explore projects.</p>
                         </ScrollReveal>
                     </div>
 
