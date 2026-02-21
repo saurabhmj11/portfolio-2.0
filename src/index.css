@@ -109,6 +109,16 @@
   .flex-center {
     @apply flex justify-center items-center;
   }
+
+  .text-outline {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-outline-strong {
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 /* Hide Scrollbar */

@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motio
 import Magnetic from './Magnetic';
 import MobileMenu from './MobileMenu';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { Atom } from 'lucide-react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -50,13 +51,25 @@ const Header = () => {
         }}
         className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 md:px-12 text-white"
       >
-        {/* Pill-shaped Logo */}
+        {/* Interactive Sliding Logo */}
         <Magnetic>
           <Link
             to="/"
-            className="border px-6 py-2 rounded-full text-sm font-medium tracking-wide uppercase transition-colors block border-white/30 text-white hover:bg-white hover:text-black"
+            className="group flex items-center h-10 px-3 rounded-full border border-white/30 backdrop-blur-md transition-colors hover:bg-white hover:border-white text-white hover:text-black overflow-hidden relative cursor-pointer"
           >
-            Saurabh Lokhande
+            {/* Futuristic AI Core Icon */}
+            <div className="flex items-center justify-center shrink-0 relative z-10 transition-transform duration-[800ms] group-hover:rotate-180">
+              <Atom className="w-5 h-5 text-white group-hover:text-black transition-colors md:animate-[spin_6s_linear_infinite]" strokeWidth={1.5} />
+            </div>
+
+            {/* Sliding Text Container using CSS Grid for perfect width animation */}
+            <div className="grid grid-cols-[0fr] group-hover:grid-cols-[1fr] transition-all duration-[600ms] ease-[cubic-bezier(0.76,0,0.24,1)]">
+              <div className="overflow-hidden flex items-center">
+                <span className="block pl-3 whitespace-nowrap text-sm font-bold tracking-widest uppercase">
+                  Saurabh Lokhande
+                </span>
+              </div>
+            </div>
           </Link>
         </Magnetic>
 

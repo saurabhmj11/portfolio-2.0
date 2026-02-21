@@ -90,34 +90,39 @@ const Hero = () => {
                 style={{ y, opacity }}
                 className="relative z-20 flex flex-col items-center text-center w-full px-2 md:px-0 max-w-[90vw]"
             >
-                {/* Row 1 */}
-                <div className="flex flex-col md:flex-row items-center md:items-baseline justify-center gap-2 md:gap-6 w-full leading-none">
-                    <span className="hero-intro font-serif italic text-2xl md:text-4xl text-gray-300 md:mr-4 mb-2 md:mb-0 opacity-0">
-                        I'm a
-                    </span>
-                    <h1 className="text-[clamp(3.5rem,11vw,9rem)] leading-[0.85] font-display font-bold tracking-tighter uppercase text-white">
-                        <HackerText text="Generative AI" speed={40} />
-                    </h1>
-                </div>
+                {/* Extraordinary Typography Block (Bulletproof Flex) */}
+                <div className="flex flex-col w-full max-w-7xl mx-auto leading-[0.85] font-display font-bold tracking-tighter uppercase cursor-default relative text-white px-0 lg:px-12">
 
-                {/* Row 2 */}
-                <div className="flex flex-col md:flex-row items-center md:items-baseline justify-center gap-2 md:gap-6 w-full leading-none mt-2 md:-mt-2">
-                    <TextReveal el="h1" className="text-[clamp(3.5rem,11vw,9rem)] leading-[0.85] font-display font-bold tracking-tighter uppercase" delay={0.8}>
-                        Engineer
-                    </TextReveal>
-                    <span className="hero-connector font-serif italic text-3xl md:text-6xl text-gray-300 md:ml-4 my-2 md:my-0 opacity-0">
-                        &
-                    </span>
-                </div>
+                    {/* Row 1: I'm a Generative AI */}
+                    <div className="flex flex-col items-center md:items-start relative z-10 w-full md:pl-[10%] mb-4 md:-mb-6">
+                        <span className="hero-intro font-serif italic text-3xl md:text-5xl text-blue-400 opacity-0 normal-case tracking-normal md:pl-16 mb-2 mix-blend-screen">
+                            I'm a
+                        </span>
+                        <h1 className="text-[clamp(3.5rem,8.5vw,9rem)] text-center md:text-left leading-none">
+                            <HackerText text="Generative AI" speed={40} />
+                        </h1>
+                    </div>
 
-                {/* Row 3 */}
-                <div className="flex flex-col items-center justify-center w-full leading-none mt-2 md:-mt-2">
-                    <TextReveal el="h1" className="text-[clamp(3.5rem,11vw,9rem)] leading-[0.85] font-display font-bold tracking-tighter uppercase" delay={1.0}>
-                        Software
-                    </TextReveal>
-                    <TextReveal el="h1" className="text-[clamp(3.5rem,11vw,9rem)] leading-[0.85] font-display font-bold tracking-tighter uppercase" delay={1.2}>
-                        Developer
-                    </TextReveal>
+                    {/* Row 2: ENGINEER & (Outlined) */}
+                    <div className="flex flex-col md:flex-row items-center justify-center md:justify-end relative z-0 w-full md:pr-[10%] mt-4 md:-mt-4">
+                        <TextReveal el="h1" className="text-[clamp(4.5rem,11.5vw,12rem)] text-outline-strong mix-blend-screen text-center md:text-right leading-none" delay={0.8}>
+                            ENGINEER
+                        </TextReveal>
+                        <span className="hero-connector font-serif italic text-4xl md:text-7xl text-blue-400 opacity-0 normal-case tracking-normal mt-2 md:mt-0 md:mb-6 md:ml-4">
+                            &
+                        </span>
+                    </div>
+
+                    {/* Row 3: SOFTWARE DEVELOPER */}
+                    <div className="flex flex-col items-center md:items-start relative z-20 w-full md:pl-[20%] mt-4 md:-mt-8">
+                        <TextReveal el="h1" className="text-[clamp(3.5rem,8vw,9rem)] text-center md:text-left leading-none" delay={1.0}>
+                            SOFTWARE
+                        </TextReveal>
+                        <TextReveal el="h1" className="text-[clamp(3.5rem,8vw,9rem)] text-center md:text-left leading-[0.85]" delay={1.2}>
+                            DEVELOPER
+                        </TextReveal>
+                    </div>
+
                 </div>
 
                 {/* Description & Buttons */}
