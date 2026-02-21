@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import nodemailer from 'nodemailer';
+
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
@@ -64,29 +64,25 @@ const requireAuth = (req, res, next) => {
 };
 
 
-// Configure Nodemailer
-const transporter = nodemailer.createTransport({
-  service: 'Gmail', // Use your email provider
-  auth: {
-    user: process.env.EMAIL_USER, // Your email
-    pass: process.env.EMAIL_PASS, // Your email password
-  },
-});
+import { Resend } from 'resend';
+
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // POST route for form submission
 app.post('/send-message', async (req, res) => {
   const { name, email, message } = req.body;
 
-  const mailOptions = {
-    from: email,
-    to: process.env.RECIPIENT_EMAIL, // The recipient's email address
-    subject: `New Contact Form Submission from ${name}`,
-    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-  };
-
   try {
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: 'Message sent successfully!' });
+    const data = await resend.emails.send({
+      from: 'Portfolio Contact Form <onboarding@resend.dev>',
+      to: process.env.RECIPIENT_EMAIL || 'saurabhmj11@gmail.com',
+      subject: `New Contact Form Submission from ${name}`,
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+      reply_to: email,
+    });
+
+    res.status(200).json({ message: 'Message sent successfully!', data });
   } catch (error) {
     console.error('Error sending email:', error);
     res.status(500).json({ error: 'Failed to send the message' });

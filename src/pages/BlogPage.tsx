@@ -1,17 +1,6 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import TextReveal from '../components/TextReveal';
-
-interface BlogPost {
-    title: string;
-    slug: string;
-    excerpt: string;
-    tags: string[];
-    publishedAt: string;
-    readTime: string;
-    status: 'published' | 'draft';
-}
 
 import postsData from '../data/posts.json';
 
