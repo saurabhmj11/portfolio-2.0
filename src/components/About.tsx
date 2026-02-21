@@ -122,7 +122,7 @@ const About = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="bg-[#050505] relative z-10" id="about">
+    <div ref={containerRef} className="bg-[#050505] relative z-10 overflow-hidden" id="about">
       <section ref={sectionRef} className="relative w-full h-screen bg-[#050505] overflow-hidden flex justify-center items-center">
 
         {/* 1. Exploding Headline Container */}

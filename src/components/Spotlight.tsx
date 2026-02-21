@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
 
 const Spotlight = () => {
+    // Disable on touch devices to save battery and prevent unwanted visual behavior
+    const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+    if (isTouchDevice) return null;
+
     const [isVisible, setIsVisible] = useState(false);
 
     // Using useMotionValue and useSpring for smooth following

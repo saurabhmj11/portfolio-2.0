@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 const CustomCursor = () => {
+    // Disable completely on mobile touch screens to save battery and prevent dual-cursors
+    const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+    if (isTouchDevice) return null;
+
     const [isHovering, setIsHovering] = useState(false);
 
     const cursorSize = isHovering ? 20 : 15;

@@ -11,6 +11,12 @@ const Magnetic: React.FC<MagneticProps> = ({ children }) => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const { playHover, playClick } = useSound();
 
+    // Disable magnetic physics and hover sounds on touch devices
+    const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+    if (isTouchDevice) {
+        return <>{children}</>;
+    }
+
     const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
         const { clientX, clientY } = e;
         if (!ref.current) return;

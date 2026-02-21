@@ -66,7 +66,7 @@ const LiveStatus = () => {
                 </div>
 
                 {/* Stats Grid */}
-                <div className="flex items-center justify-between w-full md:w-auto gap-8 md:gap-16">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full md:w-auto gap-6 md:gap-16 mt-6 md:mt-0">
                     <div className="flex items-center gap-3">
                         <Activity className="w-5 h-5 text-gray-500" />
                         <div>
