@@ -7,6 +7,8 @@
   html.lenis,
   html.lenis body {
     height: auto;
+    max-width: 100%;
+    overflow-x: clip;
   }
 
   .lenis.lenis-smooth {
@@ -26,7 +28,7 @@
   }
 
   body {
-    @apply bg-off-white text-primary-text font-sans antialiased tracking-tightest overflow-x-hidden;
+    @apply bg-off-white text-primary-text font-sans antialiased tracking-tightest overflow-x-clip;
     background-color: #e8e8e3;
   }
 
@@ -118,6 +120,25 @@
   .text-outline-strong {
     -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
     -webkit-text-fill-color: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    display: block;
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
   }
 }
 

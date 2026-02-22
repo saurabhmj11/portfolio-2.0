@@ -1,5 +1,4 @@
 import React, { Suspense } from 'react';
-import { motion } from 'framer-motion';
 import ScrollReveal from './ScrollReveal';
 import { Canvas } from '@react-three/fiber';
 const Robot3D = React.lazy(() => import('./Robot3D'));

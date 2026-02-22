@@ -64,7 +64,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                 }
                 return next;
             });
-        }, 35); // Slightly faster for a snappier feel
+        }, 12); // Dramatically faster for a snappier feel (1.2s total delay)
 
         return () => {
             clearInterval(interval);

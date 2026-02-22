@@ -39,7 +39,7 @@ const Spotlight = () => {
 
     return (
         <motion.div
-            className="pointer-events-none fixed inset-0 z-0 h-screen w-screen transition-opacity duration-300"
+            className="pointer-events-none fixed inset-0 z-0 h-full w-full transition-opacity duration-300"
             style={{
                 opacity: isVisible ? 1 : 0,
                 background: "transparent",

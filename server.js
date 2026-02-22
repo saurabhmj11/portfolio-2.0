@@ -28,7 +28,7 @@ app.use(cors({
   },
   credentials: true
 }));
-app.use(bodyParser.json({ limit: '10mb' })); // Increased limit for images/markdown
+app.use(bodyParser.json({ limit: '50mb' })); // Increased limit for images/markdown
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

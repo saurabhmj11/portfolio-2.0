@@ -1,7 +1,8 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Magnetic from './Magnetic'; // Assuming Magnetic is robust now
 import { useTerminal } from '../context/TerminalContext';
+import { useAudioDirector } from '../context/AudioContext';
 import { useInView } from 'react-intersection-observer';
 import { Helmet } from 'react-helmet-async';
 import VelocityText from './VelocityText';
@@ -19,6 +20,14 @@ const allSkills = [
 const Skills = () => {
     const { addLog } = useTerminal();
     const [ref, inView] = useInView({ threshold: 0.1 });
+
+    // AI Audio Director Trigger
+    const { playTrack } = useAudioDirector();
+    useEffect(() => {
+        if (inView) {
+            playTrack('skills-intro');
+        }
+    }, [inView, playTrack]);
     const containerRef = useRef<HTMLDivElement>(null);
 
     return (
@@ -83,7 +92,7 @@ const SkillBadge = ({ skill, index, addLog }: { skill: string, index: number, ad
                 <motion.div
                     animate={{ y: [-5, 5, -5] }}
                     transition={{ duration: randomDuration, repeat: Infinity, ease: "easeInOut", delay: randomDelay }}
-                    className="relative px-6 py-4 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md overflow-hidden cursor-pointer group-hover:border-white/30 group-hover:bg-white/10 transition-colors"
+                    className="relative px-4 sm:px-6 py-3 sm:py-4 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md overflow-hidden cursor-pointer group-hover:border-white/30 group-hover:bg-white/10 transition-colors"
                     onMouseEnter={() => addLog(`Skill Detected: ${skill}`, 'success', 'SYS')}
                 >
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />

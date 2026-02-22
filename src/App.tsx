@@ -22,8 +22,10 @@ import NotFound from './pages/NotFound';
 
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { TerminalProvider } from './context/TerminalContext';
+import { AudioProvider } from './context/AudioContext';
 import { HelmetProvider } from 'react-helmet-async';
 import Seo from './components/Seo';
+import AudioVisualizer from './components/AudioVisualizer';
 
 
 
@@ -56,58 +58,61 @@ function App() {
 
   return (
     <TerminalProvider>
-      <HelmetProvider>
-        <Analytics />
-        <Seo />
-        <SmoothScroll>
-          <Spotlight />
-          <CustomCursor />
-          <AnimatePresence mode="wait">
-            {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
-          </AnimatePresence>
+      <AudioProvider>
+        <HelmetProvider>
+          <Analytics />
+          <Seo />
+          <SmoothScroll>
+            <Spotlight />
+            <CustomCursor />
+            <AudioVisualizer />
+            <AnimatePresence mode="wait">
+              {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
+            </AnimatePresence>
 
-          {!isLoading && (
-            <React.Fragment>
-              <motion.div
-                className="fixed inset-0 bg-black z-[60] pointer-events-none"
-                initial={{ scaleY: 1 }}
-                animate={{ scaleY: 0 }}
-                exit={{ scaleY: 0 }}
-                transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                style={{ originY: 0 }}
-              />
+            {!isLoading && (
+              <React.Fragment>
+                <motion.div
+                  className="fixed inset-0 bg-black z-[60] pointer-events-none"
+                  initial={{ scaleY: 1 }}
+                  animate={{ scaleY: 0 }}
+                  exit={{ scaleY: 0 }}
+                  transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ originY: 0 }}
+                />
 
-              {/* Main Content */}
-              <div className={`relative z-10 min-h-screen ${isDark ? 'dark' : ''} bg-off-white shadow-2xl`}>
-                {/* Noise Overlay */}
-                <div className="noise-overlay" />
+                {/* Main Content */}
+                <div className={`relative z-10 min-h-screen ${isDark ? 'dark' : ''} bg-off-white shadow-2xl`}>
+                  {/* Noise Overlay */}
+                  <div className="noise-overlay" />
 
-                <Header />
+                  <Header />
 
-                <AnimatePresence mode="wait">
-                  <Routes location={location} key={location.pathname}>
-                    <Route path="/" element={<PageTransition><Home /></PageTransition>} />
-                    <Route path="/blog" element={<PageTransition><BlogPage /></PageTransition>} />
-                    <Route path="/blog/:slug" element={<PageTransition><BlogPostPage /></PageTransition>} />
-                    <Route path="/admin" element={<PageTransition><AdminPage /></PageTransition>} />
-                    <Route path="/resume" element={<PageTransition><Resume /></PageTransition>} />
-                    <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
-                  </Routes>
-                </AnimatePresence>
-              </div>
+                  <AnimatePresence mode="wait">
+                    <Routes location={location} key={location.pathname}>
+                      <Route path="/" element={<PageTransition label="Home"><Home /></PageTransition>} />
+                      <Route path="/blog" element={<PageTransition label="Research Log"><BlogPage /></PageTransition>} />
+                      <Route path="/blog/:slug" element={<PageTransition label="Article"><BlogPostPage /></PageTransition>} />
+                      <Route path="/admin" element={<PageTransition label="Admin"><AdminPage /></PageTransition>} />
+                      <Route path="/resume" element={<PageTransition label="Résumé"><Resume /></PageTransition>} />
+                      <Route path="*" element={<PageTransition label="404"><NotFound /></PageTransition>} />
+                    </Routes>
+                  </AnimatePresence>
+                </div>
 
-              {/* Fixed Footer (Behind the content) */}
-              <Footer />
+                {/* Fixed Footer (Behind the content) */}
+                <Footer />
 
-              <Chatbot isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
-              <Terminal />
-              <ScrollToTop />
+                <Chatbot isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
+                <Terminal />
+                <ScrollToTop />
 
-              <AgentDock isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
-            </React.Fragment>
-          )}
-        </SmoothScroll>
-      </HelmetProvider>
+                <AgentDock isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
+              </React.Fragment>
+            )}
+          </SmoothScroll>
+        </HelmetProvider>
+      </AudioProvider>
     </TerminalProvider >
   );
 }

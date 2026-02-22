@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, MeshTransmissionMaterial, Environment, Stars } from '@react-three/drei';
 import * as THREE from 'three';
+import useIsMobile from '../hooks/useIsMobile';
 
 const Crystal = () => {
     const meshRef = useRef<THREE.Mesh>(null!);
@@ -70,6 +71,11 @@ const Crystal = () => {
 };
 
 const Hero3D = () => {
+    const isMobile = useIsMobile();
+
+    // Completely disable 3D Canvas on mobile to fix extreme lag.
+    if (isMobile) return null;
+
     return (
         <div className="absolute inset-0 z-0 pointer-events-none opacity-80">
             <Canvas camera={{ position: [0, 0, 6], fov: 45 }} gl={{ alpha: true }} dpr={[1, 2]}>
@@ -77,7 +83,6 @@ const Hero3D = () => {
                 <Environment preset="city" />
                 <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
                 <Crystal />
-                {/* Add a subtle spotlight following mouse could be cool, but maybe too heavy */}
             </Canvas>
         </div>
     );

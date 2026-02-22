@@ -1,24 +1,46 @@
 
-import React, { useRef, useLayoutEffect, Suspense } from 'react';
+import React, { useRef, useLayoutEffect, Suspense, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useInView } from 'react-intersection-observer';
+import { useAudioDirector } from '../context/AudioContext';
 import TextReveal from './TextReveal';
-import AIParticles from './AIParticles';
 import Magnetic from './Magnetic';
 import { ArrowDown } from 'lucide-react';
 import HackerText from './HackerText';
 
 const Hero3D = React.lazy(() => import('./Hero3D'));
+const AIParticles = React.lazy(() => import('./AIParticles'));
+const HeroGL = React.lazy(() => import('./HeroGL'));
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
-    const containerRef = useRef(null);
+    const containerRef = useRef<HTMLElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end start"]
     });
+
+    const { playTrack } = useAudioDirector();
+    const [inViewRef, inView] = useInView({ threshold: 0.5 });
+
+    // Merge refs for Framer Motion scroll and Intersection Observer
+    const setRefs = React.useCallback(
+        (node: HTMLElement | null) => {
+            // @ts-ignore
+            containerRef.current = node;
+            inViewRef(node);
+        },
+        [inViewRef]
+    );
+
+    useEffect(() => {
+        if (inView) {
+            playTrack('hero-intro');
+        }
+    }, [inView, playTrack]);
 
     // Slight parallax for the text
     const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
@@ -57,7 +79,7 @@ const Hero = () => {
     return (
         <section
             id="home"
-            ref={containerRef}
+            ref={setRefs}
             className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-x-hidden bg-black text-white px-4 pt-24 pb-32 md:pt-0 md:pb-24"
         >
             {/* Background Video */}
@@ -76,14 +98,14 @@ const Hero = () => {
 
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />
 
-            {/* 3D Crystal Background */}
+            {/* 3D Crystal, Particles & WebGL Neural Sphere */}
             <div className="absolute inset-0 z-10 pointer-events-none mix-blend-screen">
                 <Suspense fallback={null}>
+                    <HeroGL />
                     <Hero3D />
+                    <AIParticles />
                 </Suspense>
             </div>
-
-            <AIParticles />
 
             {/* Main Content */}
             <motion.div
@@ -132,14 +154,14 @@ const Hero = () => {
                         Crafting intelligent agents and scalable systems.
                     </p>
 
-                    <div className="hero-cta flex gap-6">
+                    <div className="hero-cta flex flex-col sm:flex-row gap-3 sm:gap-6 items-center">
                         <Magnetic>
-                            <a href="#projects" className="px-8 py-4 bg-white text-black font-medium rounded-full hover:bg-gray-200 transition-colors duration-300 inline-block">
+                            <a href="#projects" className="px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-black font-medium rounded-full hover:bg-gray-200 transition-colors duration-300 inline-block text-sm sm:text-base w-48 sm:w-auto text-center">
                                 View Projects
                             </a>
                         </Magnetic>
                         <Magnetic>
-                            <a href="#contact" className="px-8 py-4 border border-white/20 backdrop-blur-sm text-white font-medium rounded-full hover:bg-white/10 transition-colors duration-300 inline-block">
+                            <a href="#contact" className="px-6 sm:px-8 py-3.5 sm:py-4 border border-white/20 backdrop-blur-sm text-white font-medium rounded-full hover:bg-white/10 transition-colors duration-300 inline-block text-sm sm:text-base w-48 sm:w-auto text-center">
                                 Contact Me
                             </a>
                         </Magnetic>
