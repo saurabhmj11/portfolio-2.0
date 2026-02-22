@@ -82,7 +82,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             });
     };
 
-    const playFallbackSynth = (track: AudioTrack) => {
+    const playFallbackSynth = (_track: AudioTrack) => {
         // Fallback synth is temporarily disabled at user request.
         // It will remain silent until MP3 files are added.
         setIsPlaying(false);
