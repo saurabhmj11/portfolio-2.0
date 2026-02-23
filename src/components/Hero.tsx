@@ -9,6 +9,7 @@ import TextReveal from './TextReveal';
 import Magnetic from './Magnetic';
 import { ArrowDown } from 'lucide-react';
 import HackerText from './HackerText';
+import useIsMobile from '../hooks/useIsMobile';
 
 const Hero3D = React.lazy(() => import('./Hero3D'));
 const AIParticles = React.lazy(() => import('./AIParticles'));
@@ -17,13 +18,14 @@ const HeroGL = React.lazy(() => import('./HeroGL'));
 gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
+    const isMobile = useIsMobile();
     const containerRef = useRef<HTMLElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end start"]
     });
 
-    const { playTrack } = useAudioDirector();
+    const { playSectionChime } = useAudioDirector();
     const [inViewRef, inView] = useInView({ threshold: 0.5 });
 
     // Merge refs for Framer Motion scroll and Intersection Observer
@@ -38,9 +40,9 @@ const Hero = () => {
 
     useEffect(() => {
         if (inView) {
-            playTrack('hero-intro');
+            playSectionChime('hero');
         }
-    }, [inView, playTrack]);
+    }, [inView, playSectionChime]);
 
     // Slight parallax for the text
     const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
@@ -82,30 +84,39 @@ const Hero = () => {
             ref={setRefs}
             className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-x-hidden bg-black text-white px-4 pt-24 pb-32 md:pt-0 md:pb-24"
         >
-            {/* Background Video */}
+            {/* Background — Video on desktop, gradient on mobile */}
             <div className="absolute inset-0 z-0">
-                <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover opacity-30"
-                >
-                    <source src="https://uploads-ssl.webflow.com/65b7bac85c1092089d510616/65b8c737f3618d8dd99da139_VIDEO HOME (DSK)-transcode.mp4" type="video/mp4" />
-                </video>
-                <div className="absolute inset-0 bg-black/50" />
+                {!isMobile ? (
+                    <>
+                        <video
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="w-full h-full object-cover opacity-30"
+                        >
+                            <source src="https://uploads-ssl.webflow.com/65b7bac85c1092089d510616/65b8c737f3618d8dd99da139_VIDEO HOME (DSK)-transcode.mp4" type="video/mp4" />
+                        </video>
+                        <div className="absolute inset-0 bg-black/50" />
+                    </>
+                ) : (
+                    /* Lightweight gradient replacement on mobile */
+                    <div className="w-full h-full bg-gradient-to-br from-[#030303] via-[#0a0a1a] to-[#030303]" />
+                )}
             </div>
 
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />
 
-            {/* 3D Crystal, Particles & WebGL Neural Sphere */}
-            <div className="absolute inset-0 z-10 pointer-events-none mix-blend-screen">
-                <Suspense fallback={null}>
-                    <HeroGL />
-                    <Hero3D />
-                    <AIParticles />
-                </Suspense>
-            </div>
+            {/* 3D Components — Desktop only (saves ~600KB on mobile) */}
+            {!isMobile && (
+                <div className="absolute inset-0 z-10 pointer-events-none mix-blend-screen">
+                    <Suspense fallback={null}>
+                        <HeroGL />
+                        <Hero3D />
+                        <AIParticles />
+                    </Suspense>
+                </div>
+            )}
 
             {/* Main Content */}
             <motion.div

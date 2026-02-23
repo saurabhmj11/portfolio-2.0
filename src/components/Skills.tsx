@@ -22,12 +22,12 @@ const Skills = () => {
     const [ref, inView] = useInView({ threshold: 0.1 });
 
     // AI Audio Director Trigger
-    const { playTrack } = useAudioDirector();
+    const { playSectionChime } = useAudioDirector();
     useEffect(() => {
         if (inView) {
-            playTrack('skills-intro');
+            playSectionChime('skills');
         }
-    }, [inView, playTrack]);
+    }, [inView, playSectionChime]);
     const containerRef = useRef<HTMLDivElement>(null);
 
     return (

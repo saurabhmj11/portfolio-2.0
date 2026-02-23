@@ -70,6 +70,8 @@ export default defineConfig({
           'vendor-icons': ['lucide-react'],
           // Helmet
           'vendor-seo': ['react-helmet-async'],
+          // Three.js / 3D (heavy — isolate it)
+          'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
         },
       },
     },

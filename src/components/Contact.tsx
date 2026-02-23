@@ -220,11 +220,11 @@ const TerminalField = ({
 
 const Contact = () => {
   const [ref, inView] = useInView({ threshold: 0.1 });
-  const { playTrack } = useAudioDirector();
+  const { playSectionChime } = useAudioDirector();
 
   useEffect(() => {
-    if (inView) playTrack('contact-intro');
-  }, [inView, playTrack]);
+    if (inView) playSectionChime('contact');
+  }, [inView, playSectionChime]);
 
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);

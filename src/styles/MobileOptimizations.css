@@ -1,0 +1,53 @@
+/* ─── Mobile Optimizations ────────────────────────────────────────────────── */
+/* Global mobile enhancements for touch devices and small screens */
+
+/* Remove blue/purple tap highlight on all elements */
+@media (pointer: coarse) {
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* Ensure minimum touch target size (44×44px per WCAG) */
+@media (max-width: 768px) {
+
+    a,
+    button,
+    [role="button"],
+    input[type="submit"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Disable expensive backdrop-filter on reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    [style*="backdrop-filter"],
+    .backdrop-blur-sm,
+    .backdrop-blur-md,
+    .backdrop-blur-lg,
+    .backdrop-blur-xl {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+}
+
+/* Prevent horizontal overflow on mobile */
+@media (max-width: 768px) {
+
+    html,
+    body {
+        overflow-x: hidden;
+    }
+
+    /* Reduce heavy blur effects on mobile for GPU savings */
+    [style*="blur(120px)"] {
+        filter: blur(60px) !important;
+    }
+}

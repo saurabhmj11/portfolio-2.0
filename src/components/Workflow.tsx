@@ -70,38 +70,38 @@ const Workflow = () => {
     }, []);
 
     return (
-        <section ref={containerRef} className="h-screen py-20 bg-black text-white relative overflow-hidden flex flex-col justify-center">
-            <div className="container mx-auto px-4 relative z-10 h-full flex flex-col justify-center">
-                <div className="mb-12 text-center shrink-0">
+        <section ref={containerRef} className="min-h-screen py-20 bg-black text-white relative overflow-hidden flex flex-col justify-center">
+            <div className="container mx-auto px-4 relative z-10 flex flex-col justify-center">
+                <div className="mb-16 text-center shrink-0">
                     <h2 className="text-[12px] uppercase tracking-widest text-gray-500 mb-4">My Process</h2>
                     <h3 className="text-[clamp(2.25rem,5vw,4.5rem)] font-bold tracking-tighter leading-none">How I Build</h3>
                 </div>
 
-                <div className="relative max-w-5xl mx-auto flex-1 flex flex-col justify-center">
-                    {/* Central Line */}
-                    <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[1px] bg-gray-800 -translate-x-1/2 md:-translate-x-1/2 overflow-hidden">
+                <div className="relative max-w-5xl mx-auto w-full">
+                    {/* Central Line — continuous, properly centered */}
+                    <div className="absolute left-[16px] md:left-1/2 md:-translate-x-[0.5px] top-0 bottom-0 w-[1px] bg-gray-800 overflow-hidden">
                         <div className="workflow-line w-full h-full bg-blue-500 origin-top" />
                     </div>
 
-                    <div className="space-y-8 md:space-y-16">
-                        {steps.map((step, index) => (
-                            <div key={index} className={`workflow-item flex flex-col md:flex-row items-center gap-8 md:gap-16 relative ${index % 2 === 0 ? '' : 'md:flex-row-reverse'}`}>
+                    <div className="space-y-12 md:space-y-20">
+                        {steps.map((step, index) => {
+                            const isEven = index % 2 === 0;
+                            return (
+                                <div key={index} className="workflow-item relative">
+                                    {/* Timeline Dot — always on the line */}
+                                    <div className="absolute left-[16px] md:left-1/2 -translate-x-1/2 top-2 w-3.5 h-3.5 bg-black border-2 border-blue-500 rounded-full z-10 shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
 
-                                {/* Timeline Dot */}
-                                <div className="absolute left-4 md:left-1/2 w-4 h-4 bg-black border-2 border-blue-500 rounded-full z-10 -translate-x-1/2 top-1.5 shadow-[0_0_15px_rgba(59,130,246,0.6)]">
-                                    <div className="w-full h-full bg-blue-500 scale-0 group-hover:scale-100 transition-transform duration-300" />
+                                    {/* Content — alternates sides on desktop, always right on mobile */}
+                                    <div className={`pl-10 md:pl-0 md:w-[45%] ${isEven ? 'md:ml-0 md:text-right md:pr-12' : 'md:ml-auto md:text-left md:pl-12'}`}>
+                                        <h4 className="text-2xl md:text-4xl font-bold mb-2 text-white tracking-tight font-display leading-tight">
+                                            <span className="text-blue-500 mr-1.5">{step.num}.</span>
+                                            <span className="font-extrabold">{step.title}</span>
+                                        </h4>
+                                        <p className="text-gray-400 leading-relaxed text-sm md:text-base font-light max-w-md inline-block">{step.desc}</p>
+                                    </div>
                                 </div>
-
-                                <div className={`w-full md:w-[45%] pl-12 md:pl-0 ${index % 2 === 0 ? 'md:text-right md:pr-8' : 'md:text-left md:pl-8'}`}>
-                                    <h4 className="text-3xl md:text-4xl font-bold mb-3 text-white tracking-tight font-display">
-                                        <span className="text-blue-500 mr-2">{step.num}.</span>
-                                        {step.title}
-                                    </h4>
-                                    <p className="text-gray-400 leading-relaxed text-sm md:text-base font-light">{step.desc}</p>
-                                </div>
-                                <div className="hidden md:block w-full md:w-[45%]" />
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             </div>

@@ -19,6 +19,7 @@ import BlogPostPage from './pages/BlogPostPage';
 import AdminPage from './pages/Admin';
 import Resume from './pages/Resume';
 import NotFound from './pages/NotFound';
+const CaseStudy = React.lazy(() => import('./pages/CaseStudy'));
 
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { TerminalProvider } from './context/TerminalContext';
@@ -95,6 +96,7 @@ function App() {
                       <Route path="/blog/:slug" element={<PageTransition label="Article"><BlogPostPage /></PageTransition>} />
                       <Route path="/admin" element={<PageTransition label="Admin"><AdminPage /></PageTransition>} />
                       <Route path="/resume" element={<PageTransition label="Résumé"><Resume /></PageTransition>} />
+                      <Route path="/project/:id" element={<PageTransition label="Case Study"><React.Suspense fallback={null}><CaseStudy /></React.Suspense></PageTransition>} />
                       <Route path="*" element={<PageTransition label="404"><NotFound /></PageTransition>} />
                     </Routes>
                   </AnimatePresence>

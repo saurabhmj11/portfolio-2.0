@@ -6,6 +6,7 @@
  * The section is pinned for 300vh of scroll distance.
  */
 import { useLayoutEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import useIsMobile from '../hooks/useIsMobile';
@@ -14,49 +15,54 @@ gsap.registerPlugin(ScrollTrigger);
 
 const WORKS = [
     {
+        id: 'hiremeos',
         num: '01',
         title: 'HireMeOS',
-        category: 'Autonomous AI',
+        category: 'LLM Systems',
         year: '2024',
         color: '#0a0a0a',
         accent: '#3b82f6',
         img: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=900&auto=format&fit=crop',
     },
     {
+        id: 'ocr-pipeline',
         num: '02',
         title: 'OCR Pipeline',
-        category: 'Computer Vision',
+        category: 'Automation',
         year: '2024',
         color: '#050505',
         accent: '#8b5cf6',
         img: 'https://images.unsplash.com/photo-1562577309-4932fdd64cd1?q=80&w=900&auto=format&fit=crop',
     },
     {
+        id: 'student-recsys',
         num: '03',
-        title: 'Multi-Agent RAG',
-        category: 'LLM Systems',
+        title: 'RecSys Engine',
+        category: 'Applied ML',
         year: '2024',
         color: '#0a0a0a',
         accent: '#ec4899',
-        img: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=900&auto=format&fit=crop',
+        img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=900&auto=format&fit=crop',
     },
     {
+        id: 'submaster',
         num: '04',
-        title: 'Generative UI',
-        category: 'GenAI Product',
+        title: 'SubMaster',
+        category: 'Backend Architecture',
         year: '2023',
         color: '#050505',
         accent: '#22d3ee',
-        img: 'https://images.unsplash.com/photo-1677442135968-6db3b0025e95?q=80&w=900&auto=format&fit=crop',
+        img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=900&auto=format&fit=crop',
     },
     {
+        id: 'web-intel',
         num: '05',
-        title: 'Live Agent Grid',
-        category: 'Real-time AI',
+        title: 'Web Intel',
+        category: 'Web Agents',
         year: '2023',
         color: '#0a0a0a',
         accent: '#a3e635',
-        img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=900&auto=format&fit=crop',
+        img: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?q=80&w=900&auto=format&fit=crop',
     },
 ];
 
@@ -97,7 +103,7 @@ const HorizontalWorks = () => {
                 <p className="font-mono text-[10px] text-white/20 uppercase tracking-[0.5em] mb-4 text-center">// Selected Works</p>
                 <div className="space-y-8">
                     {WORKS.map(w => (
-                        <div key={w.num} className="relative rounded-2xl overflow-hidden border border-white/8 h-60">
+                        <Link key={w.num} to={`/project/${w.id}`} className="relative rounded-2xl overflow-hidden border border-white/8 h-60 block">
                             <img src={w.img} alt={w.title} className="w-full h-full object-cover brightness-50" />
                             <div className="absolute inset-0 p-5 flex flex-col justify-between">
                                 <div className="flex justify-between items-start">
@@ -109,7 +115,7 @@ const HorizontalWorks = () => {
                                     <span className="font-mono text-[9px] text-white/30 uppercase tracking-widest">{w.year}</span>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </section>
@@ -152,9 +158,10 @@ const HorizontalWorks = () => {
 
                 {/* Project cards */}
                 {WORKS.map((work, _i) => (
-                    <div
+                    <Link
                         key={work.num}
-                        className="flex-shrink-0 relative overflow-hidden rounded-2xl border border-white/8 cursor-pointer group"
+                        to={`/project/${work.id}`}
+                        className="flex-shrink-0 relative overflow-hidden rounded-2xl border border-white/8 cursor-pointer group no-underline"
                         style={{
                             width: '38vw',
                             height: '70vh',
@@ -206,7 +213,7 @@ const HorizontalWorks = () => {
                         <div className="absolute top-8 right-8 w-10 h-10 border border-white/15 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                             <span className="text-white text-sm">↗</span>
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
         </section>

@@ -1,6 +1,7 @@
 import { useState, useRef, useLayoutEffect, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
-import { X, ArrowUpRight } from 'lucide-react';
+import { X, ArrowUpRight, ArrowRight } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Magnetic from './Magnetic';
@@ -10,6 +11,7 @@ import { Helmet } from 'react-helmet-async';
 import { useInView } from 'react-intersection-observer';
 import ScrollReveal from './ScrollReveal';
 import ScrambleText from './ScrambleText';
+import OptimizedImage from './OptimizedImage';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -169,12 +171,14 @@ const ProjectNode = ({ project, index, isHovered, setHovered, setSelectedProject
             <div className="relative w-full h-full rounded-[2rem] overflow-hidden group border border-white/10 shadow-2xl bg-[#0a0a0a]" style={{ filter: 'url(#liquid-filter)' }}>
                 {/* Embedded image with parallax */}
                 <motion.div style={{ x: smoothX, y: smoothY }} className="absolute inset-[-20%] w-[140%] h-[140%]">
-                    <motion.img
-                        layoutId={`project-image-${project.id}`}
+                    <OptimizedImage
                         src={project.image}
                         alt={project.title}
+                        width={600}
+                        quality={70}
                         className="w-full h-full object-cover filter brightness-[0.6] contrast-[1.2] group-hover:brightness-[0.8] transition-all duration-700"
                         draggable={false}
+                        wrapperClassName="w-full h-full"
                     />
                 </motion.div>
 
@@ -200,12 +204,12 @@ const Projects = () => {
     const isMobile = useIsMobile();
     const [ref, inView] = useInView({ threshold: 0.1 });
 
-    const { playTrack } = useAudioDirector();
+    const { playSectionChime } = useAudioDirector();
     useEffect(() => {
         if (inView) {
-            playTrack('projects-intro');
+            playSectionChime('projects');
         }
-    }, [inView, playTrack]);
+    }, [inView, playSectionChime]);
 
     // Handle body scroll locking
     useEffect(() => {
@@ -297,7 +301,7 @@ const Projects = () => {
                                 onClick={() => setSelectedProject(project)}
                             >
                                 <div className="h-64 overflow-hidden relative w-full">
-                                    <motion.img layoutId={`project-image-${project.id}`} src={project.image} alt={project.title} className="w-full h-full object-cover filter grayscale contrast-125" />
+                                    <OptimizedImage src={project.image} alt={project.title} width={400} quality={60} className="w-full h-full object-cover filter grayscale contrast-125" wrapperClassName="w-full h-full" />
                                     <div className="absolute inset-0 bg-black/40" />
                                     <div className="absolute inset-0 p-6 flex flex-col justify-between mix-blend-difference">
                                         <div className="flex justify-between items-start text-white">
@@ -421,11 +425,13 @@ const Projects = () => {
                             <div className="flex flex-col md:flex-row h-full">
                                 {/* Left Side: Massive Hero Image */}
                                 <div className="w-full md:w-1/2 h-[50vh] md:h-full relative overflow-hidden bg-black">
-                                    <motion.img
-                                        layoutId={`project-image-${selectedProject.id}`}
+                                    <OptimizedImage
                                         src={selectedProject.image}
                                         alt={selectedProject.title}
+                                        width={1200}
+                                        quality={80}
                                         className="w-full h-full object-cover filter grayscale contrast-[1.2] opacity-80"
+                                        wrapperClassName="w-full h-full"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0a0a0a] hidden md:block" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent block md:hidden" />
@@ -474,10 +480,18 @@ const Projects = () => {
                                         </div>
 
                                         <div className="flex flex-col md:flex-row gap-6 pt-8 border-t border-white/10">
+                                            <Magnetic>
+                                                <Link
+                                                    to={`/project/${selectedProject.id}`}
+                                                    className="inline-flex justify-center items-center gap-3 bg-white text-black px-8 py-5 font-bold uppercase tracking-widest text-sm hover:bg-gray-200 transition-colors w-full md:w-auto text-center no-underline"
+                                                >
+                                                    View Full Case Study <ArrowRight className="w-5 h-5" />
+                                                </Link>
+                                            </Magnetic>
                                             {selectedProject.link && (
                                                 <Magnetic>
-                                                    <a href={selectedProject.link} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center items-center gap-3 bg-white text-black px-8 py-5 font-bold uppercase tracking-widest text-sm hover:bg-gray-200 transition-colors w-full md:w-auto text-center">
-                                                        Execute Deployment <ArrowUpRight className="w-5 h-5" />
+                                                    <a href={selectedProject.link} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center items-center gap-3 bg-transparent text-white border border-white/20 px-8 py-5 font-bold uppercase tracking-widest text-sm hover:bg-white/10 transition-colors w-full md:w-auto text-center">
+                                                        Live Demo <ArrowUpRight className="w-5 h-5" />
                                                     </a>
                                                 </Magnetic>
                                             )}
