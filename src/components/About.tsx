@@ -6,9 +6,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 // ─── Stats that counter up during the bio phase ──────────────────────────────
 const STATS = [
-  { value: 15, suffix: '+', label: 'AI Projects\nShipped' },
+  { value: 55, suffix: '+', label: 'AI Projects\nShipped' },
   { value: 60, suffix: '%', label: 'Faster pipelines\nbuilt' },
-  { value: 5, suffix: '+', label: 'Years of\nengineering' },
+  { value: 1.5, suffix: '+', label: 'Years of\nengineering' },
 ];
 
 const About = () => {

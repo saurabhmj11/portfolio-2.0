@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-const Overlay = ({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) => {
+const Overlay = ({ containerRef: _containerRef }: { containerRef: React.RefObject<HTMLElement> }) => {
     // We expect the parent (ScrollyCanvas wrapper) to be the scroll target
     // But since Overlay is likely INSIDE the sticky container, we need to link to the same progress.
     // Ideally, we pass the generic window scroll or use the hook if the container is fixed size.
