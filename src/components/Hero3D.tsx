@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, MeshTransmissionMaterial, Environment, Stars } from '@react-three/drei';
+import { Float, Environment, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 import useIsMobile from '../hooks/useIsMobile';
 
@@ -20,49 +20,39 @@ const Crystal = () => {
             <Float speed={2} rotationIntensity={1} floatIntensity={1}>
                 <mesh ref={meshRef} scale={1.2}>
                     <icosahedronGeometry args={[1, 0]} />
-                    <MeshTransmissionMaterial
-                        backside
-                        resolution={1024}
-                        thickness={0.3}
-                        roughness={0}
-                        transmission={1}
-                        ior={1.5}
-                        chromaticAberration={0.1}
-                        anisotropy={1}
-                        distortion={0.2}
-                        distortionScale={0.3}
-                        temporalDistortion={0.1}
-                        color={"#a8c7ff"}
+                    <meshStandardMaterial
+                        color="#0066ff"
+                        transparent={true}
+                        opacity={0.8}
+                        metalness={0.8}
+                        roughness={0.1}
+                        envMapIntensity={2.0}
                     />
                 </mesh>
             </Float>
             <Float speed={1.5} rotationIntensity={2} floatIntensity={0.5} position={[2, 1, -2]}>
                 <mesh scale={0.5}>
                     <octahedronGeometry />
-                    <MeshTransmissionMaterial
-                        backside
-                        resolution={512}
-                        thickness={0.1}
-                        roughness={0}
-                        transmission={1}
-                        ior={1.5}
-                        chromaticAberration={0.2}
-                        color={"#ffb8d9"}
+                    <meshStandardMaterial
+                        color="#ffb8d9"
+                        transparent={true}
+                        opacity={0.8}
+                        metalness={0.8}
+                        roughness={0.1}
+                        envMapIntensity={2.0}
                     />
                 </mesh>
             </Float>
             <Float speed={1.8} rotationIntensity={1.5} floatIntensity={0.7} position={[-2, -1, -1]}>
                 <mesh scale={0.6}>
                     <dodecahedronGeometry />
-                    <MeshTransmissionMaterial
-                        backside
-                        resolution={512}
-                        thickness={0.15}
+                    <meshStandardMaterial
+                        color="#d9f99d"
+                        transparent={true}
+                        opacity={0.8}
+                        metalness={0.8}
                         roughness={0.1}
-                        transmission={1}
-                        ior={1.5}
-                        chromaticAberration={0.1}
-                        color={"#d9f99d"}
+                        envMapIntensity={2.0}
                     />
                 </mesh>
             </Float>

@@ -7,7 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 interface TextRevealProps {
     children: string;
     className?: string;
-    el?: keyof JSX.IntrinsicElements;
+    el?: React.ElementType;
     delay?: number;
     threshold?: number;
 }

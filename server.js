@@ -14,6 +14,7 @@ const app = express();
 // Middleware
 const allowedOrigins = [
   'http://localhost:5173', // Local Vite development
+  'http://localhost:5174', // Fallback Vite port
   'http://localhost:3000',
   process.env.FRONTEND_URL // Will be injected by Render environment variables
 ];
@@ -64,13 +65,25 @@ const requireAuth = (req, res, next) => {
 };
 
 
-import { Resend } from 'resend';
-
-// Initialize Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Email (Resend) — optional, only works if RESEND_API_KEY is set
+let resend = null;
+try {
+  if (process.env.RESEND_API_KEY) {
+    const { Resend } = await import('resend');
+    resend = new Resend(process.env.RESEND_API_KEY);
+    console.log('✓ Resend email service initialized');
+  } else {
+    console.log('⚠ RESEND_API_KEY not set — email sending disabled');
+  }
+} catch (err) {
+  console.log('⚠ Resend module not available — email sending disabled');
+}
 
 // POST route for form submission
 app.post('/send-message', async (req, res) => {
+  if (!resend) {
+    return res.status(503).json({ error: 'Email service not configured. Set RESEND_API_KEY in .env' });
+  }
   const { name, email, message } = req.body;
 
   try {

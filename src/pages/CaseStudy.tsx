@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useLayoutEffect } from 'react';
+import { useEffect, useRef, useLayoutEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import gsap from 'gsap';
@@ -8,7 +8,6 @@ import Magnetic from '../components/Magnetic';
 import OptimizedImage from '../components/OptimizedImage';
 import ScrollReveal from '../components/ScrollReveal';
 import ScrambleText from '../components/ScrambleText';
-import useIsMobile from '../hooks/useIsMobile';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -194,7 +193,6 @@ const AnimatedMetric = ({ value, label }: { value: string; label: string }) => {
 const CaseStudy = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const isMobile = useIsMobile();
 
     const project = PROJECTS.find(p => p.id === id);
     const projectIdx = PROJECTS.findIndex(p => p.id === id);
