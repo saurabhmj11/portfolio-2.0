@@ -283,52 +283,76 @@ const GlowShell = () => {
 const codeSnippets = ['<AI/>', 'LLM', 'GPT', 'RAG', 'Transformer', 'Fine-tune', 'RLHF', 'LangChain', 'Diffusion', 'Embeddings', 'Vector DB', 'Agents'];
 
 const CodeFragment = ({ text, radius, speed, offset, tiltX, tiltZ }: {
-    text: string; radius: number; speed: number; offset: number; tiltX: number; tiltZ: number;
+    text: string
+    radius: number
+    speed: number
+    offset: number
+    tiltX: number
+    tiltZ: number
 }) => {
-    const ref = useRef<THREE.Group>(null);
+
+    const orbitRef = useRef<THREE.Group>(null)
+    const textRef = useRef<THREE.Group>(null)
+
     useFrame((state) => {
-        if (!ref.current) return;
-        const t = state.clock.getElapsedTime() * speed + offset;
-        ref.current.position.x = Math.cos(t) * radius;
-        ref.current.position.y = Math.sin(t * 0.7) * radius * 0.3;
-        ref.current.position.z = Math.sin(t) * radius;
-        // Always face camera
-        ref.current.quaternion.copy(state.camera.quaternion);
-    });
+
+        if (!orbitRef.current || !textRef.current) return
+
+        const t = state.clock.getElapsedTime() * speed + offset
+
+        orbitRef.current.position.x = Math.cos(t) * radius
+        orbitRef.current.position.y = Math.sin(t * 0.7) * radius * 0.3
+        orbitRef.current.position.z = Math.sin(t) * radius
+
+        orbitRef.current.rotation.x = tiltX
+        orbitRef.current.rotation.z = tiltZ
+
+        textRef.current.quaternion.copy(state.camera.quaternion)
+
+    })
 
     const texture = useMemo(() => {
-        const canvas = document.createElement('canvas');
-        canvas.width = 256;
-        canvas.height = 64;
-        const ctx = canvas.getContext('2d')!;
-        ctx.clearRect(0, 0, 256, 64);
-        ctx.font = 'bold 28px monospace';
-        ctx.fillStyle = '#00eeff';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(text, 128, 32);
-        const tex = new THREE.CanvasTexture(canvas);
-        tex.flipY = false;
-        tex.needsUpdate = true;
-        return tex;
-    }, [text]);
+
+        const canvas = document.createElement("canvas")
+        canvas.width = 256
+        canvas.height = 64
+
+        const ctx = canvas.getContext("2d")!
+
+        ctx.clearRect(0, 0, 256, 64)
+        ctx.font = "bold 28px monospace"
+        ctx.fillStyle = "#00eeff"
+        ctx.textAlign = "center"
+        ctx.textBaseline = "middle"
+
+        ctx.fillText(text, 128, 32)
+
+        const tex = new THREE.CanvasTexture(canvas)
+        // Left out tex.flipY = false to prevent inversion
+        tex.needsUpdate = true
+
+        return tex
+
+    }, [text])
 
     return (
-        <group ref={ref} rotation={[tiltX, 0, tiltZ]}>
-            <mesh>
-                <planeGeometry args={[1.2, 0.3]} />
-                <meshBasicMaterial
-                    map={texture}
-                    transparent
-                    opacity={0.7}
-                    side={THREE.DoubleSide}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                />
-            </mesh>
+        <group ref={orbitRef}>
+            <group ref={textRef}>
+                <mesh>
+                    <planeGeometry args={[1.2, 0.3]} />
+                    <meshBasicMaterial
+                        map={texture}
+                        transparent
+                        opacity={0.7}
+                        side={THREE.DoubleSide}
+                        blending={THREE.AdditiveBlending}
+                        depthWrite={false}
+                    />
+                </mesh>
+            </group>
         </group>
-    );
-};
+    )
+}
 
 const OrbitingCodeFragments = () => {
     return (
@@ -350,57 +374,62 @@ const OrbitingCodeFragments = () => {
 
 // ── Click-to-Shockwave ──────────────────────────────────────────────────────
 const ShockwaveRing = ({ startTime }: { startTime: number }) => {
-    const mainRef = useRef<THREE.Mesh>(null);
-    const glowRef = useRef<THREE.Mesh>(null);
+    const groupRef = useRef<THREE.Group>(null);
+    const ringsRef = useRef<(THREE.Mesh | null)[]>([]);
 
     useFrame((state) => {
-        if (!mainRef.current || !glowRef.current) return;
+        if (!groupRef.current) return;
         const elapsed = state.clock.getElapsedTime() - startTime;
 
-        // Slower expansion for a more cinematic/epic feel
-        const mainScale = 1 + elapsed * 3;
-        const glowScale = 1 + elapsed * 2.5;
+        const duration = 3.5;
 
-        // Slower fade-out
-        const opacity = Math.max(0, 1 - elapsed * 1.0);
-
-        mainRef.current.scale.setScalar(mainScale);
-        glowRef.current.scale.setScalar(glowScale);
-
-        (mainRef.current.material as THREE.MeshBasicMaterial).opacity = opacity;
-        (glowRef.current.material as THREE.MeshBasicMaterial).opacity = opacity * 0.8; // Increased glow intensity
-
-        if (opacity <= 0) {
-            mainRef.current.visible = false;
-            glowRef.current.visible = false;
+        if (elapsed > duration) {
+            groupRef.current.visible = false;
+            return;
         }
+
+        const progress = elapsed / duration;
+        // Expo ease out for explosive start and smooth deceleration
+        const easeOutExpo = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+
+        ringsRef.current.forEach((ring, i) => {
+            if (!ring) return;
+
+            const speedObj = [8, 6.5, 9, 7];
+            const scale = 1 + easeOutExpo * speedObj[i];
+            ring.scale.setScalar(scale);
+
+            // Cubic fade out for organic dissipation
+            const opacity = Math.max(0, Math.pow(1 - progress, 3));
+
+            const mat = ring.material as THREE.MeshBasicMaterial;
+            const baseOpacities = [1, 0.6, 0.25, 0.8];
+            mat.opacity = opacity * baseOpacities[i];
+
+            ring.rotation.z = elapsed * (i % 2 === 0 ? 0.2 : -0.2) * (i + 1);
+        });
+
+        // Slight 3D tilt as it expands
+        groupRef.current.rotation.x = Math.PI / 2 + Math.sin(progress * Math.PI) * 0.15;
     });
 
     return (
-        <group rotation={[Math.PI / 2, 0, 0]}>
-            {/* Main high-intensity ring */}
-            <mesh ref={mainRef}>
-                <ringGeometry args={[1.9, 2.0, 64]} />
-                <meshBasicMaterial
-                    color="#ffffff"
-                    transparent
-                    opacity={1}
-                    side={THREE.DoubleSide}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                />
+        <group ref={groupRef} rotation={[Math.PI / 2, 0, 0]}>
+            <mesh ref={(el) => { if (el) ringsRef.current[0] = el; }}>
+                <ringGeometry args={[1.95, 2.0, 128]} />
+                <meshBasicMaterial color="#ffffff" transparent opacity={1} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthWrite={false} />
             </mesh>
-            {/* Secondary soft glow ring */}
-            <mesh ref={glowRef}>
-                <ringGeometry args={[1.7, 2.1, 64]} />
-                <meshBasicMaterial
-                    color="#00ffff"
-                    transparent
-                    opacity={0.5}
-                    side={THREE.DoubleSide}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                />
+            <mesh ref={(el) => { if (el) ringsRef.current[1] = el; }}>
+                <ringGeometry args={[1.8, 2.1, 128]} />
+                <meshBasicMaterial color="#00ffff" transparent opacity={0.6} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthWrite={false} />
+            </mesh>
+            <mesh ref={(el) => { if (el) ringsRef.current[2] = el; }}>
+                <ringGeometry args={[1.2, 2.4, 128]} />
+                <meshBasicMaterial color="#2200ff" transparent opacity={0.25} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthWrite={false} />
+            </mesh>
+            <mesh ref={(el) => { if (el) ringsRef.current[3] = el; }}>
+                <ringGeometry args={[1.88, 1.9, 128]} />
+                <meshBasicMaterial color="#00ffcc" transparent opacity={0.8} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthWrite={false} />
             </mesh>
         </group>
     );
@@ -415,74 +444,95 @@ interface BurstParticle {
 }
 
 const BurstFragment = ({ text, velocity, startTime }: BurstParticle) => {
-    const ref = useRef<THREE.Group>(null);
+
+    const orbitRef = useRef<THREE.Group>(null)
+    const textRef = useRef<THREE.Group>(null)
 
     const texture = useMemo(() => {
-        const canvas = document.createElement('canvas');
-        canvas.width = 256;
-        canvas.height = 64;
-        const ctx = canvas.getContext('2d')!;
-        ctx.clearRect(0, 0, 256, 64);
-        ctx.font = 'bold 32px monospace';
-        ctx.fillStyle = '#00ffcc';
-        ctx.strokeStyle = '#003322';
-        ctx.lineWidth = 2;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.strokeText(text, 128, 32);
-        ctx.fillText(text, 128, 32);
-        const tex = new THREE.CanvasTexture(canvas);
-        tex.flipY = false;
-        tex.needsUpdate = true;
-        return tex;
-    }, [text]);
+
+        const canvas = document.createElement("canvas")
+        canvas.width = 256
+        canvas.height = 64
+
+        const ctx = canvas.getContext("2d")!
+
+        ctx.clearRect(0, 0, 256, 64)
+
+        ctx.font = "bold 34px monospace"
+        ctx.fillStyle = "#00ffcc"
+        ctx.strokeStyle = "#003322"
+        ctx.lineWidth = 3
+
+        ctx.textAlign = "center"
+        ctx.textBaseline = "middle"
+
+        ctx.strokeText(text, 128, 32)
+        ctx.fillText(text, 128, 32)
+
+        const tex = new THREE.CanvasTexture(canvas)
+        // Left out tex.flipY = false to prevent inversion
+        tex.needsUpdate = true
+
+        return tex
+
+    }, [text])
 
     useFrame((state) => {
-        if (!ref.current) return;
-        const elapsed = state.clock.getElapsedTime() - startTime;
-        if (elapsed > 2.5) {
-            ref.current.visible = false;
-            return;
+
+        if (!orbitRef.current || !textRef.current) return
+
+        const elapsed = state.clock.getElapsedTime() - startTime
+
+        if (elapsed > 3) {
+            orbitRef.current.visible = false
+            return
         }
 
-        // Fly outward with deceleration
-        const decay = Math.max(0, 1 - elapsed * 0.4);
-        ref.current.position.x += velocity.x * 0.03 * decay;
-        ref.current.position.y += velocity.y * 0.03 * decay;
-        ref.current.position.z += velocity.z * 0.03 * decay;
+        const decay = Math.max(0, 1 - elapsed * 0.35)
 
-        // Spin
-        ref.current.rotation.z += 0.02;
+        orbitRef.current.position.x += velocity.x * 0.05 * decay
+        orbitRef.current.position.y += velocity.y * 0.05 * decay
+        orbitRef.current.position.z += velocity.z * 0.05 * decay
 
-        // Fade out
-        const opacity = Math.max(0, 1 - elapsed / 2.5);
-        const mat = (ref.current.children[0] as THREE.Mesh).material as THREE.MeshBasicMaterial;
-        mat.opacity = opacity;
+        orbitRef.current.rotation.z += 0.05
+        orbitRef.current.rotation.y += 0.02
 
-        // Scale up slightly then shrink
-        const scale = elapsed < 0.3 ? 1 + elapsed * 3 : Math.max(0.3, 1.9 - elapsed * 0.5);
-        ref.current.scale.setScalar(scale);
+        const scale =
+            elapsed < 0.2
+                ? 1 + elapsed * 5
+                : Math.max(0.4, 2.4 - elapsed * 0.6)
 
-        // Face camera
-        ref.current.quaternion.copy(state.camera.quaternion);
-    });
+        orbitRef.current.scale.setScalar(scale)
+
+        const opacity = Math.max(0, 1 - elapsed / 3)
+
+        const mat = (textRef.current.children[0] as THREE.Mesh)
+            .material as THREE.MeshBasicMaterial
+
+        mat.opacity = opacity
+
+        textRef.current.quaternion.copy(state.camera.quaternion)
+
+    })
 
     return (
-        <group ref={ref}>
-            <mesh>
-                <planeGeometry args={[1.4, 0.35]} />
-                <meshBasicMaterial
-                    map={texture}
-                    transparent
-                    opacity={1}
-                    side={THREE.DoubleSide}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                />
-            </mesh>
+        <group ref={orbitRef}>
+            <group ref={textRef}>
+                <mesh>
+                    <planeGeometry args={[1.6, 0.4]} />
+                    <meshBasicMaterial
+                        map={texture}
+                        transparent
+                        opacity={1}
+                        side={THREE.DoubleSide}
+                        blending={THREE.AdditiveBlending}
+                        depthWrite={false}
+                    />
+                </mesh>
+            </group>
         </group>
-    );
-};
+    )
+}
 
 // ── Text Burst Manager ──────────────────────────────────────────────────────
 interface BurstEvent {
@@ -491,26 +541,80 @@ interface BurstEvent {
 }
 
 const createBurst = (time: number): BurstEvent => {
-    const particles: BurstParticle[] = [];
-    // Pick 6-8 random words and give each a random outward velocity
-    const count = 6 + Math.floor(Math.random() * 3);
+
+    const particles: BurstParticle[] = []
+
+    const count = 10 + Math.floor(Math.random() * 6)
+
     for (let i = 0; i < count; i++) {
-        const text = burstWords[Math.floor(Math.random() * burstWords.length)];
-        const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
-        const upAngle = (Math.random() - 0.5) * Math.PI;
-        const speed = 2 + Math.random() * 3;
+
+        const text =
+            burstWords[Math.floor(Math.random() * burstWords.length)]
+
+        const angle =
+            (i / count) * Math.PI * 2 + Math.random() * 0.5
+
+        const upAngle = (Math.random() - 0.5) * Math.PI
+
+        const speed = 6 + Math.random() * 5
+
         particles.push({
+
             text,
+
             velocity: new THREE.Vector3(
                 Math.cos(angle) * Math.cos(upAngle) * speed,
                 Math.sin(upAngle) * speed,
                 Math.sin(angle) * Math.cos(upAngle) * speed
             ),
-            startTime: time,
-        });
+
+            startTime: time
+
+        })
     }
-    return { time, particles };
-};
+
+    return { time, particles }
+
+}
+
+const ExplosionFlash = ({ startTime }: { startTime: number }) => {
+
+    const ref = useRef<THREE.Mesh>(null)
+
+    useFrame((state) => {
+
+        if (!ref.current) return
+
+        const elapsed = state.clock.getElapsedTime() - startTime
+
+        if (elapsed > 0.4) {
+            ref.current.visible = false
+            return
+        }
+
+        const scale = 1 + elapsed * 12
+        const opacity = 1 - elapsed * 2.5
+
+        ref.current.scale.setScalar(scale)
+
+        const mat = ref.current.material as THREE.MeshBasicMaterial
+        mat.opacity = opacity
+
+    })
+
+    return (
+        <mesh ref={ref}>
+            <sphereGeometry args={[2, 32, 32]} />
+            <meshBasicMaterial
+                color="#00ffff"
+                transparent
+                opacity={1}
+                blending={THREE.AdditiveBlending}
+                depthWrite={false}
+            />
+        </mesh>
+    )
+}
 
 // ── Scene ───────────────────────────────────────────────────────────────────
 const Scene = () => {
@@ -562,6 +666,9 @@ const Scene = () => {
                         />
                     ))
                 )}
+                {bursts.map((b, i) => (
+                    <ExplosionFlash key={`flash-${i}-${b.time}`} startTime={b.time} />
+                ))}
             </group>
         </>
     );

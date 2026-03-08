@@ -77,8 +77,8 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
                 }
 
                 case 'scaleReveal': {
-                    // Incoming section scales from 0.95 → 1.0 with slight parallax
-                    gsap.set(toEl, { scale: 0.95, transformOrigin: 'center top' });
+                    // Incoming section slides up with slight parallax while outgoing moves down
+                    gsap.set(toEl, { transformOrigin: 'center top', clearProps: 'scale' });
 
                     ScrollTrigger.create({
                         trigger: markerRef.current,
@@ -87,18 +87,17 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
                         scrub: 1.2,
                         onUpdate: (self) => {
                             const p = self.progress;
-                            gsap.set(toEl, { scale: 0.95 + p * 0.05 });
                             gsap.set(fromEl, {
                                 y: `${p * -30}px`,
                                 opacity: 1 - p * 0.3,
                             });
                         },
                         onLeaveBack: () => {
-                            gsap.set(toEl, { scale: 0.95 });
+                            gsap.set(toEl, { clearProps: 'scale' });
                             gsap.set(fromEl, { y: '0px', opacity: 1 });
                         },
                         onLeave: () => {
-                            gsap.set(toEl, { scale: 1 });
+                            gsap.set(toEl, { clearProps: 'scale' });
                             gsap.set(fromEl, { y: '0px', opacity: 1 });
                         },
                     });

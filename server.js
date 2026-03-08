@@ -100,7 +100,7 @@ app.post('/send-message', async (req, res) => {
     try {
       await resend.emails.send({
         from: 'Saurabh Lokhande <onboarding@resend.dev>',
-        to: email,
+        to: email, // <--- Sent to the user who filled the form
         subject: `Thanks for reaching out, ${name}! — Message Received`,
         html: `
           <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0a; border: 1px solid #1a1a2e; border-radius: 16px; overflow: hidden;">
@@ -139,7 +139,7 @@ app.post('/send-message', async (req, res) => {
             </div>
           </div>
         `,
-        reply_to: process.env.RECIPIENT_EMAIL || 'saurabhmj11@gmail.com',
+        reply_to: process.env.RECIPIENT_EMAIL || 'saurabhmj11@gmail.com', // <--- So they can reply to YOU
       });
       console.log(`✓ Confirmation receipt sent to ${email}`);
     } catch (receiptError) {
