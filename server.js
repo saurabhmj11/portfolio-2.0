@@ -237,6 +237,112 @@ app.delete('/api/posts/:slug', requireAuth, (req, res) => {
 });
 
 
+import { GoogleGenAI } from '@google/genai';
+
+// Initialize Gemini if API key is present
+let ai = null;
+if (process.env.GEMINI_API_KEY) {
+  ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  console.log('✓ Gemini API initialized');
+} else {
+  console.log('⚠ GEMINI_API_KEY not set — chatbot will use fallback responses');
+}
+
+// System prompt defining the AI's persona and knowledge base
+const SYSTEM_PROMPT = `
+You are an AI assistant representing Saurabh Lokhande, an LLM Engineer.
+Your job is to answer questions about his professional background, skills, and projects in a friendly, concise, and professional tone.
+Do NOT invent information. If you don't know the answer based on the provided context, gracefully admit it and suggest contacting him directly.
+Keep your answers relatively short (under 4-5 sentences ideally) as they are displayed in a small chat widget on his portfolio.
+
+--- Context about Saurabh ---
+Name: Saurabh Lokhande
+Title: LLM Engineer | RAG • AI Agents • LLM Systems
+Email: saurabhmj11@gmail.com
+Phone: +91-7767913887
+Location: Open to Relocation | Immediate Joiner
+
+Summary: LLM Engineer with ~2 years of hands-on experience building production-grade AI systems using Large Language Models, Retrieval-Augmented Generation (RAG), and multi-agent architectures. Specialized in local-first LLM deployment (Ollama), agentic workflows (LangChain / LangGraph), and scalable FastAPI backends. Experienced in designing end-to-end AI pipelines including document ingestion, semantic chunking, embeddings, vector search, agent orchestration, and grounded answer generation.
+
+Core Skills:
+- LLM Systems & RAG: End-to-end RAG architectures, Semantic chunking & Embeddings, Vector DBs (FAISS, Qdrant, Pinecone)
+- AI Agents: LangChain, LangGraph, CrewAI
+- LLMs & GenAI: Ollama (Local), OpenAI (GPT), Claude, Gemini, Mistral
+- Backend & Engineering: Python (Advanced), FastAPI, Docker
+
+Key Projects:
+1. HireMeOS: Autonomous AI career system with multi-agent pipelines for resume analysis.
+2. Autonomous Research Agent: Multi-agent RAG system for researching and writing reports using LangGraph and Ollama.
+3. DataOS: Local-first AI assistant for structured dataset analysis.
+4. NeuroAdaptive Quiz Engine: Context-aware learning system.
+
+Experience:
+Freelance & Product Projects (Jan 2024 - Present): Built multiple production-grade LLM systems, complete RAG workflows, multi-agent planners, and FastAPI backends.
+
+Education: B.Tech in Computer Science (First Class), Amravati University (2019-2023)
+`;
+
+// Default fallback response logic (used if API key is missing or fails)
+const getFallbackResponse = (input) => {
+  const lowerInput = input.toLowerCase();
+  if (lowerInput.includes('skill') || lowerInput.includes('tools')) {
+    return "Core Expertise: LLM Systems & RAG, AI Agents (LangChain, LangGraph). Proficient in Python (FastAPI), Local LLMs (Ollama), and Vector DBs.";
+  } else if (lowerInput.includes('project')) {
+    return "Saurabh's Flagships: HireMeOS, Autonomous Research Agent, DataOS, and NeuroAdaptive Quiz Engine.";
+  } else if (lowerInput.includes('contact') || lowerInput.includes('email')) {
+    return "Contact Saurabh directly: saurabhmj11@gmail.com | +91-7767913887";
+  }
+  return "I am currently running in offline mode. Please contact Saurabh at saurabhmj11@gmail.com for more details!";
+};
+
+// Chatbot Endpoint
+app.post('/api/chat', async (req, res) => {
+  const { messages } = req.body;
+
+  // Safety check - we need an array of messages
+  if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({ error: 'Invalid messages array provided.' });
+  }
+
+  const lastMessage = messages[messages.length - 1].text;
+
+  if (!ai) {
+    // Fallback if no API key
+    return res.json({ response: getFallbackResponse(lastMessage) });
+  }
+
+  try {
+    // Format previous messages for Gemini context (optional, but good for follow-ups)
+    // Gemini expects 'user' or 'model' roles. We'll construct a single combined prompt for simplicity 
+    // in this free tier implementation to ensure context is always strongly grounded.
+
+    let conversationHistory = "";
+    // Only take the last 5 messages to avoid blowing up the context window unnecessarily
+    const recentMessages = messages.slice(-5);
+    recentMessages.forEach(msg => {
+      conversationHistory += `\n${msg.sender === 'user' ? 'User' : 'Assistant'}: ${msg.text}`;
+    });
+
+    const fullPrompt = `${SYSTEM_PROMPT}\n\nRecent Conversation:${conversationHistory}\n\nAssistant:`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: fullPrompt,
+      config: {
+        temperature: 0.3, // keep responses grounded and factual
+      }
+    });
+
+    return res.json({ response: response.text });
+
+  } catch (error) {
+    console.error("Gemini API Error:", error);
+    return res.json({
+      response: "I'm having a little trouble connecting to my neural net right now. You can always email Saurabh at saurabhmj11@gmail.com!"
+    });
+  }
+});
+
 // Default route
 app.get('/', (req, res) => {
   res.send('Server is running!');

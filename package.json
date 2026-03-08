@@ -6,12 +6,15 @@
   "scripts": {
     "dev": "vite",
     "server": "node server.js",
-    "build": "vite build && node scripts/generate-sitemap.js",
+    "build": "tsc -b && vite build",
+    "prebuild": "node scripts/generate-blog.js",
+    "blog:sync": "node scripts/generate-blog.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest"
   },
   "dependencies": {
+    "@google/genai": "^1.44.0",
     "@gsap/react": "^2.1.0",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
@@ -55,6 +58,7 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.11",
     "globals": "^15.9.0",
+    "gray-matter": "^4.0.3",
     "happy-dom": "^20.5.0",
     "jsdom": "^27.0.1",
     "postcss": "^8.4.35",

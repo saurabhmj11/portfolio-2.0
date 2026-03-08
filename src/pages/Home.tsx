@@ -6,6 +6,7 @@ import Services from '../components/Services';
 import ScrollConnector from '../components/ScrollConnector';
 import BackgroundFlow from '../components/BackgroundFlow';
 import SectionMorph from '../components/SectionMorph';
+import LiveStats from '../components/LiveStats';
 
 // Lazy load heavy components for performance
 const Experience = React.lazy(() => import('../components/Experience'));
@@ -26,6 +27,7 @@ const Home = () => {
                 <Hero />
                 <SectionMorph from="#home" to="#about" effect="scaleReveal" />
                 <About />
+                <LiveStats />
                 <Skills />
                 <SectionMorph from="#skills" to="#services" effect="colorShift" />
                 <Services />

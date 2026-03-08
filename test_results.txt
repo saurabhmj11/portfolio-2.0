@@ -1,0 +1,32 @@
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mF:/portfolio-2.0-main[39m
+
+ [32mΓ£ô[39m src/components/__tests__/Smoke.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 11[2mms[22m[39m
+ [32mΓ£ô[39m src/hooks/useIsMobile.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 77[2mms[22m[39m
+stderr | src/components/Footer.test.tsx > Footer Component > renders the marquee text
+Warning: React does not recognize the `whileHover` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `whilehover` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at div
+    at F:\portfolio-2.0-main\src\components\Footer.test.tsx:19:10
+    at a
+    at div
+    at default (F:\portfolio-2.0-main\src\components\Footer.test.tsx:10:15)
+    at div
+    at PredictiveSocialDock (F:\portfolio-2.0-main\src\components\Footer.tsx:339:41)
+    at div
+    at default (F:\portfolio-2.0-main\src\components\Footer.test.tsx:3:15)
+    at div
+    at footer
+    at Footer
+    at Router (F:\portfolio-2.0-main\node_modules\react-router\dist\umd\react-router.development.js:1207:17)
+    at BrowserRouter (F:\portfolio-2.0-main\node_modules\react-router-dom\dist\umd\react-router-dom.development.js:695:7)
+ΓÜá∩╕Å React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+ΓÜá∩╕Å React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ [32mΓ£ô[39m src/components/Footer.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 820[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m Footer Component[2m > [22mrenders the marquee text [33m448[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 15:09:45
+[2m   Duration [22m 54.69s[2m (transform 1.08s, setup 30.52s, collect 35.40s, tests 909ms, environment 26.43s, prepare 4.96s)[22m
+

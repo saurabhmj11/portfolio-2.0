@@ -1,0 +1,1140 @@
+diff --git a/index.html b/index.html
+index db1925a..1d1db39 100644
+--- a/index.html
++++ b/index.html
+@@ -113,12 +113,7 @@
+   <!-- Fonts — display=swap for no FOIT -->
+   <link
+     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+-    rel="stylesheet" media="print" onload="this.media='all'" />
+-  <noscript>
+-    <link
+-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+-      rel="stylesheet" />
+-  </noscript>
++    rel="stylesheet" />
+ </head>
+ 
+ <body>
+diff --git a/public/sitemap.xml b/public/sitemap.xml
+index e3f6dcd..a7a248d 100644
+--- a/public/sitemap.xml
++++ b/public/sitemap.xml
+@@ -3,16 +3,22 @@
+   <!-- Static Routes -->
+   <url>
+     <loc>https://saurabh-anil-lokhande.netlify.app/</loc>
+-    <lastmod>2026-02-21</lastmod>
++    <lastmod>2026-03-06</lastmod>
+     <changefreq>weekly</changefreq>
+     <priority>1.0</priority>
+   </url>
+   <url>
+     <loc>https://saurabh-anil-lokhande.netlify.app/blog</loc>
+-    <lastmod>2026-02-21</lastmod>
++    <lastmod>2026-03-06</lastmod>
+     <changefreq>daily</changefreq>
+     <priority>0.8</priority>
+   </url>
++  <url>
++    <loc>https://saurabh-anil-lokhande.netlify.app/blog/trending-tech-topics</loc>
++    <lastmod>2026-02-28</lastmod>
++    <changefreq>monthly</changefreq>
++    <priority>0.7</priority>
++  </url>
+   <url>
+     <loc>https://saurabh-anil-lokhande.netlify.app/blog/generative-ai-software-engineering</loc>
+     <lastmod>2024-02-15</lastmod>
+diff --git a/server.js b/server.js
+index d9bbb13..ccbace2 100644
+--- a/server.js
++++ b/server.js
+@@ -45,6 +45,10 @@ const readPosts = () => {
+ 
+ // Helper to write posts
+ const writePosts = (posts) => {
++  const dir = path.dirname(DATA_FILE);
++  if (!fs.existsSync(dir)) {
++    fs.mkdirSync(dir, { recursive: true });
++  }
+   fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2));
+ };
+ 
+@@ -66,13 +70,19 @@ const requireAuth = (req, res, next) => {
+ 
+ import { Resend } from 'resend';
+ 
+-// Initialize Resend
+-const resend = new Resend(process.env.RESEND_API_KEY);
++// Initialize Resend safely - avoid crashing the entire server if the key is missing locally
++const resendApiKey = process.env.RESEND_API_KEY;
++const resend = resendApiKey ? new Resend(resendApiKey) : null;
+ 
+ // POST route for form submission
+ app.post('/send-message', async (req, res) => {
+   const { name, email, message } = req.body;
+ 
++  if (!resend) {
++    console.warn('Resend API key missing. Form submission bypassed.');
++    return res.status(500).json({ error: 'Mail service not configured.' });
++  }
++
+   try {
+     const data = await resend.emails.send({
+       from: 'Portfolio Contact Form <onboarding@resend.dev>',
+diff --git a/src/App.tsx b/src/App.tsx
+index efb9ac2..0ff6e4d 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -63,14 +63,14 @@ function App() {
+         <HelmetProvider>
+           <Analytics />
+           <Seo />
+-          <SmoothScroll>
+-            <Spotlight />
+-            <CustomCursor />
+-            <AudioVisualizer />
+-            <AnimatePresence mode="wait">
+-              {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
+-            </AnimatePresence>
++          <Spotlight />
++          <CustomCursor />
++          <AudioVisualizer />
++          <AnimatePresence mode="wait">
++            {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
++          </AnimatePresence>
+ 
++          <SmoothScroll>
+             {!isLoading && (
+               <React.Fragment>
+                 <motion.div
+@@ -83,7 +83,7 @@ function App() {
+                 />
+ 
+                 {/* Main Content */}
+-                <div className={`relative z-10 min-h-screen ${isDark ? 'dark' : ''} bg-off-white shadow-2xl`}>
++                <div className={`relative z-10 min-h-screen ${isDark ? 'dark' : ''} bg-black`}>
+                   {/* Noise Overlay */}
+                   <div className="noise-overlay" />
+ 
+diff --git a/src/components/AIParticles.tsx b/src/components/AIParticles.tsx
+index 44816a0..4da932c 100644
+--- a/src/components/AIParticles.tsx
++++ b/src/components/AIParticles.tsx
+@@ -14,8 +14,8 @@ const AIParticles = () => {
+     canvas.width = width;
+     canvas.height = height;
+ 
+-    let mouse = { x: -1000, y: -1000 };
+-    let tilt = { x: 0, y: 0 };
++    const mouse = { x: -1000, y: -1000 };
++    const tilt = { x: 0, y: 0 };
+     let hasGyro = false;
+ 
+     const handleMouseMove = (e: MouseEvent) => {
+diff --git a/src/components/About.tsx b/src/components/About.tsx
+index b4a0e41..b88c2ab 100644
+--- a/src/components/About.tsx
++++ b/src/components/About.tsx
+@@ -26,34 +26,37 @@ const About = () => {
+       const headlineText = 'CREATING THE FUTURE OF AI';
+       const bioText = "Hi, I'm Saurabh — An AI Engineer & Full Stack Developer. My focus is on building intelligent, scalable, and immersive applications that bridge the gap between human creativity and artificial intelligence.";
+ 
+-      if (headlineRef.current) headlineRef.current.innerHTML = '';
+-      if (bioRef.current) bioRef.current.innerHTML = '';
+-
+-      // Headline spans
+-      headlineText.split(' ').forEach(word => {
+-        const wordDiv = document.createElement('div');
+-        wordDiv.className = 'inline-flex mx-[1vw] overflow-visible';
+-        word.split('').forEach(char => {
+-          const span = document.createElement('span');
+-          span.innerText = char;
+-          span.className = 'large-char text-[8vw] md:text-[10vw] font-black text-[#ffffff] leading-none uppercase inline-block will-change-transform will-change-opacity';
+-          wordDiv.appendChild(span);
++      // Use a more stable approach for characters to avoid repeated population
++      const headlineWords = headlineText.split(' ');
++      const bioWords = bioText.split(' ');
++
++      if (headlineRef.current && headlineRef.current.children.length === 0) {
++        headlineWords.forEach(word => {
++          const wordDiv = document.createElement('div');
++          wordDiv.className = 'inline-flex mx-[1vw] overflow-visible';
++          word.split('').forEach(char => {
++            const span = document.createElement('span');
++            span.innerText = char;
++            span.className = 'large-char text-[8vw] md:text-[10vw] font-black text-[#ffffff] leading-none uppercase inline-block will-change-transform';
++            wordDiv.appendChild(span);
++          });
++          headlineRef.current?.appendChild(wordDiv);
+         });
+-        headlineRef.current?.appendChild(wordDiv);
+-      });
++      }
+ 
+-      // Bio spans
+-      bioText.split(' ').forEach(word => {
+-        const wordDiv = document.createElement('div');
+-        wordDiv.className = 'inline-flex mr-[0.4rem] overflow-visible';
+-        word.split('').forEach(char => {
+-          const span = document.createElement('span');
+-          span.innerText = char;
+-          span.className = 'bio-char inline-block will-change-transform will-change-opacity opacity-0 text-gray-400 text-base md:text-xl font-medium tracking-wide';
+-          wordDiv.appendChild(span);
++      if (bioRef.current && bioRef.current.children.length === 0) {
++        bioWords.forEach(word => {
++          const wordDiv = document.createElement('div');
++          wordDiv.className = 'inline-flex mr-[0.4rem] overflow-visible';
++          word.split('').forEach(char => {
++            const span = document.createElement('span');
++            span.innerText = char;
++            span.className = 'bio-char inline-block will-change-transform opacity-0 text-gray-400 text-base md:text-xl font-medium tracking-wide';
++            wordDiv.appendChild(span);
++          });
++          bioRef.current?.appendChild(wordDiv);
+         });
+-        bioRef.current?.appendChild(wordDiv);
+-      });
++      }
+ 
+       const largeChars = headlineRef.current!.querySelectorAll('.large-char');
+       const bioChars = bioRef.current!.querySelectorAll('.bio-char');
+@@ -62,37 +65,61 @@ const About = () => {
+         scrollTrigger: {
+           trigger: sectionRef.current,
+           start: 'top top',
+-          end: '+=40%',
++          end: '+=250%', // Significantly longer for complex character assembly
+           pin: true,
+-          scrub: 0.5,
++          scrub: 1.5, // Even smoother
++          anticipatePin: 1,
+         }
+       });
+ 
+-      // A: Explode headline
+-      largeChars.forEach(char => {
+-        const randomX = (Math.random() - 0.5) * window.innerWidth * 1.5;
+-        const randomY = (Math.random() - 0.5) * window.innerHeight * 1.5;
+-        const randomRot = (Math.random() - 0.5) * 360;
+-        tl.to(char, { x: randomX, y: randomY, rotation: randomRot, opacity: 0, duration: 2, ease: 'power3.in' }, 0);
+-      });
++      // A: Explode headline (Use stagger for efficiency)
++      tl.to(largeChars, {
++        x: () => (Math.random() - 0.5) * window.innerWidth * 1.5,
++        y: () => (Math.random() - 0.5) * window.innerHeight * 1.5,
++        rotation: () => (Math.random() - 0.5) * 360,
++        opacity: 0,
++        duration: 3,
++        stagger: {
++          each: 0.01,
++          from: "random"
++        },
++        ease: 'power2.inOut'
++      }, 0);
+ 
+       // B: Reveal profile image
+-      gsap.set(imageRef.current, { scale: 0.5, opacity: 0 });
+-      tl.to(imageRef.current, { scale: 1, opacity: 1, duration: 1.5, ease: 'power2.out' }, 0.5);
+-
+-      // C: Assemble bio text
+-      bioChars.forEach(char => {
+-        const randomX = (Math.random() - 0.5) * 500;
+-        const randomY = (Math.random() - 0.5) * 500;
+-        const randomZ = (Math.random() - 0.5) * 200;
+-        gsap.set(char, { x: randomX, y: randomY, z: randomZ, opacity: 0 });
+-        tl.to(char, { x: 0, y: 0, z: 0, opacity: 1, duration: 1.5, ease: 'power3.out' }, 0.5);
+-      });
+-
+-      // D: Counter-up stats (animate numeric value in each stat element)
++      gsap.set(imageRef.current, { scale: 0.8, opacity: 0, filter: 'blur(10px)' });
++      tl.to(imageRef.current, {
++        scale: 1,
++        opacity: 1,
++        filter: 'blur(0px)',
++        duration: 2,
++        ease: 'power2.out'
++      }, 0.8);
++
++      // C: Assemble bio text (Use stagger)
++      tl.fromTo(bioChars,
++        {
++          x: () => (Math.random() - 0.5) * 600,
++          y: () => (Math.random() - 0.5) * 600,
++          opacity: 0,
++          scale: 0
++        },
++        {
++          x: 0,
++          y: 0,
++          opacity: 1,
++          scale: 1,
++          duration: 2,
++          ease: 'back.out(1.2)',
++          stagger: 0.005
++        },
++        1.2
++      );
++
++      // D: Counter-up stats
+       if (statsRef.current) {
+-        gsap.set(statsRef.current, { opacity: 0, y: 30 });
+-        tl.to(statsRef.current, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }, 0.6);
++        gsap.set(statsRef.current, { opacity: 0, y: 50 });
++        tl.to(statsRef.current, { opacity: 1, y: 0, duration: 1.5, ease: 'power3.out' }, 1.5);
+ 
+         STATS.forEach((stat, i) => {
+           const el = statsRef.current!.querySelectorAll('.stat-num')[i] as HTMLElement;
+@@ -100,10 +127,10 @@ const About = () => {
+           const obj = { val: 0 };
+           tl.to(obj, {
+             val: stat.value,
+-            duration: 1.2,
++            duration: 2,
+             ease: 'power2.out',
+             onUpdate: () => { el.textContent = Math.round(obj.val) + stat.suffix; }
+-          }, 0.7);
++          }, 1.8);
+         });
+       }
+ 
+diff --git a/src/components/CustomCursor.tsx b/src/components/CustomCursor.tsx
+index c2f3650..3fd0b22 100644
+--- a/src/components/CustomCursor.tsx
++++ b/src/components/CustomCursor.tsx
+@@ -2,43 +2,53 @@ import { useEffect, useState } from 'react';
+ import { motion, useMotionValue, useSpring } from 'framer-motion';
+ 
+ const CustomCursor = () => {
+-    // Disable completely on mobile touch screens to save battery and prevent dual-cursors
+-    const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+-    if (isTouchDevice) return null;
+-
++    // Determine state
+     const [isHovering, setIsHovering] = useState(false);
+ 
+-    const cursorSize = isHovering ? 20 : 15;
++    // Disable on touch screens hook-safe check
++    const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+ 
++    // Mouse coordinates (instant)
+     const mouse = {
+-        x: useMotionValue(0),
+-        y: useMotionValue(0)
+-    }
++        x: useMotionValue(-100),
++        y: useMotionValue(-100)
++    };
+ 
+-    // Smooth physics for the main cursor
+-    const smoothOptions = { damping: 20, stiffness: 300, mass: 0.5 }
++    // Outer ring physics - loose and fluid
++    const smoothOptions = { damping: 20, stiffness: 150, mass: 0.8 };
+     const smoothMouse = {
+         x: useSpring(mouse.x, smoothOptions),
+         y: useSpring(mouse.y, smoothOptions)
+-    }
++    };
++
++    // Inner dot physics - snappy and tight
++    const quickOptions = { damping: 30, stiffness: 400, mass: 0.1 };
++    const quickMouse = {
++        x: useSpring(mouse.x, quickOptions),
++        y: useSpring(mouse.y, quickOptions)
++    };
+ 
+     useEffect(() => {
+         const manageMouseMove = (e: MouseEvent) => {
+             const { clientX, clientY } = e;
+-            mouse.x.set(clientX - cursorSize / 2);
+-            mouse.y.set(clientY - cursorSize / 2);
+-        }
++            mouse.x.set(clientX);
++            mouse.y.set(clientY);
++        };
+ 
+         const manageMouseOver = (e: MouseEvent) => {
+             const target = e.target as HTMLElement;
+-            if (target.tagName.toLowerCase() === 'a' || target.closest('a') ||
++            // Detect clickable elements
++            if (
++                target.tagName.toLowerCase() === 'a' || target.closest('a') ||
+                 target.tagName.toLowerCase() === 'button' || target.closest('button') ||
+-                target.classList.contains('magnetic-target')) {
++                // Keep backwards compatibility for any custom magnetic targets
++                target.classList.contains('magnetic-target') || target.closest('.magnetic-target')
++            ) {
+                 setIsHovering(true);
+             } else {
+                 setIsHovering(false);
+             }
+-        }
++        };
+ 
+         window.addEventListener("mousemove", manageMouseMove);
+         window.addEventListener("mouseover", manageMouseOver);
+@@ -46,36 +56,48 @@ const CustomCursor = () => {
+         return () => {
+             window.removeEventListener("mousemove", manageMouseMove);
+             window.removeEventListener("mouseover", manageMouseOver);
+-        }
+-    }, [isHovering, cursorSize]);
++        };
++    }, []);
++
++    if (isTouchDevice) return null;
++
++    // Size variants
++    const ringSize = isHovering ? 64 : 40;
+ 
+     return (
+-        <>
++        <div className="pointer-events-none fixed inset-0 z-[9999] mix-blend-exclusion">
++
++            {/* Fluid Outer Ring */}
+             <motion.div
+                 style={{
+                     left: smoothMouse.x,
+                     top: smoothMouse.y,
++                    x: "-50%",
++                    y: "-50%",
++                    width: ringSize,
++                    height: ringSize,
+                 }}
+-                className="fixed z-[9999] pointer-events-none mix-blend-difference"
+-            >
+-                <motion.div
+-                    animate={{
+-                        scale: isHovering ? 4 : 1
+-                    }}
+-                    transition={{ duration: 0.3, ease: "backOut" }}
+-                    className="w-[20px] h-[20px] bg-white rounded-full"
+-                />
+-            </motion.div>
++                animate={{
++                    backgroundColor: isHovering ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0)",
++                    border: isHovering ? "0px solid white" : "1px solid rgba(255, 255, 255, 0.5)",
++                }}
++                transition={{ duration: 0.3, ease: "circOut" }}
++                className="absolute rounded-full pointer-events-none"
++            />
++
++            {/* Snappy Inner Dot */}
+             <motion.div
+                 style={{
+-                    left: mouse.x,
+-                    top: mouse.y,
++                    left: quickMouse.x,
++                    top: quickMouse.y,
++                    x: "-50%",
++                    y: "-50%",
++                    scale: isHovering ? 0 : 1, // Shrink to 0 when hovering to let the Big ring take over
+                 }}
+-                className="fixed z-[9999] pointer-events-none mix-blend-difference"
+-            >
+-                <div className="w-[10px] h-[10px] bg-white rounded-full" />
+-            </motion.div>
+-        </>
++                transition={{ duration: 0.15 }}
++                className="absolute w-[8px] h-[8px] bg-white rounded-full pointer-events-none"
++            />
++        </div>
+     );
+ };
+ 
+diff --git a/src/components/Experience.tsx b/src/components/Experience.tsx
+index bd07234..873bef4 100644
+--- a/src/components/Experience.tsx
++++ b/src/components/Experience.tsx
+@@ -1,8 +1,9 @@
+-import { useState, useEffect } from 'react';
+-import { motion, AnimatePresence } from 'framer-motion';
++import { useRef } from 'react';
++import { motion, useScroll } from 'framer-motion';
+ import { useInView } from 'react-intersection-observer';
+ import { BookOpen, BarChart, Code2, Brain } from 'lucide-react';
+ import VelocityText from './VelocityText';
++import Evolution3D from './Evolution3D';
+ 
+ const experiences = [
+     {
+@@ -55,87 +56,13 @@ const experiences = [
+     }
+ ];
+ 
+-const EvolutionGraphic = ({ index }: { index: number }) => {
+-    const activeExp = experiences[index];
+-
+-    return (
+-        <div className="relative w-full h-full flex items-center justify-center pointer-events-none scale-75 md:scale-100 min-h-[400px]">
+-            {/* Massive Ambient Background Glow */}
+-            <div className="absolute inset-0 flex items-center justify-center transition-all duration-1000 mix-blend-screen">
+-                <div className={`w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full blur-[100px] opacity-20 md:opacity-30 transition-colors duration-1000 ${activeExp.bg}`}
+-                />
+-            </div>
+-
+-            {/* Giant Background Number */}
+-            <AnimatePresence mode="wait">
+-                <motion.div
+-                    key={`number-${index}`}
+-                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
+-                    animate={{ opacity: 0.03, scale: 1, y: 0 }}
+-                    exit={{ opacity: 0, scale: 0.8, y: -20 }}
+-                    transition={{ duration: 0.8 }}
+-                    className="absolute text-[250px] md:text-[400px] font-black font-display text-white z-0 pointer-events-none select-none leading-none flex items-center justify-center"
+-                >
+-                    {index + 1}
+-                </motion.div>
+-            </AnimatePresence>
+-
+-            {/* The Evolving Core (Persistent Render, only styling changes) */}
+-            <div className="relative z-10 w-64 h-64 md:w-96 md:h-96 rounded-full bg-black/40 backdrop-blur-2xl border border-white/10 flex items-center justify-center shadow-2xl transition-all duration-1000">
+-
+-                {/* Expanding animated rings representing growth */}
+-                {Array.from({ length: 4 }).map((_, i) => (
+-                    <motion.div
+-                        key={`ring-${i}`}
+-                        className={`absolute rounded-full border border-white/10 transition-opacity duration-1000 ${i <= index ? 'opacity-100' : 'opacity-0'}`}
+-                        style={{
+-                            width: `${100 + i * 25}%`,
+-                            height: `${100 + i * 25}%`
+-                        }}
+-                        animate={{ rotate: 360 }}
+-                        transition={{ duration: 15 + i * 5, repeat: Infinity, ease: "linear" }}
+-                    />
+-                ))}
+-
+-                {/* The Inner Glowing Badge */}
+-                <div
+-                    className={`w-32 h-32 md:w-48 md:h-48 rounded-full ${activeExp.bg} bg-opacity-10 flex items-center justify-center shadow-[0_0_60px_rgba(0,0,0,0.3)] border border-white/20 transition-colors duration-1000`}
+-                    style={{ borderLeftColor: 'transparent', borderTopColor: 'transparent' }}
+-                >
+-                    {/* The Icons (Rendered simultaneously, faded via opacity to prevent unmount glitching) */}
+-                    <div className="relative w-full h-full flex items-center justify-center">
+-                        {experiences.map((exp, i) => {
+-                            const IconComponent = exp.icon;
+-                            const isActive = i === index;
+-                            return (
+-                                <IconComponent
+-                                    key={`icon-${i}`}
+-                                    className={`absolute w-12 h-12 md:w-20 md:h-20 ${exp.color} drop-shadow-2xl transition-all duration-700 ease-in-out ${isActive ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 -rotate-45'}`}
+-                                    strokeWidth={isActive ? 1.5 : 1}
+-                                />
+-                            );
+-                        })}
+-                    </div>
+-                </div>
+-            </div>
+-
+-        </div>
+-    );
+-};
+-
+-const ExperienceBlock = ({ exp, index, setActiveIndex }: any) => {
++const ExperienceBlock = ({ exp }: any) => {
+     // Ultra-precise horizontal center trigger line (like an intersection laser)
+     const { ref, inView } = useInView({
+         threshold: 0.1, // Trigger as soon as 10% is visible
+         rootMargin: "-10% 0px -10% 0px" // More relaxed margins to ensure activation across viewport sizes
+     });
+ 
+-    useEffect(() => {
+-        if (inView) {
+-            setActiveIndex(index);
+-        }
+-    }, [inView, index, setActiveIndex]);
+-
+     return (
+         <div ref={ref} className="min-h-[70vh] flex flex-col justify-center py-10 pr-4 pl-4 md:pl-20 max-w-3xl relative z-10 pointer-events-auto">
+             <motion.div
+@@ -173,10 +100,18 @@ const ExperienceBlock = ({ exp, index, setActiveIndex }: any) => {
+ };
+ 
+ const Experience = () => {
+-    const [activeIndex, setActiveIndex] = useState(0);
++    const containerRef = useRef<HTMLElement>(null);
++
++    // Using Framer Motion's useScroll completely eliminates React re-renders on scroll
++    // By passing this MotionValue down to the 3D scene, we bypass React's render cycle
++    // and interface directly with ThreeJS's useFrame loop, providing 60fps locking.
++    const { scrollYProgress } = useScroll({
++        target: containerRef,
++        offset: ["start start", "end end"]
++    });
+ 
+     return (
+-        <section id="experience" className="relative bg-[#050505] text-white">
++        <section ref={containerRef} id="experience" className="relative bg-[#050505] text-white">
+ 
+             {/* Background Text Overlay */}
+             <div className="absolute top-[10%] left-0 w-full opacity-5 pointer-events-none z-0 mix-blend-overlay overflow-hidden">
+@@ -188,36 +123,38 @@ const Experience = () => {
+             </div>
+ 
+             {/* Header */}
+-            <div className="absolute top-20 left-10 md:left-24 z-20">
++            <div className="absolute top-20 left-10 md:left-24 z-20 pointer-events-none">
+                 <h2 className="text-[12px] uppercase tracking-widest text-gray-500 mb-2">My Journey</h2>
+                 <h3 className="text-4xl md:text-5xl font-bold tracking-tighter">Growth Trajectory</h3>
+             </div>
+ 
+-            {/* Main Flex Layout */}
+-            <div className="relative w-full max-w-7xl mx-auto flex flex-col md:flex-row pt-[10vh]">
++            {/* Main Flex Layout - Fix: use flex relative layout, no absolute positioning for the columns themselves */}
++            <div className="relative w-full max-w-[1600px] mx-auto flex flex-col md:flex-row pt-[10vh]">
+ 
+                 {/* Scrollable Text Blocks (Left Side) */}
+-                <div className="w-full md:w-1/2 flex flex-col pt-[10vh] pb-[20vh] z-10 px-4 md:px-0 relative">
++                <div className="w-full md:w-1/2 flex flex-col pt-[20vh] pb-[40vh] z-10 px-4 md:px-12 relative">
+                     {experiences.map((exp, i) => (
+                         <ExperienceBlock
+                             key={i}
+                             exp={exp}
+-                            index={i}
+-                            setActiveIndex={setActiveIndex}
+                         />
+                     ))}
+                 </div>
+ 
+                 {/* Sticky Graphic (Right Side) */}
+-                <div className="absolute inset-0 md:relative w-full md:w-1/2 pointer-events-none z-0">
+-                    <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden opacity-30 md:opacity-100 transition-opacity duration-1000">
+-                        <EvolutionGraphic index={activeIndex} />
++                <div className="w-full md:w-1/2 pointer-events-none z-0 relative">
++                    <div className="md:sticky md:top-0 h-[60vh] md:h-screen w-full flex items-center justify-center overflow-hidden opacity-30 md:opacity-100 transition-opacity duration-1000">
++                        {/* We now pass the raw MotionValue down instead of a state-driven number */}
++                        <Evolution3D progress={scrollYProgress} />
+ 
+-                        {/* Vertical Progress Line (Desktop) */}
++                        {/* Vertical Progress Line (Desktop) - Hardware accelerated via Framer Motion */}
+                         <div className="hidden md:block absolute left-0 top-1/4 bottom-1/4 w-[2px] bg-white/10 rounded-full overflow-hidden">
+-                            <div
+-                                className={`w-full transition-all duration-700 ease-out ${experiences[activeIndex].bg}`}
+-                                style={{ height: `${((activeIndex + 1) / experiences.length) * 100}%` }}
++                            <motion.div
++                                className={`w-full bg-white origin-top`}
++                                style={{
++                                    height: '100%',
++                                    scaleY: scrollYProgress
++                                }}
+                             />
+                         </div>
+                     </div>
+diff --git a/src/components/Hero.tsx b/src/components/Hero.tsx
+index 4ad72f8..a0a6da3 100644
+--- a/src/components/Hero.tsx
++++ b/src/components/Hero.tsx
+@@ -11,9 +11,8 @@ import { ArrowDown } from 'lucide-react';
+ import HackerText from './HackerText';
+ import useIsMobile from '../hooks/useIsMobile';
+ 
+-const Hero3D = React.lazy(() => import('./Hero3D'));
++const ConsolidatedHeroVisuals = React.lazy(() => import('./ConsolidatedHeroVisuals'));
+ const AIParticles = React.lazy(() => import('./AIParticles'));
+-const HeroGL = React.lazy(() => import('./HeroGL'));
+ 
+ gsap.registerPlugin(ScrollTrigger);
+ 
+@@ -111,8 +110,7 @@ const Hero = () => {
+             {!isMobile && (
+                 <div className="absolute inset-0 z-10 pointer-events-none mix-blend-screen">
+                     <Suspense fallback={null}>
+-                        <HeroGL />
+-                        <Hero3D />
++                        <ConsolidatedHeroVisuals />
+                         <AIParticles />
+                     </Suspense>
+                 </div>
+@@ -127,34 +125,34 @@ const Hero = () => {
+                 <div className="flex flex-col w-full max-w-7xl mx-auto leading-[0.85] font-display font-bold tracking-tighter uppercase cursor-default relative text-white px-0 lg:px-12">
+ 
+                     {/* Row 1: I'm a Generative AI */}
+-                    <div className="flex flex-col items-center md:items-start relative z-10 w-full md:pl-[10%] mb-4 md:-mb-6">
++                    <motion.div style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]) }} className="flex flex-col items-center md:items-start relative z-10 w-full md:pl-[10%] mb-4 md:-mb-6">
+                         <span className="hero-intro font-serif italic text-3xl md:text-5xl text-blue-400 opacity-0 normal-case tracking-normal md:pl-16 mb-2 mix-blend-screen">
+                             I'm a
+                         </span>
+                         <h1 className="text-[clamp(3.5rem,8.5vw,9rem)] text-center md:text-left leading-none">
+                             <HackerText text="Generative AI" speed={40} />
+                         </h1>
+-                    </div>
++                    </motion.div>
+ 
+                     {/* Row 2: ENGINEER & (Outlined) */}
+-                    <div className="flex flex-col md:flex-row items-center justify-center md:justify-end relative z-0 w-full md:pr-[10%] mt-4 md:-mt-4">
++                    <motion.div style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "-60%"]) }} className="flex flex-col md:flex-row items-center justify-center md:justify-end relative z-0 w-full md:pr-[10%] mt-4 md:-mt-4">
+                         <TextReveal el="h1" className="text-[clamp(4.5rem,11.5vw,12rem)] text-outline-strong mix-blend-screen text-center md:text-right leading-none" delay={0.8}>
+                             ENGINEER
+                         </TextReveal>
+                         <span className="hero-connector font-serif italic text-4xl md:text-7xl text-blue-400 opacity-0 normal-case tracking-normal mt-2 md:mt-0 md:mb-6 md:ml-4">
+                             &
+                         </span>
+-                    </div>
++                    </motion.div>
+ 
+                     {/* Row 3: SOFTWARE DEVELOPER */}
+-                    <div className="flex flex-col items-center md:items-start relative z-20 w-full md:pl-[20%] mt-4 md:-mt-8">
++                    <motion.div style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "-90%"]) }} className="flex flex-col items-center md:items-start relative z-20 w-full md:pl-[20%] mt-4 md:-mt-8">
+                         <TextReveal el="h1" className="text-[clamp(3.5rem,8vw,9rem)] text-center md:text-left leading-none" delay={1.0}>
+                             SOFTWARE
+                         </TextReveal>
+                         <TextReveal el="h1" className="text-[clamp(3.5rem,8vw,9rem)] text-center md:text-left leading-[0.85]" delay={1.2}>
+                             DEVELOPER
+                         </TextReveal>
+-                    </div>
++                    </motion.div>
+ 
+                 </div>
+ 
+diff --git a/src/components/HeroGL.tsx b/src/components/HeroGL.tsx
+index 7133e1b..bdeea9f 100644
+--- a/src/components/HeroGL.tsx
++++ b/src/components/HeroGL.tsx
+@@ -133,7 +133,7 @@ const NeuralSphere = ({ scrollProgress }: { scrollProgress: React.MutableRefObje
+ 
+     return (
+         <mesh ref={meshRef}>
+-            <icosahedronGeometry args={[2.2, 64]} />
++            <icosahedronGeometry args={[2.2, 32]} />
+             <shaderMaterial
+                 vertexShader={vertexShader}
+                 fragmentShader={fragmentShader}
+diff --git a/src/components/Magnetic.tsx b/src/components/Magnetic.tsx
+index 1ec7a22..f683d64 100644
+--- a/src/components/Magnetic.tsx
++++ b/src/components/Magnetic.tsx
+@@ -4,9 +4,10 @@ import { useSound } from '../hooks/useSound';
+ 
+ interface MagneticProps {
+     children: React.ReactElement;
++    intensity?: number;
+ }
+ 
+-const Magnetic: React.FC<MagneticProps> = ({ children }) => {
++const Magnetic: React.FC<MagneticProps> = ({ children, intensity = 0.35 }) => {
+     const ref = useRef<HTMLDivElement>(null);
+     const [position, setPosition] = useState({ x: 0, y: 0 });
+     const { playHover, playClick } = useSound();
+@@ -26,7 +27,7 @@ const Magnetic: React.FC<MagneticProps> = ({ children }) => {
+         const middleY = clientY - (top + height / 2);
+ 
+         // Magnetic strength (0.5 = strong, 0.1 = weak)
+-        setPosition({ x: middleX * 0.35, y: middleY * 0.35 });
++        setPosition({ x: middleX * intensity, y: middleY * intensity });
+     };
+ 
+     const reset = () => {
+@@ -37,16 +38,24 @@ const Magnetic: React.FC<MagneticProps> = ({ children }) => {
+ 
+     return (
+         <motion.div
+-            style={{ position: 'relative' }}
++            style={{ position: 'relative', display: 'inline-block' }}
+             ref={ref}
+             animate={{ x, y }}
+-            transition={{ type: "spring", stiffness: 350, damping: 10, mass: 0.35 }}
++            transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+             onMouseMove={handleMouse}
+             onMouseLeave={reset}
+             onMouseEnter={playHover}
+             onMouseDown={playClick}
++            className="magnetic-target group" // Used by CustomCursor to trigger hover state
+         >
+-            {children}
++            {/* The child element (usually a button) receives counter-parallax text if it's a simple string, otherwise we leave it alone. To be safe, we apply the counter parallax to a wrapper to give physical depth */}
++            <motion.div
++                animate={{ x: x * 0.5, y: y * 0.5 }} // Moves slightly more/less than the background to create depth
++                transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
++                style={{ width: '100%', height: '100%' }}
++            >
++                {children}
++            </motion.div>
+         </motion.div>
+     );
+ };
+diff --git a/src/components/PageTransition.tsx b/src/components/PageTransition.tsx
+index ac94da5..90a5535 100644
+--- a/src/components/PageTransition.tsx
++++ b/src/components/PageTransition.tsx
+@@ -1,7 +1,7 @@
+ import React from 'react';
+ import { motion } from 'framer-motion';
+ 
+-const COLUMNS = 6;
++const COLUMNS = 7;
+ 
+ interface PageTransitionProps {
+     children: React.ReactNode;
+@@ -23,17 +23,17 @@ const PageTransition = ({ children, label = '' }: PageTransitionProps) => {
+                             enter: (idx: number) => ({
+                                 scaleY: 0,
+                                 transition: {
+-                                    duration: 0.7,
++                                    duration: 0.8,
+                                     ease: [0.76, 0, 0.24, 1],
+-                                    delay: 0.04 * idx,
++                                    delay: 0.05 * idx,
+                                 }
+                             }),
+                             exit: (idx: number) => ({
+                                 scaleY: 1,
+                                 transition: {
+-                                    duration: 0.55,
++                                    duration: 0.6,
+                                     ease: [0.76, 0, 0.24, 1],
+-                                    delay: 0.04 * (COLUMNS - 1 - idx),
++                                    delay: 0.05 * (COLUMNS - 1 - idx),
+                                 }
+                             }),
+                         }}
+@@ -51,41 +51,65 @@ const PageTransition = ({ children, label = '' }: PageTransitionProps) => {
+                 <motion.div
+                     variants={{
+                         initial: { opacity: 1 },
+-                        enter: { opacity: 0, transition: { duration: 0.3, delay: 0.2 } },
+-                        exit: { opacity: 1, transition: { duration: 0.2 } },
++                        enter: { opacity: 0, transition: { duration: 0.3, delay: 0.3 } },
++                        exit: { opacity: 1, transition: { duration: 0.15 } },
+                     }}
+                     initial="exit"
+                     animate="enter"
+                     exit="exit"
+                     className="fixed inset-0 z-[9999] pointer-events-none flex items-center justify-center"
+                 >
+-                    <motion.span
++                    <motion.div
+                         variants={{
+-                            initial: { y: 20, opacity: 0 },
+-                            enter: { y: 0, opacity: 0, transition: { duration: 0.4, delay: 0.15 } },
+-                            exit: { y: 0, opacity: 1, transition: { duration: 0.25 } },
++                            initial: { y: 0, scale: 1, rotate: 0, opacity: 0 },
++                            enter: {
++                                y: -30,
++                                scale: 0.9,
++                                rotate: -3,
++                                opacity: 0,
++                                transition: { duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }
++                            },
++                            exit: {
++                                y: 0,
++                                scale: 1,
++                                rotate: 0,
++                                opacity: 1,
++                                transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
++                            },
+                         }}
+-                        className="font-display font-black text-white text-[10vw] uppercase tracking-tighter leading-none select-none"
++                        className="text-center"
+                     >
+-                        {label}
+-                    </motion.span>
++                        <span className="font-display font-black text-white text-[10vw] uppercase tracking-tighter leading-none select-none block">
++                            {label}
++                        </span>
++                        <motion.span
++                            variants={{
++                                initial: { opacity: 0, y: 10 },
++                                enter: { opacity: 0, y: -5, transition: { duration: 0.3 } },
++                                exit: { opacity: 0.5, y: 0, transition: { duration: 0.4, delay: 0.1 } },
++                            }}
++                            className="text-xs font-mono text-white/40 uppercase tracking-[0.5em] mt-4 block"
++                        >
++                            Loading
++                        </motion.span>
++                    </motion.div>
+                 </motion.div>
+             )}
+ 
+-            {/* ── Page content — clip-path reveal from bottom ── */}
++            {/* ── Page content — clip-path reveal ── */}
+             <motion.div
+                 variants={{
+                     initial: { clipPath: 'inset(100% 0 0 0)', opacity: 0 },
+                     enter: {
+                         clipPath: 'inset(0% 0 0 0)',
+                         opacity: 1,
+-                        transition: { duration: 0.65, delay: 0.35, ease: [0.22, 1, 0.36, 1] }
++                        transition: { duration: 0.7, delay: 0.4, ease: [0.22, 1, 0.36, 1] }
+                     },
+                     exit: {
+                         opacity: 0,
+-                        scale: 0.99,
+-                        filter: 'blur(4px)',
+-                        transition: { duration: 0.4, ease: [0.76, 0, 0.24, 1] }
++                        scale: 0.98,
++                        filter: 'blur(6px)',
++                        transition: { duration: 0.35, ease: [0.76, 0, 0.24, 1] }
+                     },
+                 }}
+                 initial="initial"
+diff --git a/src/components/SectionMorph.tsx b/src/components/SectionMorph.tsx
+index 58752ad..61a938f 100644
+--- a/src/components/SectionMorph.tsx
++++ b/src/components/SectionMorph.tsx
+@@ -77,8 +77,8 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
+                 }
+ 
+                 case 'scaleReveal': {
+-                    // Incoming section scales from 0.95 → 1.0 with slight parallax
+-                    gsap.set(toEl, { scale: 0.95, transformOrigin: 'center top' });
++                    // Outgoing section scales down slightly while moving up
++                    gsap.set(fromEl, { transformOrigin: 'center bottom' });
+ 
+                     ScrollTrigger.create({
+                         trigger: markerRef.current,
+@@ -87,19 +87,16 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
+                         scrub: 1.2,
+                         onUpdate: (self) => {
+                             const p = self.progress;
+-                            gsap.set(toEl, { scale: 0.95 + p * 0.05 });
+                             gsap.set(fromEl, {
++                                scale: 1 - p * 0.05,
+                                 y: `${p * -30}px`,
+                                 opacity: 1 - p * 0.3,
+                             });
+                         },
+                         onLeaveBack: () => {
+-                            gsap.set(toEl, { scale: 0.95 });
+-                            gsap.set(fromEl, { y: '0px', opacity: 1 });
++                            gsap.set(fromEl, { y: '0px', opacity: 1, scale: 1 });
+                         },
+                         onLeave: () => {
+-                            gsap.set(toEl, { scale: 1 });
+-                            gsap.set(fromEl, { y: '0px', opacity: 1 });
+                         },
+                     });
+                     break;
+diff --git a/src/components/SmoothScroll.tsx b/src/components/SmoothScroll.tsx
+index cf7f512..d10cd2c 100644
+--- a/src/components/SmoothScroll.tsx
++++ b/src/components/SmoothScroll.tsx
+@@ -12,6 +12,7 @@ interface SmoothScrollProps {
+ 
+ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
+     const lenisRef = useRef<any>(null);
++    const contentRef = useRef<HTMLDivElement>(null);
+     const isMobile = useIsMobile();
+     const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+ 
+@@ -26,6 +27,7 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
+ 
+     const shouldDisable = isMobile || prefersReducedMotion;
+ 
++    // Connect Lenis RAF to GSAP ticker
+     useEffect(() => {
+         if (shouldDisable) return;
+ 
+@@ -40,6 +42,50 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
+         };
+     }, [shouldDisable]);
+ 
++    // Scroll-velocity skewing (the Locomotive effect)
++    // IMPORTANT: We only apply the CSS transform when there's actual velocity,
++    // and remove it when idle. A parent with ANY transform (even skewY(0deg))
++    // creates a new stacking context, which breaks `position: fixed` on
++    // children like the Preloader, CustomCursor, and modals.
++    useEffect(() => {
++        if (shouldDisable || !contentRef.current) return;
++
++        let currentSkew = 0;
++        const maxSkew = 2.5; // Max degrees of skew — subtle but noticeable
++        const threshold = 0.01; // Below this, remove transform entirely
++
++        const onScroll = () => {
++            const lenis = lenisRef.current?.lenis;
++            if (!lenis || !contentRef.current) return;
++
++            // Velocity is pixels/second; normalize to a small skew angle
++            const velocity = lenis.velocity;
++            const targetSkew = Math.max(-maxSkew, Math.min(maxSkew, velocity * 0.04));
++
++            // Smooth lerp to target
++            currentSkew += (targetSkew - currentSkew) * 0.1;
++
++            // Only apply transform when there's meaningful skew
++            // Removing it when idle preserves `position: fixed` for children
++            if (Math.abs(currentSkew) > threshold) {
++                contentRef.current.style.transform = `skewY(${currentSkew}deg)`;
++            } else {
++                currentSkew = 0;
++                contentRef.current.style.transform = '';
++            }
++        };
++
++        // Use GSAP ticker for frame-synced updates
++        gsap.ticker.add(onScroll);
++
++        return () => {
++            gsap.ticker.remove(onScroll);
++            if (contentRef.current) {
++                contentRef.current.style.transform = '';
++            }
++        };
++    }, [shouldDisable]);
++
+     if (shouldDisable) {
+         return <>{children}</>;
+     }
+@@ -50,14 +96,14 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
+             ref={lenisRef}
+             autoRaf={false}
+             options={{
+-                lerp: 0.07,
+-                duration: 1.5,
++                lerp: 0.04, // Heavier, more buttery inertia
++                duration: 2.0, // Longer settle time
+                 smoothWheel: true,
+-                wheelMultiplier: 1,
+-                touchMultiplier: 2,
++                wheelMultiplier: 0.8, // Slightly deliberately slower wheel feel
++                touchMultiplier: 1.5,
+             }}
+         >
+-            <div style={{ position: 'relative' }}>
++            <div ref={contentRef} style={{ position: 'relative' }}>
+                 {children}
+             </div>
+         </ReactLenis>
+diff --git a/src/components/Spotlight.tsx b/src/components/Spotlight.tsx
+index 6e26a10..cc42b51 100644
+--- a/src/components/Spotlight.tsx
++++ b/src/components/Spotlight.tsx
+@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react';
+ import { motion, useSpring, useMotionValue } from 'framer-motion';
+ 
+ const Spotlight = () => {
+-    // Disable on touch devices to save battery and prevent unwanted visual behavior
+-    const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+-    if (isTouchDevice) return null;
+-
+     const [isVisible, setIsVisible] = useState(false);
+ 
++    // Disable on touch devices hook-safe check
++    const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
++
+     // Using useMotionValue and useSpring for smooth following
+     const mouseX = useMotionValue(0);
+     const mouseY = useMotionValue(0);
+@@ -37,6 +36,8 @@ const Spotlight = () => {
+         };
+     }, [isVisible, mouseX, mouseY]);
+ 
++    if (isTouchDevice) return null;
++
+     return (
+         <motion.div
+             className="pointer-events-none fixed inset-0 z-0 h-full w-full transition-opacity duration-300"
+diff --git a/src/components/Testimonials.tsx b/src/components/Testimonials.tsx
+index b973b2d..878fa24 100644
+--- a/src/components/Testimonials.tsx
++++ b/src/components/Testimonials.tsx
+@@ -32,7 +32,7 @@ const Testimonials = () => {
+     const sliderRef = useRef<HTMLDivElement>(null);
+ 
+     useLayoutEffect(() => {
+-        let ctx = gsap.context(() => {
++        const ctx = gsap.context(() => {
+             // Clone elements for seamless loop
+             const content = sliderRef.current;
+             if (content) {
+diff --git a/src/components/TextReveal.tsx b/src/components/TextReveal.tsx
+index dac913f..7d95233 100644
+--- a/src/components/TextReveal.tsx
++++ b/src/components/TextReveal.tsx
+@@ -29,7 +29,7 @@ const TextReveal: React.FC<TextRevealProps> = ({ children, className, el: Wrappe
+                         y: 0,
+                         opacity: 1,
+                         rotateX: 0,
+-                        duration: 1.2,
++                        duration: 2.0,
+                         ease: 'power3.out',
+                         stagger: 0.05,
+                         delay: delay,
+diff --git a/src/components/Workflow.tsx b/src/components/Workflow.tsx
+index 2e1db1e..4b4a9a4 100644
+--- a/src/components/Workflow.tsx
++++ b/src/components/Workflow.tsx
+@@ -31,7 +31,7 @@ const Workflow = () => {
+     const containerRef = useRef<HTMLElement>(null);
+ 
+     useLayoutEffect(() => {
+-        let mm = gsap.matchMedia();
++        const mm = gsap.matchMedia();
+ 
+         mm.add("(min-width: 768px)", () => {
+             const items = gsap.utils.toArray('.workflow-item');
+diff --git a/src/data/posts.json b/src/data/posts.json
+index e5d6f74..dd2e556 100644
+--- a/src/data/posts.json
++++ b/src/data/posts.json
+@@ -1,4 +1,18 @@
+ [
++    {
++        "slug": "trending-tech-topics",
++        "title": "Top Trending Topics in Tech to Watch",
++        "excerpt": "A curated list of trending topics and technologies that are shaping the future.",
++        "content": "# The Future is Here\n\nStaying ahead of the curve is crucial in our fast-paced industry. Here is a list of the most impactful trending topics that engineers and developers should be focusing on.\n\n## 1. Agentic AI & Autonomous Workflows\n\nMoving beyond simple chat interfaces, AI agents can now plan, execute, and iterate on complex tasks autonomously. Tools like LangGraph and AutoGen are becoming essential.\n\n## 2. Edge AI & On-Device Processing\n\nBringing machine learning models directly to the edge reduces latency, improves privacy, and lowers cloud compute costs.\n\n## 3. Serverless WebAssembly (Wasm)\n\nWasm is breaking out of the browser. Serverless platforms are adopting Wasm for its incredibly fast cold-start times and sandboxed security model.\n\n## Conclusion\n\nThese trends represent a shift towards more intelligent, efficient, and secure computing architectures.",
++        "tags": [
++            "Tech Trends",
++            "AI",
++            "WebAssembly"
++        ],
++        "publishedAt": "2026-02-28",
++        "readTime": "4 min",
++        "status": "published"
++    },
+     {
+         "slug": "generative-ai-software-engineering",
+         "title": "The Future of Generative AI in Software Engineering",
+diff --git a/src/hooks/useIsMobile.ts b/src/hooks/useIsMobile.ts
+index 5a04756..ea62203 100644
+--- a/src/hooks/useIsMobile.ts
++++ b/src/hooks/useIsMobile.ts
+@@ -1,20 +1,23 @@
+ import { useState, useEffect } from 'react';
+ 
++const getIsMobile = () => {
++    if (typeof window === "undefined") return false;
++    const userAgent = navigator.userAgent;
++    return Boolean(
++        userAgent.match(
++            /Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i
++        ) || window.innerWidth < 1024
++    );
++};
++
+ const useIsMobile = () => {
+-    const [isMobile, setIsMobile] = useState(false);
++    const [isMobile, setIsMobile] = useState(getIsMobile);
+ 
+     useEffect(() => {
+         const checkMobile = () => {
+-            const userAgent = typeof window.navigator === "undefined" ? "" : navigator.userAgent;
+-            const mobile = Boolean(
+-                userAgent.match(
+-                    /Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i
+-                ) || window.innerWidth < 1024
+-            );
+-            setIsMobile(mobile);
++            setIsMobile(getIsMobile());
+         };
+ 
+-        checkMobile();
+         window.addEventListener("resize", checkMobile);
+         return () => window.removeEventListener("resize", checkMobile);
+     }, []);
+diff --git a/src/index.css b/src/index.css
+index 1a408be..74784bd 100644
+--- a/src/index.css
++++ b/src/index.css
+@@ -28,8 +28,8 @@
+   }
+ 
+   body {
+-    @apply bg-off-white text-primary-text font-sans antialiased tracking-tightest overflow-x-clip;
+-    background-color: #e8e8e3;
++    @apply bg-black text-white font-sans antialiased tracking-tightest overflow-x-clip;
++    background-color: #000000;
+   }
+ 
+   h1,

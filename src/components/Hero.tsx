@@ -11,9 +11,7 @@ import { ArrowDown } from 'lucide-react';
 import HackerText from './HackerText';
 import useIsMobile from '../hooks/useIsMobile';
 
-const Hero3D = React.lazy(() => import('./Hero3D'));
-const AIParticles = React.lazy(() => import('./AIParticles'));
-const HeroGL = React.lazy(() => import('./HeroGL'));
+const InteractiveCore = React.lazy(() => import('./InteractiveCore'));
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -107,13 +105,11 @@ const Hero = () => {
 
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />
 
-            {/* 3D Components — Desktop only (saves ~600KB on mobile) */}
+            {/* 3D Components — Desktop only */}
             {!isMobile && (
-                <div className="absolute inset-0 z-10 pointer-events-none mix-blend-screen">
+                <div className="absolute inset-0 z-10 pointer-events-auto mix-blend-screen overflow-hidden">
                     <Suspense fallback={null}>
-                        <HeroGL />
-                        <Hero3D />
-                        <AIParticles />
+                        <InteractiveCore />
                     </Suspense>
                 </div>
             )}

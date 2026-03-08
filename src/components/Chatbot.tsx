@@ -36,58 +36,88 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, setIsOpen }) => {
         scrollToBottom();
     }, [messages, isTyping]);
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!input.trim()) return;
 
         const userMsg: Message = { id: Date.now(), text: input, sender: 'user' };
-        setMessages(prev => [...prev, userMsg]);
+        // We'll pass the entire history to the backend for context
+        const newMessages = [...messages, userMsg];
+        setMessages(newMessages);
         setInput('');
         setIsTyping(true);
 
-        // Simulate AI delay and response
-        setTimeout(() => {
-            const lowerInput = userMsg.text.toLowerCase();
-            let botText = "I'm not sure about that, but I can connect you with Saurabh or tell you about his Agents!";
-
-            // Console log for debugging
-            console.log("Chatbot Analysis:", lowerInput);
-
-            // Capabilities & Skills
+        // Define the local fallback logic
+        const getFallbackResponse = (text: string) => {
+            const lowerInput = text.toLowerCase();
             if (lowerInput.includes('skill') || lowerInput.includes('stack') || lowerInput.includes('tech') || lowerInput.includes('what can you do') || lowerInput.includes('expert')) {
-                botText = "Core Expertise: LLM Systems & RAG (End-to-end architectures, Semantic Chunking), AI Agents (LangChain, LangGraph, CrewAI). Proficient in Python (FastAPI), Local LLMs (Ollama), and Vector DBs. ~2 years of specialized GenAI experience.";
+                return "Core Expertise: LLM Systems & RAG (End-to-end architectures, Semantic Chunking), AI Agents (LangChain, LangGraph, CrewAI). Proficient in Python (FastAPI), Local LLMs (Ollama), and Vector DBs. ~2 years of specialized GenAI experience.";
+            } else if (lowerInput.includes('project') || lowerInput.includes('work') || lowerInput.includes('built') || lowerInput.includes('portfolio')) {
+                return "Saurabh's Flagships:\n• HireMeOS: Autonomous AI Career System (Multi-agent).\n• Autonomous Research Agent: Planning & Report writing with LangGraph.\n• DataOS: Local-first dataset analysis assistant.\n• NeuroAdaptive Quiz Engine: Context-aware learning system.";
+            } else if (lowerInput.includes('workflow') || lowerInput.includes('process') || lowerInput.includes('method') || lowerInput.includes('build')) {
+                return "Saurabh's System Workflow:\n1. Deep Discovery (Problem Framing)\n2. Agentic Architecture Design (LangGraph)\n3. Precision Implementation (Python/FastAPI)\n4. Reliable Deployment (Docker/Edge)";
+            } else if (lowerInput.includes('live') || lowerInput.includes('agent') || lowerInput.includes('demo') || lowerInput.includes('try')) {
+                return "You can try his live agents right now! Check out 'Travel Guru', '90-Day Launchpad', or the experimental 'DuduSL001' in the Live Agents section below.";
+            } else if (lowerInput.includes('contact') || lowerInput.includes('email') || lowerInput.includes('phone') || lowerInput.includes('hire') || lowerInput.includes('reach')) {
+                return "Contact Saurabh directly: \nEmail: saurabhmj11@gmail.com \nPhone: +91-7767913887 \nLocation: Open to Relocation \nStatus: Immediate Joiner.";
+            } else if (lowerInput.includes('resume') || lowerInput.includes('cv') || lowerInput.includes('background') || lowerInput.includes('experience') || lowerInput.includes('job')) {
+                return "Saurabh is an LLM Engineer with ~2 years of experience. \n\nKey Highlights:\n• Specialized in RAG & Multi-Agent Orchestration.\n• Built Production-grade Document Processing pipelines.\n• Expert in Local LLM Deployment (Ollama).\n• Immediate Joiner.\n\nAsk for his 'full summary' if you want more details!";
+            } else if (lowerInput.includes('full summary') || lowerInput.includes('summary')) {
+                return "Professional Summary: LLM Engineer building production-grade AI systems. \n\nExperience: ~2 Years (Freelance & Product Projects).\n\nFocus:\n• RAG Architectures & Vector Search\n• Multi-Agent Systems (LangGraph)\n• Scalable Backends (FastAPI)\n\nHe is ready to build scalable AI solutions immediately.";
+            } else if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey') || lowerInput.includes('good morning') || lowerInput.includes('good evening')) {
+                return "Hello! I'm your guide to Saurabh's portfolio. Ask me about his AI Projects (HireMeOS, Research Agent), RAG expertise, or Contact info!";
             }
-            // Projects
-            else if (lowerInput.includes('project') || lowerInput.includes('work') || lowerInput.includes('built') || lowerInput.includes('portfolio')) {
-                botText = "Saurabh's Flagships:\n• HireMeOS: Autonomous AI Career System (Multi-agent).\n• Autonomous Research Agent: Planning & Report writing with LangGraph.\n• DataOS: Local-first dataset analysis assistant.\n• NeuroAdaptive Quiz Engine: Context-aware learning system.";
-            }
-            // Workflow
-            else if (lowerInput.includes('workflow') || lowerInput.includes('process') || lowerInput.includes('method') || lowerInput.includes('build')) {
-                botText = "Saurabh's System Workflow:\n1. Deep Discovery (Problem Framing)\n2. Agentic Architecture Design (LangGraph)\n3. Precision Implementation (Python/FastAPI)\n4. Reliable Deployment (Docker/Edge)";
-            }
-            // Live Agents
-            else if (lowerInput.includes('live') || lowerInput.includes('agent') || lowerInput.includes('demo') || lowerInput.includes('try')) {
-                botText = "You can try his live agents right now! Check out 'Travel Guru', '90-Day Launchpad', or the experimental 'DuduSL001' in the Live Agents section below.";
-            }
-            // Contact
-            else if (lowerInput.includes('contact') || lowerInput.includes('email') || lowerInput.includes('phone') || lowerInput.includes('hire') || lowerInput.includes('reach')) {
-                botText = "Contact Saurabh directly: \nEmail: saurabhmj11@gmail.com \nPhone: +91-7767913887 \nLocation: Open to Relocation \nStatus: Immediate Joiner.";
-            }
-            // Resume/Background
-            else if (lowerInput.includes('resume') || lowerInput.includes('cv') || lowerInput.includes('background') || lowerInput.includes('experience') || lowerInput.includes('job')) {
-                botText = "Saurabh is an LLM Engineer with ~2 years of experience. \n\nKey Highlights:\n• Specialized in RAG & Multi-Agent Orchestration.\n• Built Production-grade Document Processing pipelines.\n• Expert in Local LLM Deployment (Ollama).\n• Immediate Joiner.\n\nAsk for his 'full summary' if you want more details!";
-            }
-            // Detailed Summary
-            else if (lowerInput.includes('full summary') || lowerInput.includes('summary')) {
-                botText = "Professional Summary: LLM Engineer building production-grade AI systems. \n\nExperience: ~2 Years (Freelance & Product Projects).\n\nFocus:\n• RAG Architectures & Vector Search\n• Multi-Agent Systems (LangGraph)\n• Scalable Backends (FastAPI)\n\nHe is ready to build scalable AI solutions immediately.";
-            }
-            // Greetings
-            else if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey') || lowerInput.includes('good morning') || lowerInput.includes('good evening')) {
-                botText = "Hello! I'm your guide to Saurabh's portfolio. Ask me about his AI Projects (HireMeOS, Research Agent), RAG expertise, or Contact info!";
+            return "I'm not exactly sure about that, but I can connect you with Saurabh or tell you about his AI Agents and Projects!";
+        };
+
+        try {
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+            const response = await fetch(`${apiUrl}/api/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ messages: newMessages }),
+            });
+
+            if (!response.ok) {
+                // Network error, drop to fallback
+                throw new Error('Network response was not ok');
             }
 
-            setMessages(prev => [...prev, { id: Date.now() + 1, text: botText, sender: 'bot' }]);
+            const data = await response.json();
+
+            // Check if backend specifically told us it's running in offline/default mode
+            if (data.response && data.response.includes('currently running in offline mode')) {
+                setMessages(prev => [...prev, {
+                    id: Date.now() + 1,
+                    text: getFallbackResponse(input),
+                    sender: 'bot'
+                }]);
+            } else {
+                setMessages(prev => [...prev, {
+                    id: Date.now() + 1,
+                    text: data.response || "Sorry, I received an empty response from my circuits.",
+                    sender: 'bot'
+                }]);
+            }
+
+        } catch (error) {
+            console.error("Chatbot API Error, falling back to local logic:", error);
+            // Local Fallback simulation
+            setTimeout(() => {
+                setMessages(prev => [...prev, {
+                    id: Date.now() + 1,
+                    text: getFallbackResponse(input),
+                    sender: 'bot'
+                }]);
+                setIsTyping(false);
+            }, 800);
+            return; // Early return because we handle isTyping inside setTimeout
+
+        } finally {
             setIsTyping(false);
-        }, 1500);
+        }
     };
 
     return (
