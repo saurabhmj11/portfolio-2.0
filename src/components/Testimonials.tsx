@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect } from 'react';
+import { useRef, useLayoutEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -37,7 +37,7 @@ const Testimonials = () => {
             const content = sliderRef.current;
             if (content) {
                 // Simple marquee effect
-                const totalWidth = content.scrollWidth;
+
 
                 // If we want a true marquee we should duplicate content
                 // For now, let's just do a scroll-triggered horizontal move or a constant auto-scroll

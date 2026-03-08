@@ -11,7 +11,7 @@ const Terminal = () => {
     const [input, setInput] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
-    const [autoScroll, setAutoScroll] = useState(true);
+    const [autoScroll] = useState(true);
 
     // Initial Welcome Log
     useEffect(() => {

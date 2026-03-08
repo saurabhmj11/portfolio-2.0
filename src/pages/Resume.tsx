@@ -1,7 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
 import { resumeData } from '../data/resume';
-import { Download, ArrowLeft, Mail, Github, Linkedin, Globe, Phone } from 'lucide-react';
+import { Download, ArrowLeft, Mail, Github, Linkedin, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Resume = () => {

@@ -1,4 +1,3 @@
-import React, { useRef } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 
 const ScrollLine = () => {

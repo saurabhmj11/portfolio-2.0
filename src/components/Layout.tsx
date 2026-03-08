@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Header from './Header';
@@ -8,7 +8,6 @@ import AIParticles from './AIParticles';
 import { useCursor } from '../hooks/useCursor';
 
 const Layout = () => {
-  const [isDark, setIsDark] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useCursor();
@@ -22,22 +21,19 @@ const Layout = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const toggleTheme = () => {
-    setIsDark(!isDark);
-    document.documentElement.classList.toggle('dark');
-  };
+
 
   return (
-    <div className={`${isDark ? 'dark' : ''}`}>
+    <div>
       <AnimatePresence>
-        {isLoading && <Preloader />}
+        {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
       </AnimatePresence>
       <AIParticles />
-      <Header isDark={isDark} toggleTheme={toggleTheme} />
+      <Header />
       <main className="min-h-screen bg-white dark:bg-gray-900 pt-16">
         <Outlet />
       </main>
-      <Footer isDark={isDark} toggleTheme={toggleTheme} />
+      <Footer />
     </div>
   );
 };

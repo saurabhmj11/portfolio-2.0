@@ -1,11 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
+import { useRef, useEffect, useState } from 'react';
+import { useScroll } from 'framer-motion';
 import Overlay from './Overlay';
 
 const ScrollyCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [images, setImages] = useState<HTMLImageElement[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const { scrollYProgress } = useScroll({
         target: containerRef,

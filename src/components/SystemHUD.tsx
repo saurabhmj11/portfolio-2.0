@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, Globe, Zap, Cpu } from 'lucide-react';
 import { useTerminal } from '../context/TerminalContext';
@@ -22,23 +22,7 @@ const SystemHUD = () => {
         setLocation(userTimeZone.split('/')[1]?.toUpperCase().replace('_', ' ') || 'UNKNOWN SECTOR');
     }, []);
 
-    // Generate Sparkline Path
-    const generateSparkline = (data: number[]) => {
-        const width = 100;
-        const height = 20;
-        const max = 65; // Cap at 65 for scaling
-        const min = 30; // Floor at 30
 
-        const points = data.map((val, i) => {
-            const x = (i / (data.length - 1)) * width;
-            // Normalize y
-            const normalized = Math.max(0, Math.min(1, (val - min) / (max - min)));
-            const y = height - (normalized * height);
-            return `${x},${y}`;
-        }).join(' ');
-
-        return `M0,${height} ${points} L${width},${height} Z`; // Closed path for fill if needed, or open for stroke
-    };
 
     // Line only path
     const getPolyline = (data: number[]) => {

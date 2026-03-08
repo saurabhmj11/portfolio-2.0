@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import { useRef } from 'react';
 import { Canvas, useFrame, useLoader, extend, ReactThreeFiber } from '@react-three/fiber';
 import * as THREE from 'three';
 import { shaderMaterial } from '@react-three/drei';
@@ -57,7 +57,7 @@ extend({ DistortionMaterial });
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            distortionMaterial: ReactThreeFiber.Object3DNode<THREE.ShaderMaterial, typeof DistortionMaterial>;
+            distortionMaterial: ReactThreeFiber.Object3DNode<any, typeof DistortionMaterial>;
         }
     }
 }
@@ -71,7 +71,7 @@ const Scene: React.FC<SceneProps> = ({ image }) => {
     const texture = useLoader(THREE.TextureLoader, image);
 
     // Mouse tracking for the uniform
-    useFrame((state) => {
+    useFrame(() => {
         if (materialRef.current) {
             // Simple linear interpolation for hover state
             materialRef.current.uniforms.uHover.value = THREE.MathUtils.lerp(
@@ -85,13 +85,9 @@ const Scene: React.FC<SceneProps> = ({ image }) => {
     return (
         <mesh>
             <planeGeometry args={[5, 4, 32, 32]} />
-            {/* 
-         // @ts-ignore - The shader material types are tricky with 'extend' 
-      */}
             <distortionMaterial
                 ref={materialRef}
-                uTexture={texture}
-                transparent={true}
+                {...({ uTexture: texture, transparent: true } as any)}
             />
         </mesh>
     );
