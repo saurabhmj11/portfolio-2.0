@@ -280,7 +280,7 @@ const GlowShell = () => {
 };
 
 // ── Orbiting Code Fragments (AI Brain Identity) ─────────────────────────────
-const codeSnippets = ['<AI/>', 'neural.fit()', 'deploy()', '01001', 'GPT', 'RAG', 'λ', 'async', 'torch', '∇loss'];
+const codeSnippets = ['<AI/>', 'LLM', 'GPT', 'RAG', 'Transformer', 'Fine-tune', 'RLHF', 'LangChain', 'Diffusion', 'Embeddings', 'Vector DB', 'Agents'];
 
 const CodeFragment = ({ text, radius, speed, offset, tiltX, tiltZ }: {
     text: string; radius: number; speed: number; offset: number; tiltX: number; tiltZ: number;
@@ -296,20 +296,19 @@ const CodeFragment = ({ text, radius, speed, offset, tiltX, tiltZ }: {
         ref.current.quaternion.copy(state.camera.quaternion);
     });
 
-    // Use a canvas texture for text (no external font needed)
     const texture = useMemo(() => {
         const canvas = document.createElement('canvas');
         canvas.width = 256;
         canvas.height = 64;
         const ctx = canvas.getContext('2d')!;
-        ctx.fillStyle = 'transparent';
-        ctx.fillRect(0, 0, 256, 64);
+        ctx.clearRect(0, 0, 256, 64);
         ctx.font = 'bold 28px monospace';
         ctx.fillStyle = '#00eeff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(text, 128, 32);
         const tex = new THREE.CanvasTexture(canvas);
+        tex.flipY = false;
         tex.needsUpdate = true;
         return tex;
     }, [text]);
@@ -376,7 +375,7 @@ const ShockwaveRing = ({ startTime }: { startTime: number }) => {
     );
 };
 // ── Exploding Text Burst Fragment ───────────────────────────────────────────
-const burstWords = ['<AI/>', 'neural.fit()', 'deploy()', 'GPT', 'RAG', 'λ', 'async', 'torch', '∇loss', '01001'];
+const burstWords = ['<AI/>', 'LLM', 'GPT', 'RAG', 'Transformer', 'Fine-tune', 'RLHF', 'LangChain', 'Diffusion', 'Embeddings', 'Vector DB', 'Agents', 'PyTorch', 'Prompt Eng', 'deploy()'];
 
 interface BurstParticle {
     text: string;
@@ -402,6 +401,7 @@ const BurstFragment = ({ text, velocity, startTime }: BurstParticle) => {
         ctx.strokeText(text, 128, 32);
         ctx.fillText(text, 128, 32);
         const tex = new THREE.CanvasTexture(canvas);
+        tex.flipY = false;
         tex.needsUpdate = true;
         return tex;
     }, [text]);
@@ -487,14 +487,17 @@ const Scene = () => {
     const [shockwaves, setShockwaves] = useState<number[]>([]);
     const [bursts, setBursts] = useState<BurstEvent[]>([]);
 
+    const clockRef = useRef(0);
+
     // Click handler for shockwave + text burst
     const handleClick = () => {
-        const now = performance.now() / 1000;
+        const now = clockRef.current;
         setShockwaves((prev: number[]) => [...prev.slice(-3), now]);
         setBursts((prev: BurstEvent[]) => [...prev.slice(-3), createBurst(now)]);
     };
 
-    useFrame(() => {
+    useFrame((state) => {
+        clockRef.current = state.clock.getElapsedTime();
         // Cinematic parallax — camera orbits slightly with mouse
         const tx = mouse.x * 2.0;
         const ty = mouse.y * 1.5;

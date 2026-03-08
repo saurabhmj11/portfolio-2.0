@@ -105,9 +105,9 @@ const Hero = () => {
 
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />
 
-            {/* 3D Components — Desktop only */}
+            {/* 3D Components — Desktop only, z-30 so clicks reach the Canvas */}
             {!isMobile && (
-                <div className="absolute inset-0 z-10 pointer-events-auto mix-blend-screen overflow-hidden">
+                <div className="absolute inset-0 z-30 pointer-events-auto mix-blend-screen overflow-hidden">
                     <Suspense fallback={null}>
                         <InteractiveCore />
                     </Suspense>
@@ -117,7 +117,7 @@ const Hero = () => {
             {/* Main Content */}
             <motion.div
                 style={{ y, opacity }}
-                className="relative z-20 flex flex-col items-center text-center w-full px-2 md:px-0 max-w-[90vw]"
+                className="relative z-20 pointer-events-none flex flex-col items-center text-center w-full px-2 md:px-0 max-w-[90vw]"
             >
                 {/* Extraordinary Typography Block (Bulletproof Flex) */}
                 <div className="flex flex-col w-full max-w-7xl mx-auto leading-[0.85] font-display font-bold tracking-tighter uppercase cursor-default relative text-white px-0 lg:px-12">
@@ -161,7 +161,7 @@ const Hero = () => {
                         Crafting intelligent agents and scalable systems.
                     </p>
 
-                    <div className="hero-cta flex flex-col sm:flex-row gap-3 sm:gap-6 items-center">
+                    <div className="hero-cta flex flex-col sm:flex-row gap-3 sm:gap-6 items-center pointer-events-auto">
                         <Magnetic>
                             <a href="#projects" className="px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-black font-medium rounded-full hover:bg-gray-200 transition-colors duration-300 inline-block text-sm sm:text-base w-48 sm:w-auto text-center">
                                 View Projects
