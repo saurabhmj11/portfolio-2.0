@@ -350,28 +350,59 @@ const OrbitingCodeFragments = () => {
 
 // ── Click-to-Shockwave ──────────────────────────────────────────────────────
 const ShockwaveRing = ({ startTime }: { startTime: number }) => {
-    const ref = useRef<THREE.Mesh>(null);
+    const mainRef = useRef<THREE.Mesh>(null);
+    const glowRef = useRef<THREE.Mesh>(null);
+
     useFrame((state) => {
-        if (!ref.current) return;
+        if (!mainRef.current || !glowRef.current) return;
         const elapsed = state.clock.getElapsedTime() - startTime;
-        const scale = 1 + elapsed * 4;
-        const opacity = Math.max(0, 1 - elapsed * 1.5);
-        ref.current.scale.setScalar(scale);
-        (ref.current.material as THREE.MeshBasicMaterial).opacity = opacity;
-        if (opacity <= 0) ref.current.visible = false;
+
+        // Slower expansion for a more cinematic/epic feel
+        const mainScale = 1 + elapsed * 3;
+        const glowScale = 1 + elapsed * 2.5;
+
+        // Slower fade-out
+        const opacity = Math.max(0, 1 - elapsed * 1.0);
+
+        mainRef.current.scale.setScalar(mainScale);
+        glowRef.current.scale.setScalar(glowScale);
+
+        (mainRef.current.material as THREE.MeshBasicMaterial).opacity = opacity;
+        (glowRef.current.material as THREE.MeshBasicMaterial).opacity = opacity * 0.8; // Increased glow intensity
+
+        if (opacity <= 0) {
+            mainRef.current.visible = false;
+            glowRef.current.visible = false;
+        }
     });
+
     return (
-        <mesh ref={ref} rotation={[Math.PI / 2, 0, 0]}>
-            <ringGeometry args={[1.8, 2.0, 64]} />
-            <meshBasicMaterial
-                color="#00ffff"
-                transparent
-                opacity={1}
-                side={THREE.DoubleSide}
-                blending={THREE.AdditiveBlending}
-                depthWrite={false}
-            />
-        </mesh>
+        <group rotation={[Math.PI / 2, 0, 0]}>
+            {/* Main high-intensity ring */}
+            <mesh ref={mainRef}>
+                <ringGeometry args={[1.9, 2.0, 64]} />
+                <meshBasicMaterial
+                    color="#ffffff"
+                    transparent
+                    opacity={1}
+                    side={THREE.DoubleSide}
+                    blending={THREE.AdditiveBlending}
+                    depthWrite={false}
+                />
+            </mesh>
+            {/* Secondary soft glow ring */}
+            <mesh ref={glowRef}>
+                <ringGeometry args={[1.7, 2.1, 64]} />
+                <meshBasicMaterial
+                    color="#00ffff"
+                    transparent
+                    opacity={0.5}
+                    side={THREE.DoubleSide}
+                    blending={THREE.AdditiveBlending}
+                    depthWrite={false}
+                />
+            </mesh>
+        </group>
     );
 };
 // ── Exploding Text Burst Fragment ───────────────────────────────────────────
