@@ -125,7 +125,7 @@ const AIEvolutionOverlay = ({ progress }: { progress: MotionValue<number> }) => 
     const progressWidth = useTransform(progress, [0, 1], ['0%', '100%']);
 
     // ─ Scene label
-    const sceneLabel = useTransform(progress, (p: number) => {
+    const sceneLabel = useTransform(progress, (p: number): string => {
         if (p < 0.20) return '01 — AWAKENING';
         if (p < 0.40) return '02 — NEURAL LEARNING';
         if (p < 0.60) return '03 — CAREER TIMELINE';

@@ -9,15 +9,15 @@ vi.mock('./ScrollReveal', () => ({
     default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
 }));
 
-// Mock Magnetic to pass-through children
+// Mock Magnetic to pass-through children and avoid framer-motion props on DOM
 vi.mock('./Magnetic', () => ({
-    default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+    default: ({ children }: { children: React.ReactNode }) => <div data-testid="magnetic-mock">{children}</div>
 }));
 
 // Mock framer-motion to avoid complex animation handling in tests
 vi.mock('framer-motion', () => ({
     motion: {
-        div: React.forwardRef(({ children, className, style, ...props }: any, ref: any) =>
+        div: React.forwardRef(({ children, className, style, whileHover, whileTap, ...props }: any, ref: any) =>
             <div ref={ref} className={className} style={style} {...props}>{children}</div>
         ),
         span: ({ children, className, ...props }: any) =>
@@ -71,11 +71,24 @@ describe('Footer Component', () => {
         expect(resumeLink).toHaveAttribute('href', '/resume');
     });
 
-    it('renders system status bar with location and version', () => {
+    it('renders system status bar with location and version', async () => {
+        // Mock fetch for location using spyOn
+        const spy = vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => Promise.resolve({ city: 'NEW YORK', region_code: 'NY' }),
+            } as Response)
+        );
+
         renderFooter();
-        expect(screen.getByText(/WARDHA, MH/i)).toBeInTheDocument();
+
+        // Should wait for the dynamic text to appear
+        const locElement = await screen.findByText(/NEW YORK, NY/i);
+        expect(locElement).toBeInTheDocument();
         expect(screen.getByText(/V_2026\.1/i)).toBeInTheDocument();
         expect(screen.getByText(/DEPLOYMENT READY/i)).toBeInTheDocument();
+
+        spy.mockRestore();
     });
 
     it('renders the live clock element', () => {

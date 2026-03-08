@@ -87,6 +87,7 @@ app.post('/send-message', async (req, res) => {
   const { name, email, message } = req.body;
 
   try {
+    // 1. Send notification email to portfolio owner
     const data = await resend.emails.send({
       from: 'Portfolio Contact Form <onboarding@resend.dev>',
       to: process.env.RECIPIENT_EMAIL || 'saurabhmj11@gmail.com',
@@ -94,6 +95,57 @@ app.post('/send-message', async (req, res) => {
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
       reply_to: email,
     });
+
+    // 2. Send confirmation receipt email to the visitor
+    try {
+      await resend.emails.send({
+        from: 'Saurabh Lokhande <onboarding@resend.dev>',
+        to: email,
+        subject: `Thanks for reaching out, ${name}! — Message Received`,
+        html: `
+          <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0a; border: 1px solid #1a1a2e; border-radius: 16px; overflow: hidden;">
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #1e3a5f 0%, #2d1b69 100%); padding: 40px 32px; text-align: center;">
+              <h1 style="color: #ffffff; font-size: 24px; margin: 0 0 8px 0; font-weight: 700;">Message Received ✓</h1>
+              <p style="color: #94a3b8; font-size: 14px; margin: 0;">Your transmission has been logged successfully</p>
+            </div>
+
+            <!-- Body -->
+            <div style="padding: 32px;">
+              <p style="color: #e2e8f0; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                Hi <strong style="color: #818cf8;">${name}</strong>,
+              </p>
+              <p style="color: #94a3b8; font-size: 14px; line-height: 1.8; margin: 0 0 24px 0;">
+                Thank you for reaching out! I've received your message and will get back to you within <strong style="color: #e2e8f0;">24 hours</strong>.
+              </p>
+
+              <!-- Message echo box -->
+              <div style="background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; margin: 0 0 24px 0;">
+                <p style="color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 12px 0;">Your Message</p>
+                <p style="color: #d1d5db; font-size: 14px; line-height: 1.6; margin: 0; white-space: pre-wrap;">${message}</p>
+              </div>
+
+              <p style="color: #6b7280; font-size: 13px; line-height: 1.6; margin: 0;">
+                If you need to follow up, simply reply to this email or reach me at
+                <a href="mailto:saurabhmj11@gmail.com" style="color: #818cf8; text-decoration: none;">saurabhmj11@gmail.com</a>.
+              </p>
+            </div>
+
+            <!-- Footer -->
+            <div style="border-top: 1px solid #1f2937; padding: 20px 32px; text-align: center;">
+              <p style="color: #4b5563; font-size: 11px; margin: 0; letter-spacing: 1px; text-transform: uppercase;">
+                Saurabh Lokhande — AI/ML Engineer
+              </p>
+            </div>
+          </div>
+        `,
+        reply_to: process.env.RECIPIENT_EMAIL || 'saurabhmj11@gmail.com',
+      });
+      console.log(`✓ Confirmation receipt sent to ${email}`);
+    } catch (receiptError) {
+      // Log the error but don't fail the whole request — the main email was sent
+      console.error('⚠ Failed to send confirmation receipt:', receiptError);
+    }
 
     res.status(200).json({ message: 'Message sent successfully!', data });
   } catch (error) {

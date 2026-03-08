@@ -112,7 +112,9 @@ const TerminalSuccess = ({ onReset }: { onReset: () => void }) => {
     { delay: 1.2, text: '> ROUTING TO: saurabhmj11@gmail.com', color: 'text-gray-400' },
     { delay: 1.8, text: '> PRIORITY: HIGH', color: 'text-yellow-400' },
     { delay: 2.3, text: '> STATUS: TRANSMISSION COMPLETE ✓', color: 'text-green-400' },
-    { delay: 3.0, text: '> RESPONSE ETA: < 24 HOURS', color: 'text-gray-500' },
+    { delay: 2.8, text: '> DISPATCHING CONFIRMATION RECEIPT...', color: 'text-blue-400' },
+    { delay: 3.3, text: '> RECEIPT SENT TO SENDER ✓', color: 'text-green-400' },
+    { delay: 3.8, text: '> RESPONSE ETA: < 24 HOURS', color: 'text-gray-500' },
   ];
 
   return (
@@ -148,7 +150,7 @@ const TerminalSuccess = ({ onReset }: { onReset: () => void }) => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 3.5 }}
+        transition={{ delay: 4.3 }}
         className="mt-10 flex items-center gap-3"
       >
         <span className="text-green-400 text-sm">▶</span>

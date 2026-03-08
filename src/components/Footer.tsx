@@ -386,36 +386,58 @@ const LiveClock = () => {
   return <span data-testid="live-clock">{time}</span>;
 };
 
-const SystemStatusBar = () => (
-  <div className="w-full border-t border-white/5 mt-4">
-    <div className="container mx-auto max-w-7xl px-4 py-5 grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-0 items-center font-mono text-[10px] md:text-[11px] uppercase tracking-[0.2em] text-gray-600">
-      {/* Left Node */}
-      <div className="text-center md:text-left">
-        SYS_ID: SAURABH_LOKHANDE // V_2026.1
-      </div>
+const SystemStatusBar = () => {
+  const [location, setLocation] = useState('WARDHA, MH');
 
-      {/* Center Node */}
-      <div className="flex items-center justify-center gap-2">
-        <span
-          className="inline-block w-2 h-2 rounded-full bg-emerald-500"
-          style={{ animation: 'statusPulse 2s ease-in-out infinite' }}
-        />
-        <span className="text-gray-500">[ STATUS: DEPLOYMENT READY ]</span>
-      </div>
-
-      {/* Right Node */}
-      <div className="text-center md:text-right text-gray-600">
-        LOC: WARDHA, MH // TIME: <LiveClock />
-      </div>
-    </div>
-    <style>{`
-      @keyframes statusPulse {
-        0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
-        50%       { opacity: 0.6; box-shadow: 0 0 8px 4px rgba(16,185,129,0.2); }
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.city && data.region_code) {
+            setLocation(`${data.city.toUpperCase()}, ${data.region_code.toUpperCase()}`);
+          }
+        }
+      } catch (err) {
+        // Fallback to static location on error
+        console.log('Location fetch failed, using default.');
       }
-    `}</style>
-  </div>
-);
+    };
+    fetchLocation();
+  }, []);
+
+  return (
+    <div className="w-full border-t border-white/5 mt-4">
+      <div className="container mx-auto max-w-7xl px-4 py-5 grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-0 items-center font-mono text-[10px] md:text-[11px] uppercase tracking-[0.2em] text-gray-600">
+        {/* Left Node */}
+        <div className="text-center md:text-left">
+          SYS_ID: SAURABH_LOKHANDE // V_2026.1
+        </div>
+
+        {/* Center Node */}
+        <div className="flex items-center justify-center gap-2">
+          <span
+            className="inline-block w-2 h-2 rounded-full bg-emerald-500"
+            style={{ animation: 'statusPulse 2s ease-in-out infinite' }}
+          />
+          <span className="text-gray-500">[ STATUS: DEPLOYMENT READY ]</span>
+        </div>
+
+        {/* Right Node */}
+        <div className="text-center md:text-right text-gray-600">
+          LOC: {location} // TIME: <LiveClock />
+        </div>
+      </div>
+      <style>{`
+        @keyframes statusPulse {
+          0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
+          50%       { opacity: 0.6; box-shadow: 0 0 8px 4px rgba(16,185,129,0.2); }
+        }
+      `}</style>
+    </div>
+  );
+};
 
 // ─── Footer (Composed) ─────────────────────────────────────────────────────────
 
