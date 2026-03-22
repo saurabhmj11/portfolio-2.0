@@ -35,85 +35,68 @@ interface Project {
 
 const projects: Project[] = [
     {
-        id: 'hiremeos',
-        title: 'HireMeOS',
-        category: 'LLM Systems',
-        description: 'An autonomous AI operating system that plans, executes, and explains complex data analysis using LLM agents.',
+        id: 'openreception',
+        title: 'OpenReception',
+        category: 'AI SaaS Platform',
+        description: 'A production-ready AI receptionist platform capable of handling business calls, booking appointments, and answering queries autonomously.',
         image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2670&auto=format&fit=crop',
-        technologies: ['Python', 'OpenAI', 'LangChain', 'FastAPI'],
+        technologies: ['FastAPI', 'LLM APIs', 'RAG', 'Vector Databases', 'Python', 'Twilio'],
         details: {
-            problem: 'Data analysis is often fragmented, manual, and time-consuming.',
-            solution: 'A multi-agent operating system where specialized agents collaborate autonomously.',
-            architecture: 'LangGraph orchestrated state machine. Agents communicate via structured JSON.',
-            impact: 'Reduced analysis time by 60% and achieved 80% autonomous completion rate.'
+            problem: 'Business call handling is either entirely manual or relies on rigid, frustrating IVR systems.',
+            solution: 'An LLM-driven conversational architecture with real-time AI processing.',
+            architecture: 'FastAPI backend integrated with Twilio/voice APIs and a RAG pipeline for business knowledge retrieval.',
+            impact: 'Optimized latency, cost, and response reliability for autonomous business interactions.'
         },
-        repo: 'https://github.com/saurabhmj11/hiremeos',
-        link: 'https://www.linkedin.com/posts/activity-7415710665358614528-0h3Z',
+        repo: 'https://github.com/saurabhmj11',
         position: { x: '10%', y: '15%' }
     },
     {
-        id: 'ocr-pipeline',
-        title: 'OCR Pipeline',
-        category: 'Automation',
-        description: 'Production-grade OCR pipeline with validation, confidence scoring, and human-in-the-loop review.',
+        id: 'agen',
+        title: 'AGEN',
+        category: 'Browser Agents',
+        description: 'An AI agent framework that enables autonomous browser interactions and persistent sessions for AI agents.',
         image: 'https://images.unsplash.com/photo-1562577309-4932fdd64cd1?q=80&w=2670&auto=format&fit=crop',
-        technologies: ['Tesseract', 'Python', 'OpenCV', 'AWS Textract'],
+        technologies: ['Python', 'Gradio', 'LLM APIs', 'Browser Automation', 'Agents'],
         details: {
-            problem: 'Processing thousands of non-standardized invoices led to high error rates.',
-            solution: 'A hybrid OCR pipeline combining Tesseract for speed and Textract for complex layouts.',
-            architecture: 'Event-driven SQS/Lambda. Pre-processing with OpenCV.',
-            impact: 'Automated 95% of processing with <1% critical error rate.'
+            problem: 'AI agents struggle with complex, multi-step website interactions and maintaining state.',
+            solution: 'A framework with persistent browser sessions for long-running tasks and a WebUI control center.',
+            architecture: 'Tool-calling architecture bridging language models to real website interactions.',
+            impact: 'Open source platform enabling true autonomous web task execution.'
         },
-        repo: 'https://github.com/saurabhmj11/ocr-pipeline',
+        repo: 'https://github.com/saurabhmj11',
         position: { x: '60%', y: '5%' }
     },
     {
-        id: 'student-recsys',
-        title: 'RecSys Engine',
-        category: 'Applied ML',
-        description: 'ML-driven student recommendations based on quiz performance and learning patterns.',
+        id: 'research-agent',
+        title: 'Research Agent',
+        category: 'Multi-Agent Systems',
+        description: 'Stateful multi-agent system using LangGraph for automated research workflows.',
         image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop',
-        technologies: ['Scikit-learn', 'Pandas', 'FastAPI', 'PostgreSQL'],
+        technologies: ['LangGraph', 'LangChain', 'Python', 'Vector Databases'],
         details: {
-            problem: 'Generic learning paths failed to address individual student gaps.',
-            solution: 'A collaborative filtering engine for personalized quizzes and materials.',
-            architecture: 'Real-time inference API bridging cold-start content filtering to collaborative.',
-            impact: 'Improved student engagement by 40%.'
+            problem: 'Naive prompt chains fail at complex, multi-step research tasks that require verification.',
+            solution: 'A deterministic orchestration of planner, researcher, verifier, and writer agents.',
+            architecture: 'LangGraph state machine integrating RAG-based knowledge retrieval pipelines.',
+            impact: 'Built validation and reasoning loops for high output reliability.'
         },
-        repo: 'https://github.com/saurabhmj11/recsys-engine',
+        repo: 'https://github.com/saurabhmj11',
         position: { x: '25%', y: '50%' }
     },
     {
-        id: 'submaster',
-        title: 'SubMaster',
-        category: 'Backend Architecture',
-        description: 'Subscription-based SaaS backend with authentication, Stripe billing, and secure sessions.',
+        id: 'resume-processing',
+        title: 'Resume Processor',
+        category: 'AI Pipelines',
+        description: 'Automated AI pipeline processing resumes uploaded to cloud storage to extract structured candidate insights.',
         image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2670&auto=format&fit=crop',
-        technologies: ['Node.js', 'Stripe API', 'PostgreSQL', 'Redis'],
+        technologies: ['Python', 'LLM APIs', 'Document Parsing', 'NLP'],
         details: {
-            problem: 'Boilerplate SaaS backends lack robust lifecycle management.',
-            solution: 'A secure, reusable microservice handling Auth, Payments, and Webhooks.',
-            architecture: 'Express.js with varying middleware for RBAC. Idempotent webhook handler.',
-            impact: 'Reduced initial setup time from 2 weeks to 2 days across 3 startups.'
+            problem: 'Manual candidate screening is slow and data extraction from diverse PDFs is error-prone.',
+            solution: 'An automated pipeline detecting new Google Drive uploads, converting PDFs, and parsing documents.',
+            architecture: 'Serverless integration with LLM summarization to extract Name, Email, Phone, Location, and Time Zone.',
+            impact: 'Automated candidate data integration directly into workflow systems.'
         },
-        repo: 'https://github.com/saurabhmj11/submaster',
+        repo: 'https://github.com/saurabhmj11',
         position: { x: '70%', y: '45%' }
-    },
-    {
-        id: 'web-intel',
-        title: 'Web Intel',
-        category: 'Web Agents',
-        description: 'Autonomous agent that researches, validates, and summarizes information from the web.',
-        image: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?q=80&w=2670&auto=format&fit=crop',
-        technologies: ['Playwright', 'OpenAI', 'BeautifulSoup', 'Celery'],
-        details: {
-            problem: 'Market research requires parsing hundreds of pages and handling anti-bot protections.',
-            solution: 'A browsing agent navigating JS-heavy sites to extract semantic content.',
-            architecture: 'Distributed scraping using Celery workers controlling headless browsers.',
-            impact: 'Capable of summarizing 50+ pages of analysis in under 5 minutes.'
-        },
-        repo: 'https://github.com/saurabhmj11/web-agent',
-        position: { x: '45%', y: '75%' }
     }
 ];
 

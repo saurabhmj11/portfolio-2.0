@@ -71,11 +71,10 @@ const Terminal = () => {
             case 'projects':
                 addLog("Fetching Project Database...", "system");
                 setTimeout(() => {
-                    addLog("• HireMeOS (AI Operating System)", "success");
-                    addLog("• OCR Pipeline (Production Grade)", "success");
-                    addLog("• Student RecSys (ML Engine)", "success");
-                    addLog("• SubMaster (SaaS Backend)", "success");
-                    addLog("• Web Intel Agent (Automation)", "success");
+                    addLog("• OpenReception (AI SaaS Platform)", "success");
+                    addLog("• AGEN (Browser Agents)", "success");
+                    addLog("• Research Agent (Multi-Agent)", "success");
+                    addLog("• Resume Processor (AI Pipelines)", "success");
                     soundManager.playSuccess();
                 }, 300);
                 break;

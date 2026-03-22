@@ -16,6 +16,9 @@ const LiveAgents = React.lazy(() => import('../components/LiveAgents'));
 const Contact = React.lazy(() => import('../components/Contact'));
 const Testimonials = React.lazy(() => import('../components/Testimonials'));
 const Workflow = React.lazy(() => import('../components/Workflow'));
+const LangGraphInteractive = React.lazy(() => import('../components/LangGraphInteractive'));
+const RAGSimulator = React.lazy(() => import('../components/RAGSimulator'));
+const TelemetryDashboard = React.lazy(() => import('../components/TelemetryDashboard'));
 
 const Home = () => {
     return (
@@ -38,6 +41,9 @@ const Home = () => {
                     <SectionMorph from="#projects" to="#agents" effect="curtainWipe" />
                     <Testimonials />
                     <Workflow />
+                    <LangGraphInteractive />
+                    <RAGSimulator />
+                    <TelemetryDashboard />
                     <LiveAgents />
                     <Blog />
                     <Contact />

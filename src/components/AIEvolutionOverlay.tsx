@@ -6,10 +6,10 @@ import Magnetic from './Magnetic';
 const experiences = [
     {
         year: '2024 — Present',
-        role: 'AI Systems Architect',
-        org: 'Independent',
-        desc: 'Architecting autonomous multi-agent systems and LLM orchestration pipelines using RAG and LangGraph.',
-        tech: ['LangGraph', 'FastAPI', 'OpenAI', 'RAG'],
+        role: 'Generative AI / LLM Engineer',
+        org: 'OneOfficeAutomation',
+        desc: 'Designed and deployed production-style AI systems focusing on agent orchestration, retrieval architecture, and scalable AI services.',
+        tech: ['LangGraph', 'FastAPI', 'Python', 'RAG'],
         accent: '#3b82f6',
     },
     {

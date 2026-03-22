@@ -52,7 +52,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, setIsOpen }) => {
             if (lowerInput.includes('skill') || lowerInput.includes('stack') || lowerInput.includes('tech') || lowerInput.includes('what can you do') || lowerInput.includes('expert')) {
                 return "Core Expertise: LLM Systems & RAG (End-to-end architectures, Semantic Chunking), AI Agents (LangChain, LangGraph, CrewAI). Proficient in Python (FastAPI), Local LLMs (Ollama), and Vector DBs. ~2 years of specialized GenAI experience.";
             } else if (lowerInput.includes('project') || lowerInput.includes('work') || lowerInput.includes('built') || lowerInput.includes('portfolio')) {
-                return "Saurabh's Flagships:\n• HireMeOS: Autonomous AI Career System (Multi-agent).\n• Autonomous Research Agent: Planning & Report writing with LangGraph.\n• DataOS: Local-first dataset analysis assistant.\n• NeuroAdaptive Quiz Engine: Context-aware learning system.";
+                return "Saurabh's Flagships:\n• OpenReception: AI Receptionist SaaS Platform.\n• AGEN: AI Agent Browser Platform (Open Source).\n• Research Agent: Automated research workflows with LangGraph.\n• Resume Processor: Automated AI candidate intelligence pipeline.";
             } else if (lowerInput.includes('workflow') || lowerInput.includes('process') || lowerInput.includes('method') || lowerInput.includes('build')) {
                 return "Saurabh's System Workflow:\n1. Deep Discovery (Problem Framing)\n2. Agentic Architecture Design (LangGraph)\n3. Precision Implementation (Python/FastAPI)\n4. Reliable Deployment (Docker/Edge)";
             } else if (lowerInput.includes('live') || lowerInput.includes('agent') || lowerInput.includes('demo') || lowerInput.includes('try')) {
@@ -64,7 +64,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, setIsOpen }) => {
             } else if (lowerInput.includes('full summary') || lowerInput.includes('summary')) {
                 return "Professional Summary: LLM Engineer building production-grade AI systems. \n\nExperience: ~2 Years (Freelance & Product Projects).\n\nFocus:\n• RAG Architectures & Vector Search\n• Multi-Agent Systems (LangGraph)\n• Scalable Backends (FastAPI)\n\nHe is ready to build scalable AI solutions immediately.";
             } else if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey') || lowerInput.includes('good morning') || lowerInput.includes('good evening')) {
-                return "Hello! I'm your guide to Saurabh's portfolio. Ask me about his AI Projects (HireMeOS, Research Agent), RAG expertise, or Contact info!";
+                return "Hello! I'm your guide to Saurabh's portfolio. Ask me about his AI Projects (AGEN, OpenReception), RAG expertise, or Contact info!";
             }
             return "I'm not exactly sure about that, but I can connect you with Saurabh or tell you about his AI Agents and Projects!";
         };
