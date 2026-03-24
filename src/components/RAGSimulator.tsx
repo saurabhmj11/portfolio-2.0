@@ -17,39 +17,63 @@ const RAGSimulator = () => {
     const [generatedText, setGeneratedText] = useState('');
     const [isSimulating, setIsSimulating] = useState(false);
 
-    const fullResponse = "Based on the provided context, Saurabh deployed an event-driven OCR pipeline using AWS Textract, Tesseract, and OpenCV, automating 95% of processing with <1% critical error rate.";
+    const PREDEFINED_RESPONSES: Record<string, string> = {
+        "who is saurabh": "Saurabh Lokhande is an AI Engineer specializing in Generative AI, Agentic Systems, and LLM Architecture. He has 2+ years of experience building production-grade AI platforms like OpenReception and AGEN.",
+        "skills": "Saurabh's core skills include Agentic AI Systems, Multi-Agent Architectures, RAG, Prompt Engineering, and Backend Engineering with Python and FastAPI. He is proficient in tools like LangChain, LangGraph, and Vector Databases (FAISS, Pinecone).",
+        "experience": "Saurabh is currently a Generative AI / LLM Engineer at OneOfficeAutomation. He has built several production-style AI systems, including an AI receptionist SaaS, an open-source AI agent browser platform, and a stateful multi-agent research automation system using LangGraph.",
+        "contact": "You can contact Saurabh via email at saurabhmj11@gmail.com or connect with him on LinkedIn at linkedin.com/in/saurabhmj11. His portfolio is available at saurabh-anil-lokhande.netlify.app."
+    };
 
-    const runSimulation = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!query.trim() || isSimulating) return;
+    const DEFAULT_RESPONSE = "Based on the provided context, Saurabh deployed an event-driven OCR pipeline using AWS Textract, Tesseract, and OpenCV, automating 95% of processing with <1% critical error rate.";
+
+    const SUGGESTED_QUESTIONS = [
+        "Who is Saurabh Lokhande?",
+        "What are your core skills?",
+        "Tell me about your AI experience.",
+        "How to contact?"
+    ];
+
+    const getGroundedResponse = (q: string) => {
+        const lowerQ = q.toLowerCase();
+        if (lowerQ.includes("who is") || lowerQ.includes("saurabh")) return PREDEFINED_RESPONSES["who is saurabh"];
+        if (lowerQ.includes("skills") || lowerQ.includes("tech") || lowerQ.includes("stack")) return PREDEFINED_RESPONSES["skills"];
+        if (lowerQ.includes("experience") || lowerQ.includes("work") || lowerQ.includes("projects")) return PREDEFINED_RESPONSES["experience"];
+        if (lowerQ.includes("contact") || lowerQ.includes("email") || lowerQ.includes("linkedin")) return PREDEFINED_RESPONSES["contact"];
+        return DEFAULT_RESPONSE;
+    };
+
+    const runSimulation = async (e?: React.FormEvent, overrideQuery?: string) => {
+        if (e) e.preventDefault();
+        const finalQuery = overrideQuery || query;
+        if (!finalQuery.trim() || isSimulating) return;
 
         setIsSimulating(true);
         setGeneratedText('');
+        const responseToUse = getGroundedResponse(finalQuery);
 
         // 1. Embedding
         setStep(1);
-        await new Promise(r => setTimeout(r, 1500));
+        await new Promise(r => setTimeout(r, 1200));
 
         // 2. Vector Search
         setStep(2);
-        await new Promise(r => setTimeout(r, 1500));
+        await new Promise(r => setTimeout(r, 1200));
 
         // 3. Retrieval
         setStep(3);
-        await new Promise(r => setTimeout(r, 1500));
+        await new Promise(r => setTimeout(r, 1200));
 
         // 4. Generation
         setStep(4);
 
         // Typewriter effect
-        for (let i = 0; i <= fullResponse.length; i++) {
-            setGeneratedText(fullResponse.slice(0, i));
-            await new Promise(r => setTimeout(r, 30)); // 30ms per char
+        for (let i = 0; i <= responseToUse.length; i++) {
+            setGeneratedText(responseToUse.slice(0, i));
+            await new Promise(r => setTimeout(r, 25)); // Slightly faster typing
         }
 
         await new Promise(r => setTimeout(r, 2000));
         setIsSimulating(false);
-        setStep(0); // Reset or stay at 4? Let's stay at 4 so they can read it, we'll reset on next submit
     };
 
     return (
@@ -77,23 +101,39 @@ const RAGSimulator = () => {
                 <div className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl">
 
                     {/* Input Area */}
-                    <form onSubmit={(e) => { if (step === 4) setStep(0); runSimulation(e); }} className="relative mb-12">
-                        <input
-                            type="text"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            placeholder="e.g., 'How does Saurabh automate document processing?'"
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-6 pr-16 text-white font-mono text-sm focus:outline-none focus:border-blue-500/50 transition-colors placeholder:text-gray-600"
-                            disabled={isSimulating && step !== 4}
-                        />
-                        <button
-                            type="submit"
-                            disabled={!query.trim() || (isSimulating && step !== 4)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 p-2 rounded-xl transition-colors disabled:opacity-50"
-                        >
-                            <Search size={20} />
-                        </button>
-                    </form>
+                    <div className="mb-12">
+                        <form onSubmit={(e) => { if (step === 4) setStep(0); runSimulation(e); }} className="relative mb-6">
+                            <input
+                                type="text"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="e.g., 'Who is Saurabh Lokhande?'"
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-6 pr-16 text-white font-mono text-sm focus:outline-none focus:border-blue-500/50 transition-colors placeholder:text-gray-600"
+                                disabled={isSimulating && step !== 4}
+                            />
+                            <button
+                                type="submit"
+                                disabled={!query.trim() || (isSimulating && step !== 4)}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 p-2 rounded-xl transition-colors disabled:opacity-50"
+                            >
+                                <Search size={20} />
+                            </button>
+                        </form>
+
+                        {/* Suggested Questions */}
+                        <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                            {SUGGESTED_QUESTIONS.map((q, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => { setQuery(q); runSimulation(undefined, q); }}
+                                    disabled={isSimulating}
+                                    className="px-3 py-1.5 rounded-full border border-white/5 bg-white/5 text-[10px] font-mono text-gray-400 hover:border-blue-500/30 hover:text-blue-400 transition-all disabled:opacity-50"
+                                >
+                                    {q}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
                     {/* Simulation Pipeline */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
@@ -150,7 +190,7 @@ const RAGSimulator = () => {
                             <div className="h-16 flex items-center justify-center w-full text-center">
                                 {step >= 3 ? (
                                     <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-[9px] text-purple-300 font-mono leading-tight bg-purple-500/10 p-2 rounded border border-purple-500/20 line-clamp-3">
-                                        "...OCR pipeline with validation, confidence scoring... hybrid combining Tesseract and Textract..."
+                                        {query.toLowerCase().includes("skills") ? "...Agentic AI Systems, Multi-Agent Architectures, RAG, Prompt Engineering..." : "...OCR pipeline with validation, confidence scoring... hybrid combining Tesseract and Textract..."}
                                     </motion.p>
                                 ) : (
                                     <p className="text-xs text-gray-600 font-mono text-center">Top-K Docs<br />Retrieved</p>
@@ -188,7 +228,7 @@ const RAGSimulator = () => {
                                 <span className="text-xs text-emerald-500 uppercase tracking-widest mb-2 block">Agent Synthesis</span>
                                 <p className="text-gray-300 leading-relaxed text-sm md:text-base">
                                     {generatedText}
-                                    {step === 4 && generatedText.length < fullResponse.length && <span className="inline-block w-2 h-4 bg-emerald-500 ml-1 animate-pulse" />}
+                                    {step === 4 && generatedText.length < getGroundedResponse(query).length && <span className="inline-block w-2 h-4 bg-emerald-500 ml-1 animate-pulse" />}
                                 </p>
                             </motion.div>
                         )}
