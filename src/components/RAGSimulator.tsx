@@ -113,6 +113,7 @@ const RAGSimulator = () => {
                             />
                             <button
                                 type="submit"
+                                aria-label="Search"
                                 disabled={!query.trim() || (isSimulating && step !== 4)}
                                 className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 p-2 rounded-xl transition-colors disabled:opacity-50"
                             >

@@ -14,11 +14,11 @@ import Spotlight from './components/Spotlight';
 
 // Pages
 import Home from './pages/Home';
-import BlogPage from './pages/BlogPage';
-import BlogPostPage from './pages/BlogPostPage';
-import AdminPage from './pages/Admin';
-import Resume from './pages/Resume';
-import NotFound from './pages/NotFound';
+const BlogPage = React.lazy(() => import('./pages/BlogPage'));
+const BlogPostPage = React.lazy(() => import('./pages/BlogPostPage'));
+const AdminPage = React.lazy(() => import('./pages/Admin'));
+const Resume = React.lazy(() => import('./pages/Resume'));
+const NotFound = React.lazy(() => import('./pages/NotFound'));
 const CaseStudy = React.lazy(() => import('./pages/CaseStudy'));
 
 import { Routes, Route, useLocation } from 'react-router-dom';
@@ -90,15 +90,17 @@ function App() {
                   <Header />
 
                   <AnimatePresence mode="wait">
-                    <Routes location={location} key={location.pathname}>
-                      <Route path="/" element={<PageTransition label="Home"><Home /></PageTransition>} />
-                      <Route path="/blog" element={<PageTransition label="Research Log"><BlogPage /></PageTransition>} />
-                      <Route path="/blog/:slug" element={<PageTransition label="Article"><BlogPostPage /></PageTransition>} />
-                      <Route path="/admin" element={<PageTransition label="Admin"><AdminPage /></PageTransition>} />
-                      <Route path="/resume" element={<PageTransition label="Résumé"><Resume /></PageTransition>} />
-                      <Route path="/project/:id" element={<PageTransition label="Case Study"><React.Suspense fallback={null}><CaseStudy /></React.Suspense></PageTransition>} />
-                      <Route path="*" element={<PageTransition label="404"><NotFound /></PageTransition>} />
-                    </Routes>
+                    <React.Suspense fallback={null}>
+                      <Routes location={location} key={location.pathname}>
+                        <Route path="/" element={<PageTransition label="Home"><Home /></PageTransition>} />
+                        <Route path="/blog" element={<PageTransition label="Research Log"><BlogPage /></PageTransition>} />
+                        <Route path="/blog/:slug" element={<PageTransition label="Article"><BlogPostPage /></PageTransition>} />
+                        <Route path="/admin" element={<PageTransition label="Admin"><AdminPage /></PageTransition>} />
+                        <Route path="/resume" element={<PageTransition label="Résumé"><Resume /></PageTransition>} />
+                        <Route path="/project/:id" element={<PageTransition label="Case Study"><CaseStudy /></PageTransition>} />
+                        <Route path="*" element={<PageTransition label="404"><NotFound /></PageTransition>} />
+                      </Routes>
+                    </React.Suspense>
                   </AnimatePresence>
                 </div>
 

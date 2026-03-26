@@ -49,7 +49,7 @@ const Hero = () => {
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
             // Sequence for non-TextReveal elements (like the description and "I'm a")
-            const tl = gsap.timeline({ delay: 0.5 });
+            const tl = gsap.timeline({ delay: 0.1 });
 
             tl.fromTo('.hero-intro',
                 { opacity: 0, x: -50 },

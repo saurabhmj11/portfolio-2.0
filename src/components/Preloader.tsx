@@ -64,7 +64,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                 }
                 return next;
             });
-        }, 12); // Dramatically faster for a snappier feel (1.2s total delay)
+        }, 15); // Faster feel (100 * 15ms = 1.5s total progress duration)
 
         return () => {
             clearInterval(interval);
@@ -87,8 +87,8 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                 setTimeout(() => {
                     onComplete();
                     document.body.style.overflow = '';
-                }, 1500); // Wait for complex exit animation
-            }, 800);
+                }, 600); // Reduced from 1500ms for faster LCP
+            }, 200); // Reduced from 800ms - show content sooner
         }
     }, [progress, onComplete]);
 

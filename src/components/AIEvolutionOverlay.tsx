@@ -69,9 +69,9 @@ const GlassCard = ({ exp, index, progress }: {
                     />
                 </div>
 
-                <h4 className="text-2xl md:text-3xl font-display font-black uppercase tracking-tighter text-white leading-[0.9] mb-1">
+                <h3 className="text-2xl md:text-3xl font-display font-black uppercase tracking-tighter text-white leading-[0.9] mb-1">
                     {exp.role}
-                </h4>
+                </h3>
                 <p className="font-mono text-xs tracking-widest text-gray-500 uppercase mb-4">
                     // {exp.org}
                 </p>

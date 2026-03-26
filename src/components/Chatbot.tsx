@@ -196,6 +196,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, setIsOpen }) => {
                                 />
                                 <button
                                     type="submit"
+                                    aria-label="Send message"
                                     disabled={!input.trim()}
                                     className="bg-white text-black p-2 rounded-full hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
