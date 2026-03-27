@@ -3,12 +3,12 @@ import Analytics from './components/Analytics';
 import SmoothScroll from './components/SmoothScroll';
 import { AnimatePresence, motion } from 'framer-motion';
 import Header from './components/Header';
-import Terminal from './components/Terminal';
+const Terminal = React.lazy(() => import('./components/Terminal'));
 import Footer from './components/Footer';
 import Preloader from './components/Preloader';
 import CustomCursor from './components/CustomCursor';
-import Chatbot from './components/Chatbot';
-import AgentDock from './components/AgentDock';
+const Chatbot = React.lazy(() => import('./components/Chatbot'));
+const AgentDock = React.lazy(() => import('./components/AgentDock'));
 import ScrollToTop from './components/ScrollToTop';
 import Spotlight from './components/Spotlight';
 
@@ -107,11 +107,12 @@ function App() {
                 {/* Fixed Footer (Behind the content) */}
                 <Footer />
 
-                <Chatbot isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
-                <Terminal />
+                <React.Suspense fallback={null}>
+                  <Chatbot isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
+                  <Terminal />
+                  <AgentDock isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
+                </React.Suspense>
                 <ScrollToTop />
-
-                <AgentDock isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
               </React.Fragment>
             )}
           </SmoothScroll>

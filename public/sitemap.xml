@@ -3,23 +3,28 @@
   <!-- Static Routes -->
   <url>
     <loc>https://saurabh-anil-lokhande.netlify.app/</loc>
-    <lastmod>2026-03-26</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://saurabh-anil-lokhande.netlify.app/blog</loc>
-    <lastmod>2026-03-26</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://saurabh-anil-lokhande.netlify.app/resume</loc>
-    <lastmod>2026-03-26</lastmod>
+    <loc>https://saurabh-anil-lokhande.netlify.app/blog/evolutionary-architectures-hyper-scale-computation</loc>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  <!-- Blog Posts -->
+  <url>
+    <loc>https://saurabh-anil-lokhande.netlify.app/blog/ai-chip-design-co-pilot</loc>
+    <lastmod>2026-02-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
   <url>
     <loc>https://saurabh-anil-lokhande.netlify.app/blog/the-era-of-agentic-ai</loc>
     <lastmod>2024-03-22</lastmod>
@@ -29,12 +34,6 @@
   <url>
     <loc>https://saurabh-anil-lokhande.netlify.app/blog/generative-ai-software-engineering</loc>
     <lastmod>2024-02-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://saurabh-anil-lokhande.netlify.app/blog/ai-chip-design-co-pilot</loc>
-    <lastmod>2026-02-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
