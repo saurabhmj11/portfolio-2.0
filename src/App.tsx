@@ -11,6 +11,7 @@ const Chatbot = React.lazy(() => import('./components/Chatbot'));
 const AgentDock = React.lazy(() => import('./components/AgentDock'));
 import ScrollToTop from './components/ScrollToTop';
 import Spotlight from './components/Spotlight';
+import ScrollProgress from './components/ScrollProgress';
 
 // Pages
 import Home from './pages/Home';
@@ -65,6 +66,7 @@ function App() {
           <Seo />
           <SmoothScroll>
             <Spotlight />
+            <ScrollProgress />
             <CustomCursor />
             <AudioVisualizer />
             <AnimatePresence mode="wait">

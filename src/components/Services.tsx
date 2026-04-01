@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
+import useIsMobile from '../hooks/useIsMobile';
 import { Brain, Code, Cpu, Globe, Rocket, Zap } from 'lucide-react';
 
 // ─── Generative Backgrounds ────────────────────────────────────────────────
@@ -253,9 +254,22 @@ const CapabilityCard = ({ service, bgIndex }: { service: typeof services[0]; bgI
     const [hovered, setHovered] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
     const inView = useInView(ref, { once: true, margin: '-50px' });
+    const isMobile = useIsMobile();
     const Icon = service.icon;
     const BgComponent = BG_COMPONENTS[bgIndex];
     const isLarge = service.span.includes('row-span-2') && service.span.includes('col-span-2');
+
+    // Only render canvas when card is in viewport (performance optimization)
+    const [isCardVisible, setIsCardVisible] = useState(false);
+    useEffect(() => {
+        if (!ref.current) return;
+        const obs = new IntersectionObserver(
+            ([entry]) => setIsCardVisible(entry.isIntersecting),
+            { threshold: 0.1, rootMargin: '100px' }
+        );
+        obs.observe(ref.current);
+        return () => obs.disconnect();
+    }, []);
 
     return (
         <motion.div
@@ -268,9 +282,13 @@ const CapabilityCard = ({ service, bgIndex }: { service: typeof services[0]; bgI
             className={`relative overflow-hidden border border-white/10 bg-[#080808] ${service.span} min-h-[220px] md:min-h-[240px] group cursor-default`}
             style={{ borderRadius: '1.5rem' }}
         >
-            {/* Generative Background */}
+            {/* Generative Background — disabled on mobile, paused off-screen */}
             <div className="absolute inset-0 z-0">
-                <BgComponent />
+                {!isMobile && isCardVisible ? (
+                    <BgComponent />
+                ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-white/[0.02] to-transparent" />
+                )}
             </div>
 
             {/* Dark vignette overlay */}

@@ -47,7 +47,7 @@ const projects: Project[] = [
             architecture: 'FastAPI backend integrated with Twilio/voice APIs and a RAG pipeline for business knowledge retrieval.',
             impact: 'Optimized latency, cost, and response reliability for autonomous business interactions.'
         },
-        repo: 'https://github.com/saurabhmj11',
+        repo: 'https://github.com/saurabhmj11/OpenReception',
         position: { x: '10%', y: '15%' }
     },
     {
@@ -63,7 +63,7 @@ const projects: Project[] = [
             architecture: 'Tool-calling architecture bridging language models to real website interactions.',
             impact: 'Open source platform enabling true autonomous web task execution.'
         },
-        repo: 'https://github.com/saurabhmj11',
+        repo: 'https://github.com/saurabhmj11/AGEN',
         position: { x: '60%', y: '5%' }
     },
     {
@@ -79,7 +79,7 @@ const projects: Project[] = [
             architecture: 'LangGraph state machine integrating RAG-based knowledge retrieval pipelines.',
             impact: 'Built validation and reasoning loops for high output reliability.'
         },
-        repo: 'https://github.com/saurabhmj11',
+        repo: 'https://github.com/saurabhmj11/Research-Agent',
         position: { x: '25%', y: '50%' }
     },
     {
@@ -95,7 +95,7 @@ const projects: Project[] = [
             architecture: 'Serverless integration with LLM summarization to extract Name, Email, Phone, Location, and Time Zone.',
             impact: 'Automated candidate data integration directly into workflow systems.'
         },
-        repo: 'https://github.com/saurabhmj11',
+        repo: 'https://github.com/saurabhmj11/Resume-Processor',
         position: { x: '70%', y: '45%' }
     }
 ];

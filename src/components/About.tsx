@@ -117,7 +117,7 @@ const About = () => {
       <section ref={sectionRef} className="relative w-full h-screen bg-[#050505] overflow-hidden flex justify-center items-center">
 
         {/* Exploding headline */}
-        <div ref={headlineRef} className="absolute inset-0 flex flex-wrap content-center justify-center pointer-events-none p-8 z-10 w-full h-full text-center" />
+        <div ref={headlineRef} className="absolute inset-0 flex flex-wrap content-center justify-center pointer-events-none p-4 md:p-8 z-10 w-full h-full text-center" />
 
         {/* Central content */}
         <div className="relative z-20 text-center max-w-2xl w-full flex flex-col items-center px-4">
@@ -125,18 +125,18 @@ const About = () => {
             ref={imageRef}
             src="/profile.jpg"
             alt="Saurabh Lokhande — AI Engineer"
-            className="w-64 h-64 object-cover mb-8 rounded-full shadow-2xl border-4 border-white/10 hover:scale-105 transition-transform duration-500 bg-[#111]"
+            className="w-40 h-40 md:w-64 md:h-64 object-cover mb-6 md:mb-8 rounded-full shadow-2xl border-2 md:border-4 border-white/10 hover:scale-105 transition-transform duration-500 bg-[#111]"
             onError={(e) => {
               (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop';
             }}
           />
 
-          <div ref={bioRef} className="flex flex-wrap justify-center gap-y-2 gap-x-1 text-center font-medium leading-relaxed relative z-30 mix-blend-difference" />
+          <div ref={bioRef} className="flex flex-wrap justify-center gap-y-1 md:gap-y-2 gap-x-1 text-center font-medium leading-relaxed relative z-30 mix-blend-difference" />
 
           {/* ── Stats counter strip ── */}
           <div
             ref={statsRef}
-            className="mt-8 md:mt-12 flex items-start justify-center gap-6 md:gap-16"
+            className="mt-6 md:mt-12 flex items-start justify-center gap-4 md:gap-16"
           >
             {STATS.map((stat, i) => (
               <div key={i} className="flex flex-col items-center gap-1">
@@ -145,7 +145,7 @@ const About = () => {
                 >
                   0{stat.suffix}
                 </span>
-                <span className="font-mono text-[8px] md:text-[9px] text-white/25 uppercase tracking-widest text-center whitespace-pre-line">
+                <span className="font-mono text-[9px] md:text-[10px] text-white/30 uppercase tracking-widest text-center whitespace-pre-line">
                   {stat.label}
                 </span>
               </div>
