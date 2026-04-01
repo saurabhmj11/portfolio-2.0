@@ -6,9 +6,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 // ─── Stats that counter up during the bio phase ──────────────────────────────
 const STATS = [
-  { value: 55, suffix: '+', label: 'AI Projects\nShipped' },
-  { value: 60, suffix: '%', label: 'Faster pipelines\nbuilt' },
-  { value: 1.5, suffix: '+', label: 'Years of\nengineering' },
+  { value: 10, suffix: '+', label: 'Agentic AI\nSystems Built' },
+  { value: 60, suffix: '%', label: 'Faster RAG\nPipelines' },
+  { value: 3, suffix: '+', label: 'Years of\nEngineering' },
 ];
 
 const About = () => {
@@ -23,8 +23,8 @@ const About = () => {
     if (!sectionRef.current || !headlineRef.current || !bioRef.current || !imageRef.current) return;
 
     const ctx = gsap.context(() => {
-      const headlineText = 'CREATING THE FUTURE OF AI';
-      const bioText = "Hi, I'm Saurabh — An AI Engineer & Full Stack Developer. My focus is on building intelligent, scalable, and immersive applications that bridge the gap between human creativity and artificial intelligence.";
+      const headlineText = 'ENGINEERING AGENTIC ARCHITECTURES';
+      const bioText = "Hi, I'm Saurabh Lokhande — an AI Engineer with 3+ years of experience building production-grade Agentic AI systems, RAG pipelines, and LLM-powered applications. I specialize in LangChain, LangGraph, and scalable full-stack architectures that deliver real-world intelligent automation.";
 
       if (headlineRef.current) headlineRef.current.innerHTML = '';
       if (bioRef.current) bioRef.current.innerHTML = '';
