@@ -4,7 +4,6 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
 const CustomCursor = () => {
     // Disable completely on mobile touch screens to save battery and prevent dual-cursors
     const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
-    if (isTouchDevice) return null;
 
     const [isHovering, setIsHovering] = useState(false);
 
@@ -47,7 +46,9 @@ const CustomCursor = () => {
             window.removeEventListener("mousemove", manageMouseMove);
             window.removeEventListener("mouseover", manageMouseOver);
         }
-    }, [isHovering, cursorSize]);
+    }, [isHovering, cursorSize, mouse.x, mouse.y]);
+
+    if (isTouchDevice) return null;
 
     return (
         <>

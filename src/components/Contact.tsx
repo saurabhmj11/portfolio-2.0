@@ -172,7 +172,7 @@ const TerminalField = ({
   focused, onFocus, onBlur, placeholderPhrases, textarea = false, rows = 4, required = true
 }: {
   label: string; id: string; name: string; type?: string;
-  value: string; onChange: (e: React.ChangeEvent<any>) => void;
+  value: string; onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   focused: boolean; onFocus: () => void; onBlur: () => void;
   placeholderPhrases: string[]; textarea?: boolean; rows?: number; required?: boolean;
 }) => {

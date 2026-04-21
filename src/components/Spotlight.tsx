@@ -4,7 +4,6 @@ import { motion, useSpring, useMotionValue } from 'framer-motion';
 const Spotlight = () => {
     // Disable on touch devices to save battery and prevent unwanted visual behavior
     const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
-    if (isTouchDevice) return null;
 
     const [isVisible, setIsVisible] = useState(false);
 
@@ -36,6 +35,8 @@ const Spotlight = () => {
             document.body.removeEventListener('mouseenter', handleMouseEnter);
         };
     }, [isVisible, mouseX, mouseY]);
+
+    if (isTouchDevice) return null;
 
     return (
         <motion.div

@@ -111,7 +111,8 @@ const WaveformBg = () => {
                     const amp = (H / 6) - layer * 8;
                     const y = H / 2 + Math.sin(x * freq + t + layer * 1.2) * amp
                         + Math.sin(x * freq * 2.3 + t * 0.8) * (amp * 0.35);
-                    x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
                 }
                 ctx.stroke();
             }

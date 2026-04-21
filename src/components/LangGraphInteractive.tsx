@@ -10,7 +10,7 @@ type NodeId = 'input' | 'planner' | 'searcher' | 'analyser' | 'reviewer' | 'outp
 interface AgentNode {
     id: NodeId;
     label: string;
-    icon: any;
+    icon: React.ElementType;
     x: number;
     y: number;
     desc: string;

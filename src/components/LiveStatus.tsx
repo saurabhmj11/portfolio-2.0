@@ -21,7 +21,7 @@ const LiveStatus = () => {
                     yoyo: true,
                     ease: "power1.inOut",
                     modifiers: {
-                        innerHTML: (v: any) => `${Math.round(parseFloat(v))}`
+                        innerHTML: (v: string) => `${Math.round(parseFloat(v))}`
                     }
                 });
             });

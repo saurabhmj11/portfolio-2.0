@@ -1,0 +1,77 @@
+
+> ai-developer-portfolio@0.0.0 lint
+> eslint .
+
+
+F:\portfolio-2.0-main\src\components\AIParticles.tsx
+  17:9  error  'mouse' is never reassigned. Use 'const' instead  prefer-const
+  18:9  error  'tilt' is never reassigned. Use 'const' instead   prefer-const
+
+F:\portfolio-2.0-main\src\components\DistortionImage.tsx
+  58:5   error  ES2015 module syntax is preferred over namespaces  @typescript-eslint/no-namespace
+  60:62  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  90:66  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\components\ErrorBoundary.tsx
+  17:44  error  '_' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\Footer.test.tsx
+  20:62   error  'whileHover' is defined but never used    @typescript-eslint/no-unused-vars
+  20:74   error  'whileTap' is defined but never used      @typescript-eslint/no-unused-vars
+  20:96   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:106  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  23:51   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:37   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\components\HackerText.tsx
+  41:8  warning  React Hook useEffect has a missing dependency: 'startScramble'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+F:\portfolio-2.0-main\src\components\Hero.tsx
+  32:13  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+F:\portfolio-2.0-main\src\components\LiveStats.tsx
+  34:71  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:63  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\components\Overlay.tsx
+  4:34  error  '_containerRef' is defined but never used  @typescript-eslint/no-unused-vars
+
+F:\portfolio-2.0-main\src\components\SkewContainer.tsx
+  12:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\components\SmoothScroll.tsx
+  14:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\components\Terminal.tsx
+  23:8  warning  React Hook useEffect has missing dependencies: 'addLog' and 'logs.length'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+F:\portfolio-2.0-main\src\components\Testimonials.tsx
+  35:13  error  'ctx' is never reassigned. Use 'const' instead  prefer-const
+
+F:\portfolio-2.0-main\src\components\TextReveal.tsx
+  52:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\components\Workflow.tsx
+  34:13  error  'mm' is never reassigned. Use 'const' instead  prefer-const
+  60:34  error  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\context\AudioContext.tsx
+   40:74  error    Unexpected any. Specify a different type                                                                                        @typescript-eslint/no-explicit-any
+  181:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+F:\portfolio-2.0-main\src\context\TerminalContext.tsx
+  55:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+F:\portfolio-2.0-main\src\hooks\usePerformance.ts
+  30:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+F:\portfolio-2.0-main\src\pages\Admin.tsx
+   7:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   8:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:18  error  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  51:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Γ£û 33 problems (29 errors, 4 warnings)
+  4 errors and 0 warnings potentially fixable with the `--fix` option.
+

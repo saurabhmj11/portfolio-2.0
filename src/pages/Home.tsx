@@ -19,6 +19,7 @@ const Workflow = React.lazy(() => import('../components/Workflow'));
 const LangGraphInteractive = React.lazy(() => import('../components/LangGraphInteractive'));
 const RAGSimulator = React.lazy(() => import('../components/RAGSimulator'));
 const TelemetryDashboard = React.lazy(() => import('../components/TelemetryDashboard'));
+const AutonomousAgentHUD = React.lazy(() => import('../components/AutonomousAgentHUD'));
 
 const Home = () => {
     return (
@@ -44,6 +45,7 @@ const Home = () => {
                     <LangGraphInteractive />
                     <RAGSimulator />
                     <TelemetryDashboard />
+                    <AutonomousAgentHUD />
                     <LiveAgents />
                     <Blog />
                     <Contact />

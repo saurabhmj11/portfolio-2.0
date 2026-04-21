@@ -399,7 +399,7 @@ const SystemStatusBar = () => {
             setLocation(`${data.city.toUpperCase()}, ${data.region_code.toUpperCase()}`);
           }
         }
-      } catch (err) {
+      } catch {
         // Fallback to static location on error
         console.log('Location fetch failed, using default.');
       }

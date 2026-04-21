@@ -10,7 +10,7 @@ export const useSound = () => {
         // Only initialize on first user interaction to comply with browser autoplay policies
         const initAudio = () => {
             if (!audioCtxRef.current) {
-                audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+                audioCtxRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
             }
         };
         window.addEventListener('click', initAudio, { once: true });
@@ -67,5 +67,30 @@ export const useSound = () => {
         osc.stop(ctx.currentTime + 0.1);
     }, []);
 
-    return { playHover, playClick };
+    const playSuccess = useCallback(() => {
+        if (!audioCtxRef.current) return;
+        const ctx = audioCtxRef.current;
+
+        // Multi-tone electronic success chime
+        const tones = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        tones.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.1);
+            
+            gainNode.gain.setValueAtTime(0, ctx.currentTime + i * 0.1);
+            gainNode.gain.linearRampToValueAtTime(0.1, ctx.currentTime + i * 0.1 + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.1 + 0.2);
+
+            osc.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            osc.start(ctx.currentTime + i * 0.1);
+            osc.stop(ctx.currentTime + i * 0.1 + 0.2);
+        });
+    }, []);
+
+    return { playHover, playClick, playSuccess };
 };

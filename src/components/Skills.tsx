@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Magnetic from './Magnetic'; // Assuming Magnetic is robust now
-import { useTerminal } from '../context/TerminalContext';
+import { useTerminal, LogType } from '../context/TerminalContext';
 import { useAudioDirector } from '../context/AudioContext';
 import { useInView } from 'react-intersection-observer';
 import { Helmet } from 'react-helmet-async';
@@ -75,7 +75,7 @@ const Skills = () => {
     );
 };
 
-const SkillBadge = ({ skill, index, addLog }: { skill: string, index: number, addLog: any }) => {
+const SkillBadge = ({ skill, index, addLog }: { skill: string, index: number, addLog: (msg: string, type?: LogType, source?: string) => void }) => {
     // Random float animation
     const randomDuration = 3 + Math.random() * 2;
     const randomDelay = Math.random() * 2;

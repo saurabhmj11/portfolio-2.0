@@ -11,7 +11,7 @@ status: "published"
 
 For over a year, the standard interaction model with Generative AI has been conversational: you type a prompt, and the model returns an answer. This "chatbot paradigm" demonstrated the incredible reasoning capabilities of Large Language Models (LLMs), but it also highlighted their limitations. They required constant human steering, suffered from context window amnesia, and struggled to execute multi-step operations reliably.
 
-Enter **Agentic AI**. 
+Enter **Agentic AI**.
 
 We are rapidly moving from conversational wrappers to **autonomous agent architectures**. Agentic systems don’t just answer questions; they decompose complex goals, formulate plans, interact with external environments via tools, verify their own work, and correct mistakes.
 
@@ -29,18 +29,20 @@ While simple RAG (Retrieval-Augmented Generation) applications enrich prompts wi
 The complexity doesn't stop at single agents. The most robust implementations, like systems built on **LangGraph** or **CrewAI**, utilize *multi-agent orchestration*.
 
 Imagine an autonomous software development team:
+
 - A **Planner Agent** breaks down the feature request.
 - A **Researcher Agent** scours documentation for the right APIs.
 - A **Coder Agent** writes the implementation.
 - A **Reviewer Agent** runs unit tests, critiques the code, and passes it back to the coder for fixes.
 
-This deterministic orchestration replaces naive, brittle prompt chains. It transforms AI from a "super-autocomplete" into an autonomous digital workforce capable of reliably executing enterprise-grade processes. 
+This deterministic orchestration replaces naive, brittle prompt chains. It transforms AI from a "super-autocomplete" into an autonomous digital workforce capable of reliably executing enterprise-grade processes.
 
 ## The Technical Challenges Ahead
 
-Building production-ready Agentic AI is far from trivial. Deterministic execution in a non-deterministic environment (LLMs) requires rigorous engineering. 
+Building production-ready Agentic AI is far from trivial. Deterministic execution in a non-deterministic environment (LLMs) requires rigorous engineering.
 
 We face significant hurdles:
+
 - **Infinite Loops:** Agents can get stuck repeatedly executing the same failed tool call.
 - **Latency and Cost:** Deep reasoning and multiple tool calls take time and consume massive amounts of tokens.
 - **Evaluation:** Traditional unit tests don't work well for non-deterministic agents. We need LLM-as-a-judge evaluation frameworks.

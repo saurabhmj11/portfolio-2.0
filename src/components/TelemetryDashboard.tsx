@@ -51,7 +51,16 @@ const TelemetryDashboard = () => {
         emerald: { base: 'border-emerald-500/20 hover:border-emerald-500/50', glow: 'bg-emerald-500/10 group-hover:bg-emerald-500/20', bgText: 'bg-emerald-500/10 text-emerald-400', text: 'text-emerald-400', track: 'bg-emerald-500/30', fill: 'bg-emerald-400' }
     };
 
-    const MetricCard = ({ title, value, unit, icon: Icon, color, sparkline }: any) => {
+    interface MetricCardProps {
+        title: string;
+        value: string | number;
+        unit: string;
+        icon: React.ElementType;
+        color: string;
+        sparkline?: number[];
+    }
+
+    const MetricCard = ({ title, value, unit, icon: Icon, color, sparkline }: MetricCardProps) => {
         const theme = colorMap[color] || colorMap.blue;
         return (
             <div className={`bg-[#0a0a0a] border rounded-2xl p-6 relative overflow-hidden group transition-colors ${theme.base}`}>

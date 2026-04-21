@@ -147,7 +147,7 @@ const HorizontalWorks = () => {
                 </div>
 
                 {/* Project cards */}
-                {WORKS.map((work, _i) => (
+                {WORKS.map((work) => (
                     <Link
                         key={work.num}
                         to={`/project/${work.id}`}
