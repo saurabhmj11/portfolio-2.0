@@ -118,11 +118,10 @@ const SkillBar = ({
             </div>
             <div className="h-[2px] bg-white/5 rounded-full overflow-hidden">
                 <motion.div
+                    key={cardHovered ? 'hovered' : 'normal'}
                     className={`h-full ${accent} rounded-full`}
-                    initial={{ width: 0 }}
-                    animate={{
-                        width: cardHovered ? `${level}%` : inView ? `${level}%` : '0%',
-                    }}
+                    initial={{ width: '0%' }}
+                    animate={{ width: `${level}%` }}
                     transition={{
                         duration: cardHovered ? 0.9 + delay * 0.3 : 1.2,
                         delay: cardHovered ? delay * 0.15 : delay,
