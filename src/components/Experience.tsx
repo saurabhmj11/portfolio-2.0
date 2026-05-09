@@ -164,9 +164,11 @@ const MetricBar = ({ metric, accent, active, cardHovered }: {
         <span className="font-mono text-[9px] text-white/30 tracking-widest">{metric.key}</span>
         <span className="font-mono text-[10px] font-bold" style={{ color: accent }}>{displayStr}</span>
       </div>
-      <div className="h-px w-full bg-white/[0.06] relative overflow-hidden rounded-full">
+      <div className="h-[2.5px] w-full bg-white/[0.06] relative overflow-hidden rounded-full">
         <motion.div
-          animate={{ width: cardHovered ? `${metric.val}%` : active ? `${metric.val}%` : '0%' }}
+          key={cardHovered ? 'hovered' : 'normal'}
+          initial={{ width: '0%' }}
+          animate={{ width: `${metric.val}%` }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="absolute left-0 top-0 h-full rounded-full"
           style={{ background: `linear-gradient(90deg, ${accent}60, ${accent})` }}
