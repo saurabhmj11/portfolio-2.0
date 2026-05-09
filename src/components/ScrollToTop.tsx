@@ -29,7 +29,7 @@ const ScrollToTop = () => {
     return (
         <AnimatePresence>
             {isVisible && (
-                <div className="fixed bottom-8 right-8 md:right-28 z-50 mix-blend-difference text-white cursor-pointer">
+                <div className="fixed bottom-24 right-4 md:bottom-8 md:right-28 z-50 mix-blend-difference text-white cursor-pointer">
                     <Magnetic>
                         <motion.div
                             onClick={scrollToTop}

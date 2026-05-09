@@ -231,26 +231,44 @@ const Contact = () => {
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(null);
+
+    const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID;
+
+    // Guard: if no Formspree ID configured, surface a clear mailto fallback
+    if (!FORMSPREE_ID || FORMSPREE_ID === 'YOUR_FORM_ID') {
+      setIsSubmitting(false);
+      setSubmitError('direct-email');
+      return;
+    }
+
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${apiUrl}/send-message`, {
+      const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formState),
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+          _subject: `[Portfolio] New message from ${formState.name}`,
+        }),
       });
       if (response.ok) {
         setIsSuccess(true);
         setFormState({ name: '', email: '', message: '' });
       } else {
-        alert('Failed to send message. Please try again.');
+        const data = await response.json();
+        const msg = data?.errors?.map((e: { message: string }) => e.message).join(', ') || 'Submission failed.';
+        setSubmitError(msg);
       }
     } catch {
-      alert('An error occurred. Please try again later.');
+      setSubmitError('network');
     } finally {
       setIsSubmitting(false);
     }
@@ -327,7 +345,48 @@ const Contact = () => {
               {/* Inner glass highlight */}
               <div className="absolute inset-0 bg-gradient-to-b from-white/[0.03] to-transparent pointer-events-none rounded-3xl" />
 
-              <AnimatePresence mode="wait">
+                {/* Error state — inline, no alert() */}
+                {submitError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl relative z-10"
+                  >
+                    <p className="text-xs font-mono text-red-400 leading-relaxed">
+                      {submitError === 'direct-email' ? (
+                        <>
+                          Form service not configured.{' '}
+                          <a
+                            href={`mailto:saurabhmj11@gmail.com?subject=Portfolio Inquiry from ${formState.name}&body=${encodeURIComponent(formState.message)}`}
+                            className="underline text-red-300 hover:text-white transition-colors"
+                          >
+                            Click here to email directly →
+                          </a>
+                        </>
+                      ) : submitError === 'network' ? (
+                        <>
+                          Network error. Email me at{' '}
+                          <a href="mailto:saurabhmj11@gmail.com" className="underline text-red-300 hover:text-white transition-colors">
+                            saurabhmj11@gmail.com
+                          </a>
+                        </>
+                      ) : (
+                        <>{submitError}. Email{' '}
+                          <a href="mailto:saurabhmj11@gmail.com" className="underline text-red-300 hover:text-white">saurabhmj11@gmail.com</a>
+                        </>
+                      )}
+                    </p>
+                    <button
+                      onClick={() => setSubmitError(null)}
+                      className="absolute top-3 right-3 text-red-500/50 hover:text-red-300 transition-colors text-xs font-mono"
+                      aria-label="Dismiss error"
+                    >
+                      ✕
+                    </button>
+                  </motion.div>
+                )}
+
+                <AnimatePresence mode="wait">
                 {isSuccess ? (
                   <TerminalSuccess key="success" onReset={() => setIsSuccess(false)} />
                 ) : (

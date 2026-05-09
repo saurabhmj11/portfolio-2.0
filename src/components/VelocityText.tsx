@@ -65,7 +65,7 @@ const VelocityText = ({ children, baseVelocity = 5 }: ParallaxProps) => {
      */
     return (
         <div className="parallax overflow-hidden tracking-tighter leading-[0.8] m-0 whitespace-nowrap flex flex-nowrap">
-            <motion.div className="scroller font-display font-black uppercase text-[15vw] md:text-[20vw] whitespace-nowrap flex flex-nowrap" style={{ x, skewX: skewVelocity }}>
+            <motion.div className="scroller font-display font-black uppercase text-[12vw] md:text-[20vw] whitespace-nowrap flex flex-nowrap" style={{ x, skewX: skewVelocity }}>
                 {Array.from({ length: 4 }).map((_, i) => (
                     <span key={i} className="block mr-10">{children} </span>
                 ))}

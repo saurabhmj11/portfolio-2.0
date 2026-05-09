@@ -62,7 +62,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, onNavClick }) 
                                             y: "-100%",
                                             transition: { delay: i * 0.05, duration: 0.4, ease: [0.76, 0, 0.24, 1] }
                                         }}
-                                        className="text-[12vw] sm:text-7xl font-display font-black uppercase tracking-tighter leading-[0.85] text-white hover:text-outline-strong hover:text-transparent transition-all duration-300 block py-1 md:py-2"
+                                        className="text-[10vw] sm:text-7xl font-display font-black uppercase tracking-tighter leading-[0.85] text-white hover:text-outline-strong hover:text-transparent transition-all duration-300 block py-1 md:py-2"
                                     >
                                         {item.name}
                                     </motion.a>

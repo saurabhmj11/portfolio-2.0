@@ -112,7 +112,7 @@ const LangGraphInteractive = () => {
 
     if (isMobile) {
         return (
-            <section className="bg-[#020202] py-20 px-4 border-t border-white/5" id="architecture">
+            <section className="bg-[#020202] pt-20 pb-48 md:py-20 px-4 border-t border-white/5" id="architecture">
                 <div className="mb-12 text-center">
                     <p className="font-mono text-[10px] text-cyan-500 uppercase tracking-[0.5em] mb-4">// System Architecture</p>
                     <h2 className="text-4xl font-display font-black text-white uppercase leading-none">Agentic<br />Orchestration</h2>

@@ -21,6 +21,8 @@ const TelemetryDashboard = () => {
         }
     });
 
+    const isMobileView = window.innerWidth < 768;
+
     // Simulate live data feed
     useEffect(() => {
         const interval = setInterval(() => {
@@ -42,7 +44,7 @@ const TelemetryDashboard = () => {
         }, 2000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [isMobileView]); // Re-run if screen size changes drastically
 
     const colorMap: Record<string, { base: string, glow: string, bgText: string, text: string, track: string, fill: string }> = {
         amber: { base: 'border-amber-500/20 hover:border-amber-500/50', glow: 'bg-amber-500/10 group-hover:bg-amber-500/20', bgText: 'bg-amber-500/10 text-amber-400', text: 'text-amber-400', track: 'bg-amber-500/30', fill: 'bg-amber-400' },
@@ -64,7 +66,7 @@ const TelemetryDashboard = () => {
         const theme = colorMap[color] || colorMap.blue;
         return (
             <div className={`bg-[#0a0a0a] border rounded-2xl p-6 relative overflow-hidden group transition-colors ${theme.base}`}>
-                <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors ${theme.glow}`} />
+                <div className={`absolute top-0 right-0 w-32 h-32 rounded-full md:blur-3xl -mr-10 -mt-10 pointer-events-none transition-colors ${theme.glow}`} />
 
                 <div className="flex justify-between items-start mb-6">
                     <div className={`p-3 rounded-lg ${theme.bgText}`}>
@@ -133,7 +135,7 @@ const TelemetryDashboard = () => {
                         <div className="flex justify-between items-start mb-6">
                             <div>
                                 <p className="text-gray-500 font-mono text-xs uppercase tracking-widest flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500 md:animate-pulse" />
                                     System Status
                                 </p>
                                 <h3 className="text-xl font-bold text-white mt-2">All Agents Operational</h3>

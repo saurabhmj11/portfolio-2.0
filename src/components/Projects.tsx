@@ -12,93 +12,12 @@ import { useInView } from 'react-intersection-observer';
 import ScrollReveal from './ScrollReveal';
 import ScrambleText from './ScrambleText';
 import OptimizedImage from './OptimizedImage';
+import projectsData, { type Project } from '../data/projectsData';
 
 gsap.registerPlugin(ScrollTrigger);
 
-interface Project {
-    id: string;
-    title: string;
-    category: string;
-    description: string;
-    image: string;
-    technologies: string[];
-    details: {
-        problem: string;
-        solution: string;
-        architecture: string;
-        impact: string;
-    };
-    link?: string;
-    repo?: string;
-    position: { x: string, y: string };
-}
-
-const projects: Project[] = [
-    {
-        id: 'openreception',
-        title: 'OpenReception',
-        category: 'AI SaaS Platform',
-        description: 'A production-ready AI receptionist platform capable of handling business calls, booking appointments, and answering queries autonomously.',
-        image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2670&auto=format&fit=crop',
-        technologies: ['FastAPI', 'LLM APIs', 'RAG', 'Vector Databases', 'Python', 'Twilio'],
-        details: {
-            problem: 'Business call handling is either entirely manual or relies on rigid, frustrating IVR systems.',
-            solution: 'An LLM-driven conversational architecture with real-time AI processing.',
-            architecture: 'FastAPI backend integrated with Twilio/voice APIs and a RAG pipeline for business knowledge retrieval.',
-            impact: 'Optimized latency, cost, and response reliability for autonomous business interactions.'
-        },
-        repo: 'https://github.com/saurabhmj11/OpenReception',
-        position: { x: '10%', y: '15%' }
-    },
-    {
-        id: 'agen',
-        title: 'AGEN',
-        category: 'Browser Agents',
-        description: 'An AI agent framework that enables autonomous browser interactions and persistent sessions for AI agents.',
-        image: 'https://images.unsplash.com/photo-1562577309-4932fdd64cd1?q=80&w=2670&auto=format&fit=crop',
-        technologies: ['Python', 'Gradio', 'LLM APIs', 'Browser Automation', 'Agents'],
-        details: {
-            problem: 'AI agents struggle with complex, multi-step website interactions and maintaining state.',
-            solution: 'A framework with persistent browser sessions for long-running tasks and a WebUI control center.',
-            architecture: 'Tool-calling architecture bridging language models to real website interactions.',
-            impact: 'Open source platform enabling true autonomous web task execution.'
-        },
-        repo: 'https://github.com/saurabhmj11/AGEN',
-        position: { x: '60%', y: '5%' }
-    },
-    {
-        id: 'research-agent',
-        title: 'Research Agent',
-        category: 'Multi-Agent Systems',
-        description: 'Stateful multi-agent system using LangGraph for automated research workflows.',
-        image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop',
-        technologies: ['LangGraph', 'LangChain', 'Python', 'Vector Databases'],
-        details: {
-            problem: 'Naive prompt chains fail at complex, multi-step research tasks that require verification.',
-            solution: 'A deterministic orchestration of planner, researcher, verifier, and writer agents.',
-            architecture: 'LangGraph state machine integrating RAG-based knowledge retrieval pipelines.',
-            impact: 'Built validation and reasoning loops for high output reliability.'
-        },
-        repo: 'https://github.com/saurabhmj11/Research-Agent',
-        position: { x: '25%', y: '50%' }
-    },
-    {
-        id: 'resume-processing',
-        title: 'Resume Processor',
-        category: 'AI Pipelines',
-        description: 'Automated AI pipeline processing resumes uploaded to cloud storage to extract structured candidate insights.',
-        image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2670&auto=format&fit=crop',
-        technologies: ['Python', 'LLM APIs', 'Document Parsing', 'NLP'],
-        details: {
-            problem: 'Manual candidate screening is slow and data extraction from diverse PDFs is error-prone.',
-            solution: 'An automated pipeline detecting new Google Drive uploads, converting PDFs, and parsing documents.',
-            architecture: 'Serverless integration with LLM summarization to extract Name, Email, Phone, Location, and Time Zone.',
-            impact: 'Automated candidate data integration directly into workflow systems.'
-        },
-        repo: 'https://github.com/saurabhmj11/Resume-Processor',
-        position: { x: '70%', y: '45%' }
-    }
-];
+// Use the shared data file — single source of truth for all project content
+const projects: Project[] = projectsData;
 
 // Interactive Node Component (Draggable Project Card)
 const ProjectNode = ({ project, index, isHovered, setHovered, setSelectedProject }: { project: Project, index: number, isHovered: boolean, setHovered: (id: string | null) => void, setSelectedProject: (p: Project) => void }) => {
@@ -267,7 +186,7 @@ const Projects = () => {
                 <div className="py-24 px-4 w-full min-h-screen bg-[#020202] flex flex-col justify-center">
                     <div className="mb-16 text-center">
                         <ScrollReveal>
-                            <h2 className="text-[14vw] font-display font-black leading-[0.9] tracking-tighter uppercase mb-4 text-white text-center">
+                            <h2 className="text-[11vw] font-display font-black leading-[0.9] tracking-tighter uppercase mb-4 text-white text-center">
                                 <ScrambleText text="Neural" />
                                 <br />
                                 <span className="text-gray-600 italic"><ScrambleText text="Web" /></span>
@@ -471,9 +390,9 @@ const Projects = () => {
                                                     View Full Case Study <ArrowRight className="w-5 h-5" />
                                                 </Link>
                                             </Magnetic>
-                                            {selectedProject.link && (
+                                            {selectedProject.liveUrl && (
                                                 <Magnetic>
-                                                    <a href={selectedProject.link} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center items-center gap-3 bg-transparent text-white border border-white/20 px-8 py-5 font-bold uppercase tracking-widest text-sm hover:bg-white/10 transition-colors w-full md:w-auto text-center">
+                                                    <a href={selectedProject.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center items-center gap-3 bg-blue-600 text-white px-8 py-5 font-bold uppercase tracking-widest text-sm hover:bg-blue-500 transition-colors w-full md:w-auto text-center">
                                                         Live Demo <ArrowUpRight className="w-5 h-5" />
                                                     </a>
                                                 </Magnetic>

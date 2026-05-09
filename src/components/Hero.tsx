@@ -1,5 +1,5 @@
 
-import React, { useRef, useLayoutEffect, Suspense, useEffect } from 'react';
+import React, { useRef, useLayoutEffect, Suspense, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -7,13 +7,19 @@ import { useInView } from 'react-intersection-observer';
 import { useAudioDirector } from '../context/AudioContext';
 import TextReveal from './TextReveal';
 import Magnetic from './Magnetic';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, Github, Star, GitBranch, Users } from 'lucide-react';
 import HackerText from './HackerText';
 import useIsMobile from '../hooks/useIsMobile';
 
 const InteractiveCore = React.lazy(() => import('./InteractiveCore'));
 
 gsap.registerPlugin(ScrollTrigger);
+
+interface GitHubStats {
+    repos: number;
+    followers: number;
+    stars: number;
+}
 
 const Hero = () => {
     const isMobile = useIsMobile();
@@ -23,13 +29,45 @@ const Hero = () => {
         offset: ["start start", "end start"]
     });
 
+    const [ghStats, setGhStats] = useState<GitHubStats>({ repos: 10, followers: 0, stars: 0 });
+
+    // Fetch live GitHub stats
+    useEffect(() => {
+        let cancelled = false;
+        const fetchStats = async () => {
+            try {
+                const [userRes, reposRes] = await Promise.all([
+                    fetch('https://api.github.com/users/saurabhmj11'),
+                    fetch('https://api.github.com/users/saurabhmj11/repos?per_page=100&sort=updated'),
+                ]);
+                if (!userRes.ok || !reposRes.ok) return;
+                const user = await userRes.json();
+                const repos = await reposRes.json();
+                const totalStars = Array.isArray(repos)
+                    ? repos.reduce((acc: number, r: { stargazers_count: number }) => acc + (r.stargazers_count || 0), 0)
+                    : 0;
+                if (!cancelled) {
+                    setGhStats({
+                        repos: user.public_repos ?? 10,
+                        followers: user.followers ?? 0,
+                        stars: totalStars,
+                    });
+                }
+            } catch {
+                // silently fall back to defaults
+            }
+        };
+        fetchStats();
+        return () => { cancelled = true; };
+    }, []);
+
     const { playSectionChime } = useAudioDirector();
     const [inViewRef, inView] = useInView({ threshold: 0.5 });
 
     // Merge refs for Framer Motion scroll and Intersection Observer
     const setRefs = React.useCallback(
         (node: HTMLElement | null) => {
-            // @ts-ignore
+            // @ts-expect-error -- containerRef is typed as RefObject<HTMLElement> but accepts null from callback ref
             containerRef.current = node;
             inViewRef(node);
         },
@@ -119,7 +157,21 @@ const Hero = () => {
                 style={{ y, opacity }}
                 className="relative z-20 pointer-events-none flex flex-col items-center text-center w-full px-2 md:px-0 max-w-[90vw]"
             >
-                {/* Extraordinary Typography Block (Bulletproof Flex) */}
+                {/* ── Open to Work badge ── */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex items-center gap-2.5 px-4 py-2 mb-6 rounded-full border border-green-500/30 bg-green-500/5 backdrop-blur-sm pointer-events-auto"
+                >
+                    <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                    </span>
+                    <span className="text-green-400 text-xs font-mono tracking-widest uppercase">Open to Work — AI / LLM Roles</span>
+                </motion.div>
+
+                {/* Extraordinary Typography Block */}
                 <div className="flex flex-col w-full max-w-7xl mx-auto leading-[0.85] font-display font-bold tracking-tighter uppercase cursor-default relative text-white px-0 lg:px-12">
 
                     {/* Row 1: I'm a Generative AI */}
@@ -127,14 +179,14 @@ const Hero = () => {
                         <span className="hero-intro font-serif italic text-3xl md:text-5xl text-blue-400 opacity-0 normal-case tracking-normal md:pl-16 mb-2 mix-blend-screen">
                             I'm a
                         </span>
-                        <h1 className="text-[clamp(3.5rem,8.5vw,9rem)] text-center md:text-left leading-none">
+                        <h1 className="text-[clamp(2rem,11.5vw,9rem)] text-center md:text-left leading-none">
                             <HackerText text="Generative AI" speed={40} />
                         </h1>
                     </div>
 
                     {/* Row 2: ENGINEER & (Outlined) */}
                     <div className="flex flex-col md:flex-row items-center justify-center md:justify-end relative z-0 w-full md:pr-[10%] mt-4 md:-mt-4">
-                        <TextReveal el="h1" className="text-[clamp(4.5rem,11.5vw,12rem)] text-outline-strong mix-blend-screen text-center md:text-right leading-none" delay={0.8}>
+                        <TextReveal el="h1" className="text-[clamp(3.5rem,11.5vw,12rem)] text-outline-strong mix-blend-screen text-center md:text-right leading-none" delay={0.8}>
                             ENGINEER
                         </TextReveal>
                         <span className="hero-connector font-serif italic text-4xl md:text-7xl text-blue-400 opacity-0 normal-case tracking-normal mt-2 md:mt-0 md:mb-6 md:ml-4">
@@ -144,10 +196,10 @@ const Hero = () => {
 
                     {/* Row 3: SOFTWARE DEVELOPER */}
                     <div className="flex flex-col items-center md:items-start relative z-20 w-full md:pl-[20%] mt-4 md:-mt-8">
-                        <TextReveal el="h1" className="text-[clamp(3.5rem,8vw,9rem)] text-center md:text-left leading-none" delay={1.0}>
+                        <TextReveal el="h1" className="text-[clamp(1.8rem,10vw,9rem)] text-center md:text-left leading-none" delay={1.0}>
                             SOFTWARE
                         </TextReveal>
-                        <TextReveal el="h1" className="text-[clamp(3.5rem,8vw,9rem)] text-center md:text-left leading-[0.85]" delay={1.2}>
+                        <TextReveal el="h1" className="text-[clamp(1.8rem,10vw,9rem)] text-center md:text-left leading-[0.85]" delay={1.2}>
                             DEVELOPER
                         </TextReveal>
                     </div>
@@ -174,6 +226,39 @@ const Hero = () => {
                         </Magnetic>
                     </div>
                 </div>
+
+                {/* ── GitHub Social Proof Strip (Live Data) ── */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.8, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="mt-8 flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-gray-500 pointer-events-auto"
+                >
+                    <a
+                        href="https://github.com/saurabhmj11"
+                        target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 hover:text-white transition-colors group"
+                        aria-label="GitHub profile"
+                    >
+                        <Github size={12} className="text-gray-600 group-hover:text-white transition-colors" />
+                        <span>saurabhmj11</span>
+                    </a>
+                    <span className="text-gray-700">·</span>
+                    <span className="flex items-center gap-1.5">
+                        <GitBranch size={12} className="text-blue-400/60" />
+                        {ghStats.repos} Public Repos
+                    </span>
+                    <span className="text-gray-700">·</span>
+                    <span className="flex items-center gap-1.5">
+                        <Star size={12} className="text-yellow-400/60" />
+                        {ghStats.stars > 0 ? `${ghStats.stars} Stars` : 'Active Builder'}
+                    </span>
+                    <span className="text-gray-700">·</span>
+                    <span className="flex items-center gap-1.5">
+                        <Users size={12} className="text-purple-400/60" />
+                        {ghStats.followers > 0 ? `${ghStats.followers} Followers` : 'Open Source Contributor'}
+                    </span>
+                </motion.div>
             </motion.div>
 
             {/* Scroll Indicator */}

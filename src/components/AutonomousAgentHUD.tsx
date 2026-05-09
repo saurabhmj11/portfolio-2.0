@@ -139,13 +139,13 @@ const AutonomousAgentHUD = () => {
       <div className="absolute inset-0 bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Main HUD Container */}
-      <div className="relative bg-[#050505]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-[600px]">
+      <div className="relative bg-[#050505]/90 md:bg-[#050505]/80 backdrop-blur-md md:backdrop-blur-xl border border-white/10 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-[700px] md:h-[600px]">
         
         {/* Left Sidebar: Controls & Stats */}
         <div className="w-full md:w-80 border-r border-white/5 p-6 flex flex-col gap-8 bg-white/[0.02]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
-              <Activity className="text-blue-400 animate-pulse" size={20} />
+              <Activity className="text-blue-400 md:animate-pulse" size={20} />
             </div>
             <div>
               <h3 className="text-white font-display font-bold text-lg leading-none">Agent HUD</h3>
@@ -223,8 +223,8 @@ const AutonomousAgentHUD = () => {
             <div className="flex items-center gap-4">
               <span className="text-[10px] font-mono text-gray-600 uppercase tracking-widest hidden md:block">0x_GROUNDED_REASONING</span>
               <div className="flex gap-1">
-                <div className="w-1 h-1 rounded-full bg-emerald-500/50" />
-                <div className="w-1 h-1 rounded-full bg-emerald-500/50 animate-pulse" />
+              <div className="w-1 h-1 rounded-full bg-emerald-500/50" />
+                <div className="w-1 h-1 rounded-full bg-emerald-500/50 md:animate-pulse" />
               </div>
             </div>
           </div>
@@ -270,8 +270,8 @@ const AutonomousAgentHUD = () => {
               <div className="flex gap-4">
                 <div className="w-12" />
                 <div className="flex items-center gap-2 text-blue-400">
-                  <div className="w-1 h-4 bg-blue-500 animate-pulse" />
-                  <p className="text-[10px] font-bold tracking-widest animate-pulse uppercase">Agent is thinking...</p>
+                  <div className="w-1 h-4 bg-blue-500 md:animate-pulse" />
+                  <p className="text-[10px] font-bold tracking-widest md:animate-pulse uppercase">Agent is thinking...</p>
                 </div>
               </div>
             )}

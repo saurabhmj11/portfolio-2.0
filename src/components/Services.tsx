@@ -389,7 +389,7 @@ const Services = () => {
                             variants={containerVariants}
                             initial="hidden"
                             animate={inView ? "visible" : "hidden"}
-                            className="text-[14vw] md:text-[7vw] font-display font-black leading-[0.85] tracking-tighter uppercase"
+                            className="text-[10vw] md:text-[7vw] font-display font-black leading-[0.85] tracking-tighter uppercase"
                         >
                             {letters.map((char, index) => (
                                 <motion.span key={index} variants={letterVariants} className="inline-block">
@@ -399,18 +399,19 @@ const Services = () => {
                         </motion.h2>
                     </div>
 
-                    <div className="flex items-center mt-8 md:mt-12">
+                    <div className="flex flex-col md:flex-row md:items-center mt-8 md:mt-12">
                         <motion.div
-                            initial={{ width: 0 }}
-                            animate={inView ? { width: '100%' } : {}}
+                            initial={{ scaleX: 0 }}
+                            animate={inView ? { scaleX: 1 } : {}}
+                            style={{ originX: 0 }}
                             transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                            className="h-px bg-white/10 flex-grow"
+                            className="h-px bg-white/10 flex-grow hidden md:block"
                         />
                         <motion.p
                             initial={{ opacity: 0, x: 50 }}
                             animate={inView ? { opacity: 1, x: 0 } : {}}
                             transition={{ duration: 0.7, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                            className="text-white/40 text-lg md:text-xl leading-relaxed font-light pl-8 max-w-xl"
+                            className="text-white/40 text-lg md:text-xl leading-relaxed font-light mt-4 md:mt-0 md:pl-8 max-w-xl"
                         >
                             I bridge the gap between{' '}
                             <em className="text-white not-italic font-semibold">bleeding-edge AI research</em>{' '}
@@ -420,7 +421,7 @@ const Services = () => {
                 </div>
 
                 {/* Bento Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 auto-rows-[300px] gap-4 pb-28">
+                <div className="grid grid-cols-1 md:grid-cols-3 auto-rows-[300px] gap-4 pb-48 md:pb-28">
                     {services.map((service, i) => (
                         <CapabilityCard key={service.num} service={service} bgIndex={i} />
                     ))}

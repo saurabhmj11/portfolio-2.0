@@ -99,7 +99,7 @@ const LiveStats: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                     {/* Stat Item 1 */}
                     <motion.div
                         custom={0}
@@ -164,7 +164,7 @@ const LiveStats: React.FC = () => {
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true }}
-                        className="col-span-2 lg:col-span-1 bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:border-orange-500/50 transition-colors flex flex-col justify-center"
+                        className="sm:col-span-2 lg:col-span-1 bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:border-orange-500/50 transition-colors flex flex-col justify-center"
                     >
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                             <Activity className="w-16 h-16 text-orange-400" />

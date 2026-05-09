@@ -77,7 +77,7 @@ const RAGSimulator = () => {
     };
 
     return (
-        <section className="py-32 bg-[#020202] relative border-t border-white/5" id="rag-simulator">
+        <section className="pt-32 pb-48 md:py-32 bg-[#020202] relative border-t border-white/5" id="rag-simulator">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03)_0%,transparent_70%)] pointer-events-none" />
 
             <div className="container mx-auto px-4 max-w-5xl relative z-10">
@@ -208,7 +208,7 @@ const RAGSimulator = () => {
                             <div className="h-16 flex items-center justify-center w-full">
                                 {step >= 4 ? (
                                     <div className="w-full flex justify-center">
-                                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                                        <div className="w-2 h-2 rounded-full bg-emerald-400 md:animate-ping" />
                                     </div>
                                 ) : (
                                     <p className="text-xs text-gray-600 font-mono text-center">Grounded<br />Synthesis</p>
@@ -229,7 +229,7 @@ const RAGSimulator = () => {
                                 <span className="text-xs text-emerald-500 uppercase tracking-widest mb-2 block">Agent Synthesis</span>
                                 <p className="text-gray-300 leading-relaxed text-sm md:text-base">
                                     {generatedText}
-                                    {step === 4 && generatedText.length < getGroundedResponse(query).length && <span className="inline-block w-2 h-4 bg-emerald-500 ml-1 animate-pulse" />}
+                                    {step === 4 && generatedText.length < getGroundedResponse(query).length && <span className="inline-block w-2 h-4 bg-emerald-500 ml-1 md:animate-pulse" />}
                                 </p>
                             </motion.div>
                         )}

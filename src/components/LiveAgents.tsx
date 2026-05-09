@@ -88,9 +88,9 @@ const SignalBars = ({ active }: { active: boolean }) => {
                 <motion.div
                     key={i}
                     className={`w-[2px] rounded-full ${active ? 'bg-green-400' : 'bg-white/20'}`}
-                    animate={active ? {
+                    animate={active && !window.matchMedia('(max-width: 768px)').matches ? {
                         height: [`${h}px`, `${Math.max(2, h * (0.4 + Math.random() * 0.8))}px`, `${h}px`],
-                    } : { height: '3px' }}
+                    } : { height: active ? `${h}px` : '3px' }}
                     transition={{
                         duration: 0.6 + i * 0.05,
                         repeat: Infinity,
@@ -164,7 +164,7 @@ const AgentRow = ({ agent, index }: { agent: Agent; index: number }) => {
                         </div>
                         {agent.status === 'ACTIVE' && (
                             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-400 rounded-full border border-black">
-                                <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
+                                <span className="absolute inset-0 rounded-full bg-green-400 md:animate-ping opacity-75" />
                             </span>
                         )}
                     </div>
@@ -246,7 +246,11 @@ const StatsTicker = () => {
             <motion.div
                 className="flex gap-16 whitespace-nowrap"
                 animate={{ x: ['0%', '-50%'] }}
-                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+                transition={{ 
+                    duration: typeof window !== 'undefined' && window.innerWidth < 768 ? 45 : 30, 
+                    repeat: Infinity, 
+                    ease: 'linear' 
+                }}
             >
                 {[...items, ...items].map((item, i) => (
                     <span key={i} className="text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] flex items-center gap-4">
@@ -290,7 +294,7 @@ const LiveAgents = () => {
                         >
                             <div className="relative flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-green-400">
-                                    <span className="absolute inset-0 rounded-full bg-green-400 animate-ping" />
+                                    <span className="absolute inset-0 rounded-full bg-green-400 md:animate-ping" />
                                 </div>
                                 <span className="font-mono text-xs text-green-400 uppercase tracking-[0.4em]">
                                     <ScrambleText text="// NETWORK ONLINE" />

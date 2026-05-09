@@ -16,7 +16,7 @@ const AudioVisualizer = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 2 }}
                 onClick={toggleMute}
-                className="fixed bottom-4 left-4 z-[100] bg-black/50 backdrop-blur-md border border-white/10 p-3 rounded-full text-white/50 hover:text-white transition-colors"
+                className="fixed top-24 right-4 z-[100] bg-black/50 backdrop-blur-md border border-white/10 p-3 rounded-full text-white/50 hover:text-white transition-colors"
                 aria-label="Toggle AI Director Audio"
             >
                 {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}

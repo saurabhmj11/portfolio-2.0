@@ -159,6 +159,8 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
         return () => ctx.revert();
     }, [from, to, effect, toColor, isMobile]);
 
+    if (isMobile) return null;
+
     // Invisible marker div — only purpose is to give ScrollTrigger a trigger point
     return (
         <div

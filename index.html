@@ -23,7 +23,8 @@
   <link rel="canonical" href="https://saurabhlokhande.com/" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
   <!-- Open Graph -->
@@ -35,9 +36,11 @@
   <meta property="og:description"
     content="AI Engineer specializing in LLM agents, RAG systems, and full-stack AI. Production-grade projects, live deployed agents, and autonomous AI workflows." />
   <meta property="og:image" content="https://saurabhlokhande.com/og-image.jpg" />
+  <meta property="og:image:secure_url" content="https://saurabhlokhande.com/og-image.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Saurabh Lokhande — AI Engineer Portfolio" />
+  <meta property="og:image:alt" content="Saurabh Lokhande — AI Engineer & Generative AI Specialist" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
@@ -47,6 +50,7 @@
   <meta name="twitter:description"
     content="AI Engineer specializing in LLM agents, RAG systems, and full-stack AI. Production-grade projects, live deployed agents, and autonomous AI workflows." />
   <meta name="twitter:image" content="https://saurabhlokhande.com/og-image.jpg" />
+  <meta name="twitter:image:alt" content="Saurabh Lokhande — AI Engineer Portfolio" />
 
   <!-- Structured Data: Person + WebSite -->
   <script type="application/ld+json">
@@ -73,7 +77,7 @@
         ],
         "alumniOf": {
           "@type": "EducationalOrganization",
-          "name": "University"
+          "name": "Dr. Babasaheb Ambedkar Technological University"
         }
       },
       {
@@ -103,6 +107,40 @@
       }
     ]
   }
+  </script>
+
+  <!-- Structured Data: Live SaaS Products -->
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Hire Me OS 2.0",
+      "url": "https://hireme-os-2-0.onrender.com",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "description": "Autonomous career intelligence SaaS with 6-block A-F evaluation engine, Autopilot 24/7 scheduler, and Chrome extension. Scans LinkedIn, Indeed and Glassdoor, tailors resumes, and auto-applies to jobs.",
+      "author": { "@id": "https://saurabhlokhande.com/#person" },
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "featureList": ["6-Block Job Evaluation", "Autopilot 24/7 Scheduler", "AI Resume Tailor", "Chrome Extension", "Real-time SSE Streaming"],
+      "softwareVersion": "2.0",
+      "downloadUrl": "https://hireme-os-2-0.onrender.com"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Doc AI",
+      "url": "https://doc-ai-frontend.onrender.com",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "description": "Logistics document intelligence platform with RAG, HIPAA-compliant PII masking via Microsoft Presidio, confidence-scored Q&A, and structured data extraction from PDFs and shipping documents.",
+      "author": { "@id": "https://saurabhlokhande.com/#person" },
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "featureList": ["RAG Pipeline", "PII/PHI Masking", "Confidence Scoring", "Structured JSON Extraction", "JWT Authentication"],
+      "softwareVersion": "1.0",
+      "downloadUrl": "https://doc-ai-frontend.onrender.com"
+    }
+  ]
   </script>
 
   <!-- Preconnect for performance -->
