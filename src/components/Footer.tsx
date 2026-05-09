@@ -401,7 +401,6 @@ const SystemStatusBar = () => {
         }
       } catch {
         // Fallback to static location on error
-        console.log('Location fetch failed, using default.');
       }
     };
     fetchLocation();

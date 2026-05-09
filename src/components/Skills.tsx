@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useAudioDirector } from '../context/AudioContext';
 import { useInView } from 'react-intersection-observer';
@@ -80,28 +80,52 @@ const MARQUEE_TAGS = [
 
 // ─── Skill Bar ────────────────────────────────────────────────────────────────
 const SkillBar = ({
-    name, level, accent, delay,
-}: { name: string; level: number; accent: string; delay: number }) => {
+    name, level, accent, delay, cardHovered,
+}: { name: string; level: number; accent: string; delay: number; cardHovered: boolean }) => {
     const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
+    const [displayNum, setDisplayNum] = useState(0);
+    const rafRef = useRef<number | null>(null);
+
+    // Count up on card hover
+    useEffect(() => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        if (!cardHovered) { setDisplayNum(0); return; }
+        const duration = 900 + delay * 300;
+        const start = performance.now();
+        const tick = (now: number) => {
+            const p = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            setDisplayNum(Math.round(eased * level));
+            if (p < 1) rafRef.current = requestAnimationFrame(tick);
+        };
+        rafRef.current = requestAnimationFrame(tick);
+        return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+    }, [cardHovered, level, delay]);
 
     return (
-        <div ref={ref} className="group">
+        <div ref={ref}>
             <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-mono text-gray-400 group-hover:text-white transition-colors duration-300">
+                <span className="text-xs font-mono transition-colors duration-300"
+                    style={{ color: cardHovered ? 'white' : 'rgb(156,163,175)' }}>
                     {name}
                 </span>
-                <span className="text-[10px] font-mono text-gray-600 group-hover:text-gray-400 transition-colors tabular-nums">
-                    {level}%
+                <span
+                    className="text-[10px] font-mono tabular-nums transition-colors duration-300"
+                    style={{ color: cardHovered ? 'rgb(209,213,219)' : 'rgb(75,85,99)' }}
+                >
+                    {cardHovered ? displayNum : level}%
                 </span>
             </div>
             <div className="h-[2px] bg-white/5 rounded-full overflow-hidden">
                 <motion.div
                     className={`h-full ${accent} rounded-full`}
                     initial={{ width: 0 }}
-                    animate={inView ? { width: `${level}%` } : { width: 0 }}
+                    animate={{
+                        width: cardHovered ? `${level}%` : inView ? `${level}%` : '0%',
+                    }}
                     transition={{
-                        duration: 1.2,
-                        delay,
+                        duration: cardHovered ? 0.9 + delay * 0.3 : 1.2,
+                        delay: cardHovered ? delay * 0.15 : delay,
                         ease: [0.22, 1, 0.36, 1],
                     }}
                 />
@@ -113,41 +137,48 @@ const SkillBar = ({
 // ─── Domain Card ─────────────────────────────────────────────────────────────
 const DomainCard = ({
     domain, color, accent, border, dot, skills, index,
-}: typeof STACK[number] & { index: number }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.6, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
-        className={`relative p-6 bg-gradient-to-br ${color} border ${border} rounded-2xl transition-all duration-500 overflow-hidden group`}
-    >
-        {/* Hover shimmer */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent" />
-        </div>
+}: typeof STACK[number] & { index: number }) => {
+    const [hovered, setHovered] = useState(false);
 
-        {/* Header */}
-        <div className="flex items-center gap-2.5 mb-6 relative z-10">
-            <span className={`w-2 h-2 rounded-full ${dot} shrink-0`} />
-            <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-gray-400 group-hover:text-gray-300 transition-colors">
-                {domain}
-            </h3>
-        </div>
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
+            className={`relative p-6 bg-gradient-to-br ${color} border ${border} rounded-2xl transition-all duration-500 overflow-hidden group`}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+        >
+            {/* Hover shimmer */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent" />
+            </div>
 
-        {/* Skill bars */}
-        <div className="space-y-4 relative z-10">
-            {skills.map((s, i) => (
-                <SkillBar
-                    key={s.name}
-                    name={s.name}
-                    level={s.level}
-                    accent={accent}
-                    delay={index * 0.12 + i * 0.08}
-                />
-            ))}
-        </div>
-    </motion.div>
-);
+            {/* Header */}
+            <div className="flex items-center gap-2.5 mb-6 relative z-10">
+                <span className={`w-2 h-2 rounded-full ${dot} shrink-0`} />
+                <h3 className="text-xs font-mono uppercase tracking-[0.25em] text-gray-400 group-hover:text-gray-300 transition-colors">
+                    {domain}
+                </h3>
+            </div>
+
+            {/* Skill bars */}
+            <div className="space-y-4 relative z-10">
+                {skills.map((s, i) => (
+                    <SkillBar
+                        key={s.name}
+                        name={s.name}
+                        level={s.level}
+                        accent={accent}
+                        delay={i * 0.06}
+                        cardHovered={hovered}
+                    />
+                ))}
+            </div>
+        </motion.div>
+    );
+};
 
 // ─── Marquee Strip ────────────────────────────────────────────────────────────
 const MarqueeStrip = ({ reverse = false }: { reverse?: boolean }) => {
