@@ -90,7 +90,7 @@ const SkillBar = ({
     useEffect(() => {
         if (rafRef.current) cancelAnimationFrame(rafRef.current);
         if (!cardHovered) { setDisplayNum(0); return; }
-        const duration = 900 + delay * 300;
+        const duration = 1500 + delay * 400;
         const start = performance.now();
         const tick = (now: number) => {
             const p = Math.min((now - start) / duration, 1);
@@ -123,7 +123,7 @@ const SkillBar = ({
                     initial={{ width: '0%' }}
                     animate={{ width: `${level}%` }}
                     transition={{
-                        duration: cardHovered ? 0.9 + delay * 0.3 : 1.2,
+                        duration: cardHovered ? 1.5 + delay * 0.4 : 1.5,
                         delay: cardHovered ? delay * 0.15 : delay,
                         ease: [0.22, 1, 0.36, 1],
                     }}

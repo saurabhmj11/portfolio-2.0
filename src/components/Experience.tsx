@@ -144,7 +144,7 @@ const MetricBar = ({ metric, accent, active, cardHovered }: {
     let animControls: any;
     if (cardHovered) {
       animControls = animate(0, 1, {
-        duration: 0.9,
+        duration: 1.5,
         ease: [0.22, 1, 0.36, 1],
         onUpdate: (latest) => {
           setDisplayStr(interpolateDisplay(latest, metric.display));
@@ -169,7 +169,7 @@ const MetricBar = ({ metric, accent, active, cardHovered }: {
           key={cardHovered ? 'hovered' : 'normal'}
           initial={{ width: '0%' }}
           animate={{ width: `${metric.val}%` }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
           className="absolute left-0 top-0 h-full rounded-full"
           style={{ background: `linear-gradient(90deg, ${accent}60, ${accent})` }}
         />
