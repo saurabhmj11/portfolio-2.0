@@ -21,8 +21,8 @@ const ScrollReveal = ({
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: isMobile ? 15 : 30, filter: isMobile ? 'blur(5px)' : 'blur(10px)' }}
-            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            initial={{ opacity: 0, y: isMobile ? 15 : 30, filter: isMobile ? 'none' : 'blur(10px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: isMobile ? 'none' : 'blur(0px)' }}
             viewport={{ once: true, margin: isMobile ? "-20px" : "-50px", amount: threshold }}
             transition={{
                 duration: isMobile ? 0.6 : 0.8,

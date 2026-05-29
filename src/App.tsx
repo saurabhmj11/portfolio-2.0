@@ -13,6 +13,8 @@ import ScrollToTop from './components/ScrollToTop';
 import Spotlight from './components/Spotlight';
 import ScrollProgress from './components/ScrollProgress';
 import CommandPalette from './components/CommandPalette';
+import MobileBottomNav from './components/MobileBottomNav';
+import useSwipeNavigation from './hooks/useSwipeNavigation';
 
 // Pages
 import Home from './pages/Home';
@@ -38,6 +40,8 @@ function App() {
   const [isDark] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  // Swipe-to-navigate between sections on mobile
+  useSwipeNavigation();
   const location = useLocation();
 
   // Scroll logic on route change
@@ -117,6 +121,8 @@ function App() {
                   <AgentDock isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
                 </React.Suspense>
                 <ScrollToTop />
+                {/* Mobile bottom navigation bar */}
+                <MobileBottomNav />
               </React.Fragment>
             )}
           </SmoothScroll>

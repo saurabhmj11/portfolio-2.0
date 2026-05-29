@@ -87,26 +87,48 @@ const HorizontalWorks = () => {
     }, [isMobile]);
 
     if (isMobile) {
-        // Mobile: vertical grid
+        // Mobile: Native CSS Scroll-Snap Carousel (Zero JS overhead, buttery smooth)
         return (
-            <section className="bg-[#020202] py-20 px-5" id="works">
-                <p className="font-mono text-[10px] text-white/20 uppercase tracking-[0.5em] mb-4 text-center">// Selected Works</p>
-                <div className="space-y-8">
+            <section className="bg-[#020202] py-20 px-0 overflow-hidden" id="works">
+                <p className="font-mono text-[10px] text-white/20 uppercase tracking-[0.5em] mb-6 text-center px-5">// Selected Works</p>
+                <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-8 px-5 gap-4">
                     {WORKS.map(w => (
-                        <Link key={w.num} to={`/project/${w.id}`} className="relative rounded-2xl overflow-hidden border border-white/8 h-60 block">
-                            <img src={w.img} alt={w.title} className="w-full h-full object-cover brightness-50" />
-                            <div className="absolute inset-0 p-5 flex flex-col justify-between">
-                                <div className="flex justify-between items-start">
-                                    <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest">{w.num}</span>
-                                    <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">{w.category}</span>
-                                </div>
-                                <div>
-                                    <h3 className="font-display font-black text-3xl uppercase text-white leading-none">{w.title}</h3>
-                                    <span className="font-mono text-[9px] text-white/30 uppercase tracking-widest">{w.year}</span>
-                                </div>
+                        <Link 
+                            key={w.num} 
+                            to={`/project/${w.id}`} 
+                            className="relative rounded-2xl flex-shrink-0 w-[85vw] max-w-[320px] h-[350px] overflow-hidden border border-white/10 block snap-center"
+                            style={{ 
+                                boxShadow: `0 10px 40px -10px ${w.accent}20`,
+                            }}
+                            onClick={() => navigator.vibrate && navigator.vibrate(10)}
+                        >
+                            <img
+                                src={w.img.replace('w=900', 'w=400')}
+                                alt={w.title}
+                                loading="lazy"
+                                decoding="async"
+                                className="w-full h-full object-cover brightness-[0.4]"
+                            />
+                            {/* Glassmorphic overlay for details */}
+                            <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+                                <div className="text-[10px] text-white/50 font-mono mb-2 uppercase tracking-wider">{w.category} // {w.year}</div>
+                                <h3 className="text-2xl font-bold text-white tracking-tight">{w.title}</h3>
+                                <div className="mt-3 w-8 h-1 rounded-full" style={{ background: w.accent }} />
+                            </div>
+                            
+                            {/* Creative Number indicator */}
+                            <div className="absolute top-4 right-4 text-4xl font-black text-white/5 font-display tracking-tighter">
+                                {w.num}
                             </div>
                         </Link>
                     ))}
+                </div>
+                
+                {/* Swipe Indicator */}
+                <div className="flex justify-center items-center gap-2 mt-2">
+                    <div className="w-8 h-[2px] bg-white/20 rounded-full overflow-hidden">
+                        <div className="w-1/2 h-full bg-white/60 rounded-full animate-[swipeHint_2s_ease-in-out_infinite]" />
+                    </div>
                 </div>
             </section>
         );

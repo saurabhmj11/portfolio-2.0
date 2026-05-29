@@ -1,5 +1,5 @@
 
-import React, { useRef, useLayoutEffect, Suspense, useEffect, useState } from 'react';
+import React, { useRef, useLayoutEffect, Suspense, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -10,16 +10,11 @@ import Magnetic from './Magnetic';
 import { ArrowDown, Github, Star, GitBranch, Users } from 'lucide-react';
 import HackerText from './HackerText';
 import useIsMobile from '../hooks/useIsMobile';
+import { useGitHubStats } from '../hooks/useGitHubStats';
 
 const InteractiveCore = React.lazy(() => import('./InteractiveCore'));
 
 gsap.registerPlugin(ScrollTrigger);
-
-interface GitHubStats {
-    repos: number;
-    followers: number;
-    stars: number;
-}
 
 const Hero = () => {
     const isMobile = useIsMobile();
@@ -29,37 +24,7 @@ const Hero = () => {
         offset: ["start start", "end start"]
     });
 
-    const [ghStats, setGhStats] = useState<GitHubStats>({ repos: 10, followers: 0, stars: 0 });
-
-    // Fetch live GitHub stats
-    useEffect(() => {
-        let cancelled = false;
-        const fetchStats = async () => {
-            try {
-                const [userRes, reposRes] = await Promise.all([
-                    fetch('https://api.github.com/users/saurabhmj11'),
-                    fetch('https://api.github.com/users/saurabhmj11/repos?per_page=100&sort=updated'),
-                ]);
-                if (!userRes.ok || !reposRes.ok) return;
-                const user = await userRes.json();
-                const repos = await reposRes.json();
-                const totalStars = Array.isArray(repos)
-                    ? repos.reduce((acc: number, r: { stargazers_count: number }) => acc + (r.stargazers_count || 0), 0)
-                    : 0;
-                if (!cancelled) {
-                    setGhStats({
-                        repos: user.public_repos ?? 10,
-                        followers: user.followers ?? 0,
-                        stars: totalStars,
-                    });
-                }
-            } catch {
-                // silently fall back to defaults
-            }
-        };
-        fetchStats();
-        return () => { cancelled = true; };
-    }, []);
+    const { stats, loading } = useGitHubStats('saurabhmj11');
 
     const { playSectionChime } = useAudioDirector();
     const [inViewRef, inView] = useInView({ threshold: 0.5 });
@@ -144,12 +109,14 @@ const Hero = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />
 
             {/* 3D Components — Desktop only, z-30 so clicks reach the Canvas */}
-            {!isMobile && (
+            {!isMobile ? (
                 <div className="absolute inset-0 z-30 pointer-events-auto mix-blend-screen overflow-hidden">
                     <Suspense fallback={null}>
                         <InteractiveCore />
                     </Suspense>
                 </div>
+            ) : (
+                <div className="absolute inset-0 z-10 mobile-mesh-bg pointer-events-none" />
             )}
 
             {/* Main Content */}
@@ -246,17 +213,17 @@ const Hero = () => {
                     <span className="text-gray-700">·</span>
                     <span className="flex items-center gap-1.5">
                         <GitBranch size={12} className="text-blue-400/60" />
-                        {ghStats.repos} Public Repos
+                        {loading ? '--' : stats?.publicRepos} Public Repos
                     </span>
                     <span className="text-gray-700">·</span>
                     <span className="flex items-center gap-1.5">
                         <Star size={12} className="text-yellow-400/60" />
-                        {ghStats.stars > 0 ? `${ghStats.stars} Stars` : 'Active Builder'}
+                        {!loading && (stats?.totalStars ?? 0) > 0 ? `${stats?.totalStars} Stars` : 'Active Builder'}
                     </span>
                     <span className="text-gray-700">·</span>
                     <span className="flex items-center gap-1.5">
                         <Users size={12} className="text-purple-400/60" />
-                        {ghStats.followers > 0 ? `${ghStats.followers} Followers` : 'Open Source Contributor'}
+                        {!loading && (stats?.followers ?? 0) > 0 ? `${stats?.followers} Followers` : 'Open Source Contributor'}
                     </span>
                 </motion.div>
             </motion.div>

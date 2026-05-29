@@ -4,6 +4,7 @@ import { Github, Linkedin, Code2, Terminal, Cpu, FileText } from 'lucide-react';
 import Magnetic from './Magnetic';
 import { Link } from 'react-router-dom';
 import ScrollReveal from './ScrollReveal';
+import useIsMobile from '../hooks/useIsMobile';
 
 // ─── 1. AtmosphericLatentSpace ──────────────────────────────────────────────────
 // Moody, glowing neural-network latent space background.
@@ -11,66 +12,90 @@ import ScrollReveal from './ScrollReveal';
 
 const NOISE_SVG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")`;
 
-const AtmosphericLatentSpace = () => (
-  <>
-    {/* Breathing orb — Blue */}
-    <div
-      className="absolute pointer-events-none"
-      style={{
-        width: '45vw',
-        height: '45vw',
-        maxWidth: 700,
-        maxHeight: 700,
-        top: '10%',
-        left: '15%',
-        background: 'radial-gradient(circle, rgba(37,99,235,0.45) 0%, transparent 70%)',
-        filter: 'blur(120px)',
-        opacity: 0.6,
-        mixBlendMode: 'screen',
-        animation: 'breatheBlue 12s ease-in-out infinite',
-        willChange: 'transform',
-      }}
-    />
-    {/* Breathing orb — Purple */}
-    <div
-      className="absolute pointer-events-none"
-      style={{
-        width: '40vw',
-        height: '40vw',
-        maxWidth: 600,
-        maxHeight: 600,
-        bottom: '5%',
-        right: '10%',
-        background: 'radial-gradient(circle, rgba(139,92,246,0.4) 0%, transparent 70%)',
-        filter: 'blur(120px)',
-        opacity: 0.6,
-        mixBlendMode: 'screen',
-        animation: 'breathePurple 14s ease-in-out infinite',
-        willChange: 'transform',
-      }}
-    />
-    {/* Noise / grain texture */}
-    <div
-      className="absolute inset-0 pointer-events-none"
-      style={{
-        backgroundImage: NOISE_SVG,
-        backgroundRepeat: 'repeat',
-        backgroundSize: '128px 128px',
-        opacity: 0.05,
-      }}
-    />
-    <style>{`
-      @keyframes breatheBlue {
-        0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-        50%       { transform: translate3d(3%, -4%, 0) scale(1.08); }
-      }
-      @keyframes breathePurple {
-        0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-        50%       { transform: translate3d(-4%, 3%, 0) scale(1.12); }
-      }
-    `}</style>
-  </>
-);
+const AtmosphericLatentSpace = () => {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    // Static gradients — no animation, no blur filter, zero GPU cost
+    return (
+      <>
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            width: '80vw', height: '60vw',
+            top: '5%', left: '10%',
+            background: 'radial-gradient(circle, rgba(37,99,235,0.2) 0%, transparent 70%)',
+            opacity: 0.5,
+          }}
+        />
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            width: '70vw', height: '50vw',
+            bottom: '5%', right: '5%',
+            background: 'radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)',
+            opacity: 0.5,
+          }}
+        />
+      </>
+    );
+  }
+
+  return (
+    <>
+      {/* Breathing orb — Blue */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          width: '45vw', height: '45vw',
+          maxWidth: 700, maxHeight: 700,
+          top: '10%', left: '15%',
+          background: 'radial-gradient(circle, rgba(37,99,235,0.45) 0%, transparent 70%)',
+          filter: 'blur(120px)',
+          opacity: 0.6,
+          mixBlendMode: 'screen',
+          animation: 'breatheBlue 12s ease-in-out infinite',
+          willChange: 'transform',
+        }}
+      />
+      {/* Breathing orb — Purple */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          width: '40vw', height: '40vw',
+          maxWidth: 600, maxHeight: 600,
+          bottom: '5%', right: '10%',
+          background: 'radial-gradient(circle, rgba(139,92,246,0.4) 0%, transparent 70%)',
+          filter: 'blur(120px)',
+          opacity: 0.6,
+          mixBlendMode: 'screen',
+          animation: 'breathePurple 14s ease-in-out infinite',
+          willChange: 'transform',
+        }}
+      />
+      {/* Noise / grain texture */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: NOISE_SVG,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '128px 128px',
+          opacity: 0.05,
+        }}
+      />
+      <style>{`
+        @keyframes breatheBlue {
+          0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+          50%       { transform: translate3d(3%, -4%, 0) scale(1.08); }
+        }
+        @keyframes breathePurple {
+          0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+          50%       { transform: translate3d(-4%, 3%, 0) scale(1.12); }
+        }
+      `}</style>
+    </>
+  );
+};
 
 // ─── 2. TelemetryMarquee ────────────────────────────────────────────────────────
 // Infinite CSS-only ticker. Hardware-accelerated via translate3d.

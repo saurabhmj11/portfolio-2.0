@@ -1,64 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { GitCommit, Github, Star, GitFork, Activity } from 'lucide-react';
-
-interface GitHubStats {
-    publicRepos: number;
-    followers: number;
-    following: number;
-    totalStars: number;
-    recentCommits: number; // Simulated from recent events
-}
+import { useGitHubStats } from '../hooks/useGitHubStats';
 
 const LiveStats: React.FC = () => {
-    const [stats, setStats] = useState<GitHubStats | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
-
-    // Replace with your actual GitHub username
-    const username = 'saurabhmj11';
-
-    useEffect(() => {
-        const fetchGitHubStats = async () => {
-            try {
-                // 1. Fetch User Data
-                const userRes = await fetch(`https://api.github.com/users/${username}`);
-                if (!userRes.ok) throw new Error('Failed to fetch user');
-                const userData = await userRes.json();
-
-                // 2. Fetch Repos for Stars
-                const reposRes = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`);
-                let totalStars = 0;
-                if (reposRes.ok) {
-                    const reposData = await reposRes.json();
-                    totalStars = reposData.reduce((acc: number, repo: any) => acc + repo.stargazers_count, 0);
-                }
-
-                // 3. Fetch Recent Events for Activity (Rough estimate of recent commits)
-                const eventsRes = await fetch(`https://api.github.com/users/${username}/events/public?per_page=30`);
-                let recentCommits = 0;
-                if (eventsRes.ok) {
-                    const eventsData = await eventsRes.json();
-                    recentCommits = eventsData.filter((event: any) => event.type === 'PushEvent').length;
-                }
-
-                setStats({
-                    publicRepos: userData.public_repos,
-                    followers: userData.followers,
-                    following: userData.following,
-                    totalStars: totalStars,
-                    recentCommits: recentCommits * 3 // Multiplied to simulate a rough recent contribution count
-                });
-            } catch (err) {
-                console.error("Error fetching GitHub stats:", err);
-                setError(true);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchGitHubStats();
-    }, [username]);
+    // ── Replace 3 API calls with 1 cached hook ──
+    const { stats, loading, error } = useGitHubStats('saurabhmj11');
 
     const statVariants = {
         hidden: { opacity: 0, y: 20 },
