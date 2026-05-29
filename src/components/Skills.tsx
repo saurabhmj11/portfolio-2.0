@@ -82,7 +82,7 @@ const MARQUEE_TAGS = [
 const SkillBar = ({
     name, level, accent, delay, cardHovered,
 }: { name: string; level: number; accent: string; delay: number; cardHovered: boolean }) => {
-    const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
+    const [ref] = useInView({ threshold: 0.1, triggerOnce: true });
     const [displayNum, setDisplayNum] = useState(0);
     const rafRef = useRef<number | null>(null);
 

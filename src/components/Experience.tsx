@@ -132,10 +132,9 @@ const interpolateDisplay = (progress: number, display: string) => {
 };
 
 // ─── Animated Metric Bar ───────────────────────────────────────────────────────
-const MetricBar = ({ metric, accent, active, cardHovered }: {
+const MetricBar = ({ metric, accent, cardHovered }: {
   metric: typeof ROLES[0]['metrics'][0];
   accent: string;
-  active: boolean;
   cardHovered: boolean;
 }) => {
   const [displayStr, setDisplayStr] = useState('0');
@@ -307,7 +306,7 @@ const ProcessCard = ({ role, index }: { role: typeof ROLES[0]; index: number }) 
           <AsciiDiagram lines={role.diagram} accent={role.accent} active={isInView} />
           <div className="space-y-3.5">
             {role.metrics.map(m => (
-              <MetricBar key={m.key} metric={m} accent={role.accent} active={isInView} cardHovered={hovered} />
+              <MetricBar key={m.key} metric={m} accent={role.accent} cardHovered={hovered} />
             ))}
           </div>
         </div>
