@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import Markdown from 'react-markdown';
 
+interface BlogPost {
+    title: string;
+    slug: string;
+    excerpt: string;
+    content: string;
+    tags: string[];
+    publishedAt: string;
+    readTime: string;
+    status: string;
+}
+
 const AdminPage = () => {
     const [token, setToken] = useState<string | null>(localStorage.getItem('admin_token'));
     const [view, setView] = useState<'list' | 'edit'>('list');
-    const [posts, setPosts] = useState<any[]>([]);
-    const [editingPost, setEditingPost] = useState<any | null>(null);
+    const [posts, setPosts] = useState<BlogPost[]>([]);
+    const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
 
     // Login State
     const [email, setEmail] = useState('');
@@ -32,7 +43,7 @@ const AdminPage = () => {
             } else {
                 setError('Invalid credentials');
             }
-        } catch (err) {
+        } catch {
             setError('Login failed');
         }
     };
@@ -48,7 +59,7 @@ const AdminPage = () => {
         localStorage.removeItem('admin_token');
     };
 
-    const handleEdit = (post: any) => {
+    const handleEdit = (post: BlogPost) => {
         setEditingPost(post);
         setView('edit');
     };
@@ -209,6 +220,10 @@ const AdminPage = () => {
                 </div>
             </div>
         );
+    }
+
+    if (!editingPost) {
+        return <div className="pt-32 text-center text-gray-500">No post selected for editing.</div>;
     }
 
     return (

@@ -32,8 +32,7 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
     const isMobile = useIsMobile();
 
     useLayoutEffect(() => {
-        // Skip on mobile for perf, and respect prefers-reduced-motion
-        if (isMobile) return;
+        // Skip if prefers-reduced-motion is active
         const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (prefersReduced) return;
 
@@ -158,8 +157,6 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
 
         return () => ctx.revert();
     }, [from, to, effect, toColor, isMobile]);
-
-    if (isMobile) return null;
 
     // Invisible marker div — only purpose is to give ScrollTrigger a trigger point
     return (

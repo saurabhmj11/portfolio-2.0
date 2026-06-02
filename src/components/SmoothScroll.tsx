@@ -2,7 +2,6 @@ import { ReactLenis } from '@studio-freight/react-lenis';
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import useIsMobile from '../hooks/useIsMobile';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,7 +26,6 @@ interface ReactLenisRef {
 const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const lenisRef = useRef<any>(null);  // `any` needed: ReactLenis generic ref type conflicts with our shape
-    const isMobile = useIsMobile();
     const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
     useEffect(() => {
@@ -38,9 +36,8 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
         return () => mediaQuery.removeEventListener('change', listener);
     }, []);
 
-    // Smooth Lenis scroll — desktop only.
-    // On mobile we skip Lenis but GSAP ScrollTrigger still works via native scroll.
-    const useLenis = !isMobile && !prefersReducedMotion;
+    // Smooth Lenis scroll on both desktop and mobile.
+    const useLenis = !prefersReducedMotion;
 
     // ── Lenis → GSAP ticker bridge (desktop only) ───────────────────────────
     useEffect(() => {
@@ -107,7 +104,10 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
                 duration: 1.5,
                 smoothWheel: true,
                 wheelMultiplier: 1,
-                touchMultiplier: 2,
+                touchMultiplier: 1.5,
+                syncTouch: true,
+                syncTouchLerp: 0.08,
+                touchInertiaMultiplier: 35,
             }}
         >
             <div style={{ position: 'relative' }}>

@@ -32,7 +32,7 @@ const Testimonials = () => {
     const sliderRef = useRef<HTMLDivElement>(null);
 
     useLayoutEffect(() => {
-        let ctx = gsap.context(() => {
+        const ctx = gsap.context(() => {
             // Clone elements for seamless loop
             const content = sliderRef.current;
             if (content) {

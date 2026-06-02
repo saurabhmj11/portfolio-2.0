@@ -14,7 +14,7 @@ import Spotlight from './components/Spotlight';
 import ScrollProgress from './components/ScrollProgress';
 import CommandPalette from './components/CommandPalette';
 import MobileBottomNav from './components/MobileBottomNav';
-import useSwipeNavigation from './hooks/useSwipeNavigation';
+
 
 // Pages
 import Home from './pages/Home';
@@ -40,8 +40,8 @@ function App() {
   const [isDark] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  // Swipe-to-navigate between sections on mobile
-  useSwipeNavigation();
+  // Swipe-to-navigate between sections on mobile (Disabled to allow smooth Lenis/ScrollTrigger animations)
+  // useSwipeNavigation();
   const location = useLocation();
 
   // Scroll logic on route change

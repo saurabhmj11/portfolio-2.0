@@ -198,24 +198,25 @@ const Projects = () => {
 
                     <div className="space-y-12">
                         {projects.map((project, index) => (
-                            <motion.div
-                                key={project.id}
-                                layoutId={`project-container-${project.id}`}
-                                className="w-full bg-[#0a0a0a] border border-white/10 rounded-3xl overflow-hidden"
-                                onClick={() => setSelectedProject(project)}
-                            >
-                                <div className="h-64 overflow-hidden relative w-full">
-                                    <OptimizedImage src={project.image} alt={project.title} width={400} quality={60} className="w-full h-full object-cover filter grayscale contrast-125" wrapperClassName="w-full h-full" />
-                                    <div className="absolute inset-0 bg-black/40" />
-                                    <div className="absolute inset-0 p-6 flex flex-col justify-between mix-blend-difference">
-                                        <div className="flex justify-between items-start text-white">
-                                            <span className="text-xs font-mono uppercase tracking-widest">0{index + 1}</span>
-                                            <span className="text-xs font-mono uppercase tracking-widest text-right">{project.category}</span>
+                            <ScrollReveal key={project.id} width="100%">
+                                <motion.div
+                                    layoutId={`project-container-${project.id}`}
+                                    className="w-full bg-[#0a0a0a] border border-white/10 rounded-3xl overflow-hidden cursor-pointer"
+                                    onClick={() => setSelectedProject(project)}
+                                >
+                                    <div className="h-64 overflow-hidden relative w-full">
+                                        <OptimizedImage src={project.image} alt={project.title} width={400} quality={60} className="w-full h-full object-cover filter grayscale contrast-125" wrapperClassName="w-full h-full" />
+                                        <div className="absolute inset-0 bg-black/40" />
+                                        <div className="absolute inset-0 p-6 flex flex-col justify-between mix-blend-difference">
+                                            <div className="flex justify-between items-start text-white">
+                                                <span className="text-xs font-mono uppercase tracking-widest">0{index + 1}</span>
+                                                <span className="text-xs font-mono uppercase tracking-widest text-right">{project.category}</span>
+                                            </div>
+                                            <motion.h3 layoutId={`project-title-${project.id}`} className="text-4xl font-display font-black leading-tight text-white uppercase">{project.title}</motion.h3>
                                         </div>
-                                        <motion.h3 layoutId={`project-title-${project.id}`} className="text-4xl font-display font-black leading-tight text-white uppercase">{project.title}</motion.h3>
                                     </div>
-                                </div>
-                            </motion.div>
+                                </motion.div>
+                            </ScrollReveal>
                         ))}
                     </div>
                 </div>

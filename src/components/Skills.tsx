@@ -82,14 +82,16 @@ const MARQUEE_TAGS = [
 const SkillBar = ({
     name, level, accent, delay, cardHovered,
 }: { name: string; level: number; accent: string; delay: number; cardHovered: boolean }) => {
-    const [ref] = useInView({ threshold: 0.1, triggerOnce: true });
+    const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
     const [displayNum, setDisplayNum] = useState(0);
     const rafRef = useRef<number | null>(null);
 
-    // Count up on card hover
+    const shouldAnimate = cardHovered || inView;
+
+    // Count up on viewport entry or card hover
     useEffect(() => {
         if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        if (!cardHovered) { setDisplayNum(0); return; }
+        if (!shouldAnimate) { setDisplayNum(0); return; }
         const duration = 1500 + delay * 400;
         const start = performance.now();
         const tick = (now: number) => {
@@ -100,31 +102,31 @@ const SkillBar = ({
         };
         rafRef.current = requestAnimationFrame(tick);
         return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-    }, [cardHovered, level, delay]);
+    }, [shouldAnimate, level, delay]);
 
     return (
         <div ref={ref}>
             <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xs font-mono transition-colors duration-300"
-                    style={{ color: cardHovered ? 'white' : 'rgb(156,163,175)' }}>
+                    style={{ color: shouldAnimate ? 'white' : 'rgb(156,163,175)' }}>
                     {name}
                 </span>
                 <span
                     className="text-[10px] font-mono tabular-nums transition-colors duration-300"
-                    style={{ color: cardHovered ? 'rgb(209,213,219)' : 'rgb(75,85,99)' }}
+                    style={{ color: shouldAnimate ? 'rgb(209,213,219)' : 'rgb(75,85,99)' }}
                 >
-                    {cardHovered ? displayNum : level}%
+                    {shouldAnimate ? displayNum : 0}%
                 </span>
             </div>
             <div className="h-[2px] bg-white/5 rounded-full overflow-hidden">
                 <motion.div
-                    key={cardHovered ? 'hovered' : 'normal'}
+                    key={shouldAnimate ? 'animated' : 'idle'}
                     className={`h-full ${accent} rounded-full`}
                     initial={{ width: '0%' }}
-                    animate={{ width: `${level}%` }}
+                    animate={{ width: shouldAnimate ? `${level}%` : '0%' }}
                     transition={{
-                        duration: cardHovered ? 1.5 + delay * 0.4 : 1.5,
-                        delay: cardHovered ? delay * 0.15 : delay,
+                        duration: shouldAnimate ? 1.5 + delay * 0.4 : 1.5,
+                        delay: shouldAnimate ? delay * 0.15 : delay,
                         ease: [0.22, 1, 0.36, 1],
                     }}
                 />
@@ -234,7 +236,7 @@ const Skills = () => {
 
                 {/* ── Header ── */}
                 <ScrollReveal>
-                    <div className="mb-16 md:mb-20">
+                    <div className="mb-10 md:mb-12">
                         <span className="text-xs font-mono text-gray-500 uppercase tracking-[0.3em] mb-4 block">
                             // SYSTEM CAPABILITIES
                         </span>
@@ -255,7 +257,7 @@ const Skills = () => {
                 </ScrollReveal>
 
                 {/* ── Marquee Tags ── */}
-                <div className="mb-16 space-y-2">
+                <div className="mb-10 space-y-2">
                     <MarqueeStrip />
                     <MarqueeStrip reverse />
                 </div>

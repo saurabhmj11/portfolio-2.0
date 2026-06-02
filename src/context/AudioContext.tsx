@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useRef, useEffect, useCallback } from 'react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -37,12 +38,17 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Lazy-initialize Web Audio context (requires user gesture)
     const getAudioCtx = useCallback(() => {
         if (!audioCtxRef.current) {
-            audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+            const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+            audioCtxRef.current = new AudioContextClass();
         }
-        if (audioCtxRef.current.state === 'suspended') {
-            audioCtxRef.current.resume();
+        const ctx = audioCtxRef.current;
+        if (!ctx) {
+            throw new Error('AudioContext failed to initialize');
         }
-        return audioCtxRef.current;
+        if (ctx.state === 'suspended') {
+            ctx.resume();
+        }
+        return ctx;
     }, []);
 
     // ── Ambient Drone ──────────────────────────────────────────────────────────

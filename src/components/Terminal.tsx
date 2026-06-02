@@ -12,15 +12,17 @@ const Terminal = () => {
     const inputRef = useRef<HTMLInputElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const [autoScroll] = useState(true);
+    const hasInitialized = useRef(false);
 
     // Initial Welcome Log
     useEffect(() => {
-        if (logs.length === 0) {
+        if (!hasInitialized.current && logs.length === 0) {
+            hasInitialized.current = true;
             addLog("Initializing Neural Interface...", "system");
             setTimeout(() => addLog("Saurabh's Core Systems [ONLINE]", "success"), 500);
             setTimeout(() => addLog("Type 'help' for command list.", "info"), 800);
         }
-    }, []);
+    }, [addLog, logs.length]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {

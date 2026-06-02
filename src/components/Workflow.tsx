@@ -31,10 +31,10 @@ const Workflow = () => {
     const containerRef = useRef<HTMLElement>(null);
 
     useLayoutEffect(() => {
-        let mm = gsap.matchMedia();
+        const mm = gsap.matchMedia();
 
         mm.add("(min-width: 768px)", () => {
-            const items = gsap.utils.toArray('.workflow-item');
+            const items = gsap.utils.toArray<Element>('.workflow-item');
 
             // Allow layout to settle
             ScrollTrigger.refresh();
@@ -57,11 +57,41 @@ const Workflow = () => {
             );
 
             // 2. Animate items sequentially linked to the line drawing
-            items.forEach((item: any, i) => {
+            items.forEach((item: Element, i) => {
                 tl.fromTo(item,
                     { opacity: 0, x: -20 },
                     { opacity: 1, x: 0, duration: 1, ease: 'power2.out' },
                     `-=${3.5 - (i * 0.5)}` // Overlap slightly with line drawing
+                );
+            });
+        });
+
+        mm.add("(max-width: 767px)", () => {
+            const items = gsap.utils.toArray<Element>('.workflow-item');
+
+            ScrollTrigger.refresh();
+
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: containerRef.current,
+                    start: 'top 75%',
+                    end: 'bottom 85%',
+                    scrub: 1,
+                }
+            });
+
+            // 1. Draw the line
+            tl.fromTo('.workflow-line',
+                { scaleY: 0 },
+                { scaleY: 1, duration: 4, ease: 'none' }
+            );
+
+            // 2. Animate items sequentially linked to the line drawing
+            items.forEach((item: Element, i) => {
+                tl.fromTo(item,
+                    { opacity: 0, x: -15 },
+                    { opacity: 1, x: 0, duration: 1, ease: 'power2.out' },
+                    `-=${3.5 - (i * 0.6)}`
                 );
             });
         });

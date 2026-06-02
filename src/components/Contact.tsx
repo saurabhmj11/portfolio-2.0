@@ -184,7 +184,7 @@ const TerminalField = ({
     onFocus,
     onBlur,
     placeholder: ph,
-    className: 'w-full px-0 py-3 border-b border-white/15 outline-none bg-transparent transition-colors placeholder:text-gray-700 text-white focus:border-transparent text-sm',
+    className: 'w-full px-0 py-3 border-b border-white/15 outline-none bg-transparent transition-colors placeholder:text-gray-500 placeholder:font-mono text-white focus:border-transparent text-sm',
   };
 
   return (
