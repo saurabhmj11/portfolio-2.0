@@ -122,7 +122,7 @@ const Hero = () => {
             {/* Main Content */}
             <motion.div
                 style={{ y, opacity }}
-                className="relative z-20 pointer-events-none flex flex-col items-center text-center w-full px-2 md:px-0 max-w-[90vw]"
+                className="relative z-40 pointer-events-none flex flex-col items-center text-center w-full px-2 md:px-0 max-w-[90vw]"
             >
                 {/* ── Open to Work badge ── */}
                 <motion.div
