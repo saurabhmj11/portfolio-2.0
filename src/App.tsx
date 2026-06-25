@@ -74,12 +74,14 @@ function App() {
             <ScrollProgress />
             <CustomCursor />
             <AudioVisualizer />
+            {/* Preloader overlay — rendered on top but does NOT block crawlers from seeing content */}
             <AnimatePresence mode="wait">
               {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
             </AnimatePresence>
 
-            {!isLoading && (
-              <React.Fragment>
+            {/* Main Content — always in DOM so Googlebot indexes it */}
+            <React.Fragment>
+              {!isLoading && (
                 <motion.div
                   className="fixed inset-0 bg-black z-[60] pointer-events-none"
                   initial={{ scaleY: 1 }}
@@ -88,43 +90,48 @@ function App() {
                   transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
                   style={{ originY: 0 }}
                 />
+              )}
 
-                {/* Main Content */}
-                <div className={`relative z-10 min-h-screen ${isDark ? 'dark' : ''} bg-off-white shadow-2xl`}>
-                  {/* Noise Overlay */}
-                  <div className="noise-overlay" />
+              {/* Main Content */}
+              <div
+                className={`relative z-10 min-h-screen ${isDark ? 'dark' : ''} bg-off-white shadow-2xl`}
+                style={{ visibility: isLoading ? 'hidden' : 'visible' }}
+              >
+                {/* Noise Overlay */}
+                <div className="noise-overlay" />
 
-                  <Header />
-                  <CommandPalette />
+                <Header />
+                <CommandPalette />
 
-                  <AnimatePresence mode="wait">
-                    <React.Suspense fallback={null}>
-                      <Routes location={location} key={location.pathname}>
-                        <Route path="/" element={<PageTransition label="Home"><Home /></PageTransition>} />
-                        <Route path="/blog" element={<PageTransition label="Research Log"><BlogPage /></PageTransition>} />
-                        <Route path="/blog/:slug" element={<PageTransition label="Article"><BlogPostPage /></PageTransition>} />
-                        <Route path="/admin" element={<PageTransition label="Admin"><AdminPage /></PageTransition>} />
-                        <Route path="/resume" element={<PageTransition label="Résumé"><Resume /></PageTransition>} />
-                        <Route path="/project/:id" element={<PageTransition label="Case Study"><CaseStudy /></PageTransition>} />
-                        <Route path="*" element={<PageTransition label="404"><NotFound /></PageTransition>} />
-                      </Routes>
-                    </React.Suspense>
-                  </AnimatePresence>
-                </div>
+                <AnimatePresence mode="wait">
+                  <React.Suspense fallback={null}>
+                    <Routes location={location} key={location.pathname}>
+                      <Route path="/" element={<PageTransition label="Home"><Home /></PageTransition>} />
+                      <Route path="/blog" element={<PageTransition label="Research Log"><BlogPage /></PageTransition>} />
+                      <Route path="/blog/:slug" element={<PageTransition label="Article"><BlogPostPage /></PageTransition>} />
+                      <Route path="/admin" element={<PageTransition label="Admin"><AdminPage /></PageTransition>} />
+                      <Route path="/resume" element={<PageTransition label="Résumé"><Resume /></PageTransition>} />
+                      <Route path="/project/:id" element={<PageTransition label="Case Study"><CaseStudy /></PageTransition>} />
+                      <Route path="*" element={<PageTransition label="404"><NotFound /></PageTransition>} />
+                    </Routes>
+                  </React.Suspense>
+                </AnimatePresence>
+              </div>
 
-                {/* Fixed Footer (Behind the content) */}
-                <Footer />
+              {/* Fixed Footer (Behind the content) */}
+              {!isLoading && <Footer />}
 
+              {!isLoading && (
                 <React.Suspense fallback={null}>
                   <Chatbot isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
                   <Terminal />
                   <AgentDock isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
                 </React.Suspense>
-                <ScrollToTop />
-                {/* Mobile bottom navigation bar */}
-                <MobileBottomNav />
-              </React.Fragment>
-            )}
+              )}
+              <ScrollToTop />
+              {/* Mobile bottom navigation bar */}
+              {!isLoading && <MobileBottomNav />}
+            </React.Fragment>
           </SmoothScroll>
         </HelmetProvider>
       </AudioProvider>

@@ -12,7 +12,7 @@ interface SeoProps {
     tags?: string[];
 }
 
-const BASE_URL = 'https://saurabhlokhande.com';
+const BASE_URL = 'https://saurabh-anil-lokhande.netlify.app';
 const DEFAULT_IMAGE = `${BASE_URL}/og-image.jpg`;
 
 const Seo: React.FC<SeoProps> = ({
