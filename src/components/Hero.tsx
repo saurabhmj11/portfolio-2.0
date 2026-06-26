@@ -29,14 +29,17 @@ const Hero = () => {
     const { playSectionChime } = useAudioDirector();
     const [inViewRef, inView] = useInView({ threshold: 0.5 });
 
+    const [coreInViewRef, coreInView] = useInView({ threshold: 0, rootMargin: "200px" });
+
     // Merge refs for Framer Motion scroll and Intersection Observer
     const setRefs = React.useCallback(
         (node: HTMLElement | null) => {
             // @ts-expect-error -- containerRef is typed as RefObject<HTMLElement> but accepts null from callback ref
             containerRef.current = node;
             inViewRef(node);
+            coreInViewRef(node);
         },
-        [inViewRef]
+        [inViewRef, coreInViewRef]
     );
 
     useEffect(() => {
@@ -93,7 +96,7 @@ const Hero = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />
 
             {/* 3D Components — Desktop only, z-30 so clicks reach the Canvas */}
-            {!isMobile ? (
+            {!isMobile && coreInView ? (
                 <div className="absolute inset-0 z-30 pointer-events-auto mix-blend-screen overflow-hidden">
                     <Suspense fallback={null}>
                         <InteractiveCore />

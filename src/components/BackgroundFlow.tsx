@@ -28,12 +28,12 @@ const BackgroundFlow = () => {
             {/* Moving Orbs */}
             <motion.div
                 style={{ y: y1 }}
-                className="absolute top-[-20%] left-[-10%] w-[40vw] h-[40vw] bg-blue-900/10 rounded-full blur-[80px] will-change-transform"
+                className="absolute top-[-20%] left-[-10%] w-[40vw] h-[40vw] bg-blue-900/10 rounded-full blur-[40px] will-change-transform"
             />
 
             <motion.div
                 style={{ y: y2 }}
-                className="absolute bottom-[-20%] right-[-10%] w-[40vw] h-[40vw] bg-purple-900/10 rounded-full blur-[80px] will-change-transform"
+                className="absolute bottom-[-20%] right-[-10%] w-[40vw] h-[40vw] bg-purple-900/10 rounded-full blur-[40px] will-change-transform"
             />
 
             {/* Central Glow based on scroll position */}
@@ -42,7 +42,7 @@ const BackgroundFlow = () => {
                     opacity: glowOpacity,
                     scale: glowScale
                 }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] h-[30vw] bg-cyan-900/10 rounded-full blur-[60px] will-change-transform"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] h-[30vw] bg-cyan-900/10 rounded-full blur-[30px] will-change-transform"
             />
         </div>
     );

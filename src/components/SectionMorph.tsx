@@ -55,8 +55,7 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
                             const p = self.progress;
                             // Outgoing fades + blurs out
                             gsap.set(fromEl, {
-                                opacity: 1 - p * 0.6,
-                                filter: `blur(${p * 6}px)`,
+                                opacity: 1 - p * 0.8,
                             });
                             // Incoming reveals from bottom
                             gsap.set(toEl, {
@@ -64,11 +63,11 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
                             });
                         },
                         onLeaveBack: () => {
-                            gsap.set(fromEl, { opacity: 1, filter: 'blur(0px)' });
+                            gsap.set(fromEl, { opacity: 1 });
                             gsap.set(toEl, { clipPath: 'inset(100% 0 0 0)' });
                         },
                         onLeave: () => {
-                            gsap.set(fromEl, { opacity: 1, filter: 'blur(0px)' });
+                            gsap.set(fromEl, { opacity: 1 });
                             gsap.set(toEl, { clipPath: 'inset(0% 0 0 0)' });
                         },
                     });
@@ -138,16 +137,15 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
                         onUpdate: (self) => {
                             const p = self.progress;
                             gsap.set(fromEl, {
-                                opacity: 1 - p * 0.5,
-                                scale: 1 - p * 0.02,
-                                filter: `blur(${p * 4}px)`,
+                                opacity: 1 - p * 0.8,
+                                scale: 1 - p * 0.05,
                             });
                         },
                         onLeaveBack: () => {
-                            gsap.set(fromEl, { opacity: 1, scale: 1, filter: 'blur(0px)' });
+                            gsap.set(fromEl, { opacity: 1, scale: 1 });
                         },
                         onLeave: () => {
-                            gsap.set(fromEl, { opacity: 1, scale: 1, filter: 'blur(0px)' });
+                            gsap.set(fromEl, { opacity: 1, scale: 1 });
                         },
                     });
                     break;

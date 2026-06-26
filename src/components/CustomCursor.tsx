@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 const CustomCursor = () => {
-    const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+    const isTouchDevice = typeof window !== 'undefined' && 
+        (window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 1024);
 
     const [isHovering, setIsHovering] = useState(false);
 

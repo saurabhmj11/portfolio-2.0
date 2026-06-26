@@ -195,7 +195,7 @@ const MorphOrb = () => {
 
     return (
         <mesh ref={meshRef}>
-            <icosahedronGeometry args={[2.2, 128]} />
+            <icosahedronGeometry args={[2.2, 64]} />
             <shaderMaterial
                 vertexShader={orbVertex}
                 fragmentShader={orbFragment}
@@ -211,7 +211,7 @@ const MorphOrb = () => {
 // ── Orbiting Light Motes (magical floating particles) ───────────────────────
 const LightMotes = () => {
     const ref = useRef<THREE.Points>(null);
-    const count = 300;
+    const count = 100;
 
     const [positions, sizes] = useMemo(() => {
         const p = new Float32Array(count * 3);
@@ -683,7 +683,7 @@ const InteractiveCore = () => {
             <Canvas
                 camera={{ position: [0, 0, 7], fov: 50 }}
                 gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-                dpr={[1, 2]}
+                dpr={1}
                 style={{ position: 'absolute', inset: 0, pointerEvents: 'auto' }}
             >
                 <Scene />
