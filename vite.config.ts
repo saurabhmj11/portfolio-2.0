@@ -44,6 +44,9 @@ export default defineConfig({
     })
   ],
   build: {
+    target: 'esnext',
+    sourcemap: false,
+    chunkSizeWarningLimit: 1000,
     outDir: 'dist',
     cssCodeSplit: true,
     minify: 'terser',
@@ -84,9 +87,7 @@ export default defineConfig({
       },
     },
   },
-  optimizeDeps: {
-    exclude: ['lucide-react'],
-  },
+  optimizeDeps: {},
   test: {
     globals: true,
     environment: 'jsdom',

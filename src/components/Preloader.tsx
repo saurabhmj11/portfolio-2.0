@@ -64,7 +64,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                 }
                 return next;
             });
-        }, 15); // Faster feel (100 * 15ms = 1.5s total progress duration)
+        }, 10); // Faster feel (100 * 10ms = 1.0s total progress duration)
 
         return () => {
             clearInterval(interval);

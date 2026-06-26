@@ -85,25 +85,9 @@ const Hero = () => {
             ref={setRefs}
             className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-x-hidden bg-black text-white px-4 pt-24 pb-32 md:pt-0 md:pb-24"
         >
-            {/* Background — Video on desktop, gradient on mobile */}
+            {/* Background — Gradient (No heavy video) */}
             <div className="absolute inset-0 z-0">
-                {!isMobile ? (
-                    <>
-                        <video
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            className="w-full h-full object-cover opacity-30"
-                        >
-                            <source src="https://uploads-ssl.webflow.com/65b7bac85c1092089d510616/65b8c737f3618d8dd99da139_VIDEO HOME (DSK)-transcode.mp4" type="video/mp4" />
-                        </video>
-                        <div className="absolute inset-0 bg-black/50" />
-                    </>
-                ) : (
-                    /* Lightweight gradient replacement on mobile */
-                    <div className="w-full h-full bg-gradient-to-br from-[#030303] via-[#0a0a1a] to-[#030303]" />
-                )}
+                <div className="w-full h-full bg-gradient-to-br from-[#030303] via-[#0a0a1a] to-[#030303]" />
             </div>
 
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />

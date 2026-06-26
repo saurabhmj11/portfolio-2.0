@@ -6,13 +6,13 @@ import Header from './components/Header';
 const Terminal = React.lazy(() => import('./components/Terminal'));
 import Footer from './components/Footer';
 import Preloader from './components/Preloader';
-import CustomCursor from './components/CustomCursor';
+const CustomCursor = React.lazy(() => import('./components/CustomCursor'));
 const Chatbot = React.lazy(() => import('./components/Chatbot'));
 const AgentDock = React.lazy(() => import('./components/AgentDock'));
-import ScrollToTop from './components/ScrollToTop';
-import Spotlight from './components/Spotlight';
-import ScrollProgress from './components/ScrollProgress';
-import CommandPalette from './components/CommandPalette';
+const ScrollToTop = React.lazy(() => import('./components/ScrollToTop'));
+const Spotlight = React.lazy(() => import('./components/Spotlight'));
+const ScrollProgress = React.lazy(() => import('./components/ScrollProgress'));
+const CommandPalette = React.lazy(() => import('./components/CommandPalette'));
 import MobileBottomNav from './components/MobileBottomNav';
 
 
@@ -30,7 +30,7 @@ import { TerminalProvider } from './context/TerminalContext';
 import { AudioProvider } from './context/AudioContext';
 import { HelmetProvider } from 'react-helmet-async';
 import Seo from './components/Seo';
-import AudioVisualizer from './components/AudioVisualizer';
+const AudioVisualizer = React.lazy(() => import('./components/AudioVisualizer'));
 
 
 
@@ -70,14 +70,19 @@ function App() {
           <Analytics />
           <Seo />
           <SmoothScroll>
-            <Spotlight />
-            <ScrollProgress />
-            <CustomCursor />
-            <AudioVisualizer />
             {/* Preloader overlay — rendered on top but does NOT block crawlers from seeing content */}
             <AnimatePresence mode="wait">
               {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
             </AnimatePresence>
+
+            {!isLoading && (
+              <React.Suspense fallback={null}>
+                <Spotlight />
+                <ScrollProgress />
+                <CustomCursor />
+                <AudioVisualizer />
+              </React.Suspense>
+            )}
 
             {/* Main Content — always in DOM so Googlebot indexes it */}
             <React.Fragment>
@@ -95,13 +100,16 @@ function App() {
               {/* Main Content */}
               <div
                 className={`relative z-10 min-h-screen ${isDark ? 'dark' : ''} bg-off-white shadow-2xl`}
-                style={{ visibility: isLoading ? 'hidden' : 'visible' }}
               >
                 {/* Noise Overlay */}
                 <div className="noise-overlay" />
 
                 <Header />
-                <CommandPalette />
+                {!isLoading && (
+                  <React.Suspense fallback={null}>
+                    <CommandPalette />
+                  </React.Suspense>
+                )}
 
                 <AnimatePresence mode="wait">
                   <React.Suspense fallback={null}>
@@ -126,9 +134,9 @@ function App() {
                   <Chatbot isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
                   <Terminal />
                   <AgentDock isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />
+                  <ScrollToTop />
                 </React.Suspense>
               )}
-              <ScrollToTop />
               {/* Mobile bottom navigation bar */}
               {!isLoading && <MobileBottomNav />}
             </React.Fragment>
