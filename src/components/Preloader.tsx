@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 
 interface PreloaderProps {
     onComplete: () => void;
@@ -29,7 +29,6 @@ const ringsData = [
     }
 ];
 
-// Added new tech stack related data for the creative background elements
 const techElements = [
     // AI / GenAI
     { label: "LLM", icon: "🧠", color: "text-purple-400", x: "10%", y: "20%", delay: 0 },
@@ -45,54 +44,59 @@ const techElements = [
 
 const nameString = "SAURABH LOKHANDE";
 
+// Every infinite/looping animation (ring spin, icon float, scan sweep) now runs
+// on these CSS keyframes instead of Framer Motion's JS-driven rAF loop.
+// Framer Motion is kept only for one-shot enter/exit transitions, so once the
+// intro settles there are zero persistent JS animation subscriptions left —
+// just GPU-composited CSS, which is what actually keeps this jank-free on
+// mid-range phones.
+const PRELOADER_KEYFRAMES = `
+@keyframes preloader-ring-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.preloader-ring-spin {
+  animation-name: preloader-ring-spin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+@keyframes preloader-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.preloader-float {
+  animation: preloader-float 3s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes preloader-scan {
+  from { transform: translateX(-20%); }
+  to { transform: translateX(120%); }
+}
+.preloader-scan {
+  animation: preloader-scan 1.2s linear infinite;
+  will-change: transform;
+}
+`;
+
 const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
-    const [progress, setProgress] = useState(0);
     const [isVisible, setIsVisible] = useState(true);
-    const [activeRings, setActiveRings] = useState<number[]>([]);
 
     useEffect(() => {
-        // Prevent scrolling while preloader is active
         document.body.style.overflow = 'hidden';
-
-        const interval = setInterval(() => {
-            setProgress(prev => {
-                const next = prev + 1;
-
-                if (next >= 100) {
-                    clearInterval(interval);
-                    return 100;
-                }
-                return next;
-            });
-        }, 10); // Faster feel (100 * 10ms = 1.0s total progress duration)
-
         return () => {
-            clearInterval(interval);
             document.body.style.overflow = '';
         };
     }, []);
 
-    useEffect(() => {
-        ringsData.forEach((ring, index) => {
-            if (progress >= ring.trigger && !activeRings.includes(index)) {
-                setActiveRings(prev => [...prev, index]);
-            }
-        });
-    }, [progress, activeRings]);
+    const handleComplete = () => {
+        setIsVisible(false);
+        setTimeout(() => {
+            onComplete();
+            document.body.style.overflow = '';
+        }, 600); // Wait for exit animation
+    };
 
-    useEffect(() => {
-        if (progress === 100) {
-            setTimeout(() => {
-                setIsVisible(false);
-                setTimeout(() => {
-                    onComplete();
-                    document.body.style.overflow = '';
-                }, 600); // Reduced from 1500ms for faster LCP
-            }, 200); // Reduced from 800ms - show content sooner
-        }
-    }, [progress, onComplete]);
-
-    // Split text into words, then letters for staggered reveal
     const words = nameString.split(" ");
 
     return (
@@ -102,16 +106,22 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                     className="fixed inset-0 z-[100] bg-[#0a0a0a] flex flex-col items-center justify-center overflow-hidden"
                     exit={{
                         opacity: 0,
-                        backdropFilter: "blur(0px)",
-                        transition: { duration: 1.2, ease: [0.76, 0, 0.24, 1], delay: 0.8 }
+                        transition: { duration: 1.2, ease: [0.76, 0, 0.24, 1], delay: 0.2 }
                     }}
                 >
-                    {/* Atmospheric Glow tied to progress */}
-                    <div
-                        className="absolute inset-0 pointer-events-none transition-opacity duration-300 z-0"
+                    <style>{PRELOADER_KEYFRAMES}</style>
+
+                    {/* Atmospheric Glow — static gradient, faded in via opacity only.
+                        Animating the `background` string forces a full-screen repaint
+                        on every frame; opacity is compositor-only. */}
+                    <motion.div
+                        className="absolute inset-0 pointer-events-none z-0"
                         style={{
-                            background: `radial-gradient(circle at center, rgba(255,255,255,${(progress / 100) * 0.05}) 0%, rgba(0,0,0,0) 70%)`
+                            background: 'radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 70%)'
                         }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 1, ease: "linear" }}
                     />
 
                     {/* Floating Tech Elements Background */}
@@ -119,25 +129,24 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                         {techElements.map((el, idx) => (
                             <motion.div
                                 key={idx}
-                                className={`absolute flex flex-col items-center justify-center font-mono opacity-0 ${el.color}`}
+                                className={`absolute flex flex-col items-center justify-center font-mono ${el.color}`}
                                 style={{ left: el.x, top: el.y }}
-                                initial={{ opacity: 0, scale: 0, y: 20 }}
-                                animate={{
-                                    opacity: progress > 10 ? 0.3 : 0, // Reveal after 10%
-                                    scale: progress > 10 ? 1 : 0,
-                                    y: [0, -10, 0]
-                                }}
+                                initial={{ opacity: 0, scale: 0 }}
+                                animate={{ opacity: 0.3, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.5 } }}
                                 transition={{
-                                    opacity: { duration: 0.8, delay: el.delay },
-                                    scale: { duration: 0.8, delay: el.delay, type: "spring" },
-                                    y: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: el.delay }
+                                    opacity: { duration: 0.8, delay: 0.1 + el.delay },
+                                    scale: { duration: 0.8, delay: 0.1 + el.delay, type: "spring" }
                                 }}
                             >
-                                <span className="text-2xl md:text-4xl mb-1">{el.icon}</span>
-                                <span className="text-[8px] md:text-[10px] tracking-widest uppercase border border-current px-2 py-0.5 rounded-sm bg-black/50 backdrop-blur-sm">
-                                    {el.label}
-                                </span>
+                                {/* Bobbing is CSS now, not Framer Motion — it never
+                                    touches JS again after the entrance finishes. */}
+                                <div className="preloader-float flex flex-col items-center" style={{ animationDelay: `${el.delay}s` }}>
+                                    <span className="text-2xl md:text-4xl mb-1 block">{el.icon}</span>
+                                    <span className="text-[8px] md:text-[10px] tracking-widest uppercase border border-current px-2 py-0.5 rounded-sm bg-black/50 backdrop-blur-sm block">
+                                        {el.label}
+                                    </span>
+                                </div>
                             </motion.div>
                         ))}
                     </div>
@@ -152,9 +161,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                         }}
                     >
                         {ringsData.map((ring, index) => (
-                            activeRings.includes(index) && (
-                                <Ring key={index} {...ring} />
-                            )
+                            <Ring key={index} {...ring} />
                         ))}
                     </motion.div>
 
@@ -169,13 +176,13 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                         }}
                     >
                         {/* Cinematic Typography Reveal */}
-                        <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-8 overflow-hidden drop-shadow-2xl">
+                        <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-8 overflow-hidden drop-shadow-lg">
                             {words.map((word, wordIndex) => (
                                 <div key={wordIndex} className="flex">
                                     {word.split('').map((char, charIndex) => (
                                         <motion.span
                                             key={charIndex}
-                                            className="text-4xl md:text-7xl font-display font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                                            className="text-4xl md:text-7xl font-display font-bold tracking-tighter text-white"
                                             initial={{ y: 100, opacity: 0 }}
                                             animate={{ y: 0, opacity: 1 }}
                                             transition={{
@@ -191,56 +198,21 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                             ))}
                         </div>
 
-                        {/* Creative Cyber Badges (Reveal at 60%) */}
+                        {/* Creative Cyber Badges */}
                         <motion.div
                             className="flex flex-wrap items-center justify-center gap-3 mb-12 text-xs md:text-sm font-mono tracking-[0.2em] uppercase"
                             initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: progress > 60 ? 1 : 0, y: progress > 60 ? 0 : 10 }}
-                            transition={{ duration: 0.5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.6 }}
                         >
-                            <span className="px-3 py-1 border border-cyan-400/30 text-cyan-400 bg-cyan-400/10 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.2)]">AI Systems</span>
+                            <span className="px-3 py-1 border border-cyan-400/30 text-cyan-400 bg-cyan-400/10 rounded-full">AI Systems</span>
                             <span className="text-white/30">•</span>
-                            <span className="px-3 py-1 border border-blue-400/30 text-blue-400 bg-blue-400/10 rounded-full shadow-[0_0_10px_rgba(96,165,250,0.2)]">Full Stack</span>
+                            <span className="px-3 py-1 border border-blue-400/30 text-blue-400 bg-blue-400/10 rounded-full">Full Stack</span>
                             <span className="text-white/30">•</span>
-                            <span className="px-3 py-1 border border-emerald-400/30 text-emerald-400 bg-emerald-400/10 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.2)]">Engineered</span>
+                            <span className="px-3 py-1 border border-emerald-400/30 text-emerald-400 bg-emerald-400/10 rounded-full">Engineered</span>
                         </motion.div>
 
-                        {/* Progress Bar & Percentage */}
-                        <div className="flex flex-col items-center gap-4 w-64 md:w-80">
-                            <motion.div
-                                className="h-[3px] bg-white/10 w-full overflow-hidden rounded-full relative"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                            >
-                                <motion.div
-                                    className="absolute top-0 left-0 bottom-0 bg-gradient-to-r from-blue-500 via-cyan-400 to-emerald-400"
-                                    style={{ width: `${progress}%` }}
-                                    transition={{ ease: "linear" }}
-                                />
-                                {/* Scanning light effect */}
-                                <motion.div
-                                    className="absolute top-0 bottom-0 w-8 bg-white/40 blur-[2px]"
-                                    animate={{ left: ["-20%", "120%"] }}
-                                    transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-                                />
-                            </motion.div>
-
-                            <motion.div
-                                className="font-mono text-xs md:text-sm text-gray-400 tracking-widest flex justify-between w-full"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.6 }}
-                            >
-                                <span className="flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                                    {progress < 100 ? 'INITIALIZING_' : 'SYSTEM_READY'}
-                                </span>
-                                <span className={progress === 100 ? "text-cyan-400 font-bold drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]" : "text-white font-bold"}>
-                                    {progress}%
-                                </span>
-                            </motion.div>
-                        </div>
+                        <ProgressIndicator onComplete={handleComplete} />
                     </motion.div>
                 </motion.div>
             )}
@@ -248,45 +220,114 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
     );
 };
 
-const Ring = ({ text, radius, speed, dir }: { text: string, radius: number, speed: number, dir: number }) => {
+const ProgressIndicator = ({ onComplete }: { onComplete: () => void }) => {
+    // 0 re-renders during progress!
+    const progress = useMotionValue(0);
+    const scaleX = useTransform(progress, [0, 100], [0, 1]);
+    const percentageText = useTransform(progress, (v) => `${Math.floor(v)}%`);
+
+    // Status text transform
+    const statusText = useTransform(progress, (v) => (v < 100 ? 'INITIALIZING_' : 'SYSTEM_READY') as string);
+    const statusColor = useTransform(progress, (v) => (v < 100 ? '#9ca3af' : '#22d3ee') as string); // gray-400 to cyan-400
+
+    useEffect(() => {
+        const controls = animate(progress, 100, {
+            duration: 1, // 1 second
+            ease: "linear",
+            onComplete: () => {
+                setTimeout(onComplete, 200);
+            }
+        });
+        return controls.stop;
+    }, [progress, onComplete]);
+
+    return (
+        <div className="flex flex-col items-center gap-4 w-64 md:w-80">
+            <motion.div
+                className="h-[3px] bg-white/10 w-full overflow-hidden rounded-full relative"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+            >
+                <motion.div
+                    className="absolute top-0 left-0 bottom-0 bg-gradient-to-r from-blue-500 via-cyan-400 to-emerald-400 origin-left"
+                    style={{ scaleX, width: '100%' }}
+                />
+                {/* Scanning light effect — moved off `left` (a layout-triggering
+                    property) onto a CSS transform animation (composited, no
+                    reflow on every frame). The wrapper is sized to match the
+                    track (inset-0) so percentage transforms line up exactly
+                    like the original -20%/120% `left` keyframes did. */}
+                <div className="absolute inset-0 preloader-scan">
+                    <div className="absolute top-0 bottom-0 left-0 w-8 bg-white/20" />
+                </div>
+            </motion.div>
+
+            <motion.div
+                className="font-mono text-xs md:text-sm tracking-widest flex justify-between w-full"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+            >
+                <motion.span className="flex items-center gap-2" style={{ color: statusColor }}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                    <motion.span>{statusText}</motion.span>
+                </motion.span>
+                <motion.span
+                    className="font-bold"
+                    style={{ color: statusColor }}
+                >
+                    {percentageText}
+                </motion.span>
+            </motion.div>
+        </div>
+    );
+};
+
+const Ring = React.memo(({ text, radius, speed, dir, trigger }: { text: string, radius: number, speed: number, dir: number, trigger: number }) => {
+    const chars = text.split('');
     return (
         <motion.div
             className="absolute flex items-center justify-center rounded-full"
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{
-                opacity: 0.4, // Reduced opacity so it doesn't overpower the main text
-                scale: 1,
-                rotate: dir * 360
-            }}
-            transition={{
-                opacity: { duration: 1.2, ease: [0.76, 0, 0.24, 1] },
-                scale: { duration: 1.2, ease: [0.76, 0, 0.24, 1] },
-                rotate: { duration: speed, ease: "linear", repeat: Infinity }
-            }}
+            animate={{ opacity: 0.4, scale: 1 }}
+            transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1], delay: trigger / 100 }}
             style={{ width: radius * 2, height: radius * 2 }}
         >
-            {text.split('').map((char, i) => {
-                const angle = (i / text.length) * 360;
-                return (
-                    <span
-                        key={i}
-                        className="absolute text-[9px] md:text-[11px] font-bold text-white uppercase font-mono"
-                        style={{
-                            transform: `rotate(${angle}deg) translateY(-${radius}px)`,
-                            transformOrigin: 'center center',
-                            left: '50%',
-                            top: '50%',
-                            marginTop: '-7px',
-                            marginLeft: '-3.5px',
-                            textShadow: '0 0 10px rgba(255,255,255,0.3)'
-                        }}
-                    >
-                        {char}
-                    </span>
-                );
-            })}
+            {/* Rotation now lives entirely in CSS — Framer Motion above only
+                handles the one-shot fade/scale-in, so the spin keeps running
+                smoothly on the compositor thread even while React is busy
+                doing other work (route changes, data fetching, etc). */}
+            <div
+                className="absolute inset-0 preloader-ring-spin"
+                style={{
+                    animationDuration: `${speed}s`,
+                    animationDirection: dir === -1 ? 'reverse' : 'normal'
+                }}
+            >
+                {chars.map((char, i) => {
+                    const angle = (i / chars.length) * 360;
+                    return (
+                        <span
+                            key={i}
+                            className="absolute text-[9px] md:text-[11px] font-bold text-white uppercase font-mono"
+                            style={{
+                                transform: `rotate(${angle}deg) translateY(-${radius}px)`,
+                                transformOrigin: 'center center',
+                                left: '50%',
+                                top: '50%',
+                                marginTop: '-7px',
+                                marginLeft: '-3.5px'
+                            }}
+                        >
+                            {char}
+                        </span>
+                    );
+                })}
+            </div>
         </motion.div>
     );
-};
+});
+Ring.displayName = 'Ring';
 
 export default Preloader;

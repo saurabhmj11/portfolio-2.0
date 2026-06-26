@@ -135,6 +135,58 @@ const projectsData: Project[] = [
         repo: 'https://github.com/saurabhmj11/hireme-os-2.0',
         position: { x: '70%', y: '45%' },
     },
+    {
+        id: 'quantrag-fintech',
+        title: 'QuantRAG: FinTech Auditor',
+        category: 'Financial AI System',
+        description:
+            'Autonomous agentic system for real-time financial document auditing, SEC filing analysis, and risk scoring using LangChain and enterprise RAG architecture.',
+        image:
+            'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=2670&auto=format&fit=crop',
+        technologies: ['Python', 'LangChain', 'Pinecone', 'React', 'FastAPI'],
+        details: {
+            problem:
+                'Manual auditing of 10-K filings, compliance documents, and unstructured financial data is slow, prone to human error, and lacks real-time risk assessment.',
+            solution:
+                'A robust multi-agent RAG system that ingests financial PDFs, extracts tables and sentiment using multimodal models, and runs anomaly detection algorithms verified by LLMs.',
+            architecture:
+                'FastAPI microservices orchestrating LangChain agents. Pinecone for dense vector retrieval. React frontend with D3.js for risk visualization.',
+            impact:
+                'Reduces manual audit time by 90% while surfacing hidden risk factors across thousands of documents simultaneously.',
+        },
+        metrics: [
+            { label: 'Audit Speed', value: '10x Faster' },
+            { label: 'Data Points', value: '1M+' },
+            { label: 'Accuracy', value: '99.4%' },
+        ],
+        position: { x: '40%', y: '80%' },
+    },
+    {
+        id: 'mediq-healthcare',
+        title: 'MedIQ: Clinical AI Assistant',
+        category: 'Healthcare AI Platform',
+        description:
+            'HIPAA-compliant multimodal AI assistant for clinical decision support, capable of synthesizing patient histories, lab results, and medical literature.',
+        image:
+            'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2670&auto=format&fit=crop',
+        technologies: ['TypeScript', 'Next.js', 'LLaMA-3', 'Medical NLP', 'PostgreSQL'],
+        details: {
+            problem:
+                'Clinicians suffer from burnout due to excessive EHR (Electronic Health Record) documentation and the cognitive load of cross-referencing patient histories.',
+            solution:
+                'A secure, localized LLM (fine-tuned on medical corpora) that summarizes patient charts, suggests differential diagnoses, and drafts clinical notes.',
+            architecture:
+                'Next.js frontend with localized/on-premise model execution for PHI protection. Microsoft Presidio for strict anonymization before inference.',
+            impact:
+                'Saves clinicians 2 hours per day on documentation, allowing more time for direct patient care, with strict compliance guarantees.',
+        },
+        metrics: [
+            { label: 'Time Saved', value: '2hrs/day' },
+            { label: 'HIPAA Compliant', value: 'Yes' },
+            { label: 'Latency', value: '<500ms' },
+        ],
+        position: { x: '85%', y: '75%' },
+    }
 ];
 
 export default projectsData;
