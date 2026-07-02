@@ -103,9 +103,9 @@ const TravelScene = () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // 90-DAY LAUNCHPAD
 const RocketScene = () => {
-    const rocketRef = useRef(null);
-    const particlesRef = useRef(null);
-    const ring1 = useRef(null); const ring2 = useRef(null); const ring3 = useRef(null);
+    const rocketRef = useRef<THREE.Group>(null);
+    const particlesRef = useRef<THREE.Points>(null);
+    const ring1 = useRef<THREE.Mesh>(null); const ring2 = useRef<THREE.Mesh>(null); const ring3 = useRef<THREE.Mesh>(null);
     const count = 120;
     const [positions, velocities] = useMemo(() => {
         const p = new Float32Array(count * 3), v = new Float32Array(count * 3);
@@ -152,14 +152,18 @@ const RocketScene = () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // DUDUSL001 — data flowing through git branches
 const BranchScene = () => {
-    const groupRef = useRef(null);
-    const nodeRefs = useRef([]);
-    const signalRefs = useRef([]);
-    const nodes = useMemo(() => [
+    const groupRef = useRef<THREE.Group>(null);
+    const nodeRefs = useRef<(THREE.Mesh | null)[]>([]);
+    const signalRefs = useRef<(THREE.Mesh | null)[]>([]);
+    interface NodeData {
+        pos: [number, number, number];
+        c: string;
+    }
+    const nodes: NodeData[] = useMemo(() => [
         {pos:[0,-1.1,0],c:'#a78bfa'},{pos:[-0.75,-0.15,.2],c:'#c084fc'},{pos:[0.75,-0.15,-.2],c:'#c084fc'},
         {pos:[-1.15,.75,.1],c:'#e879f9'},{pos:[-0.3,.75,-.15],c:'#e879f9'},{pos:[0.3,.75,.15],c:'#e879f9'},{pos:[1.15,.75,-.1],c:'#e879f9'},
     ], []);
-    const edges = useMemo(()=>[[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]], []);
+    const edges: [number, number][] = useMemo(()=>[[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]], []);
     const signalProgress = useRef(edges.map(()=>Math.random()));
     const edgeData = useMemo(() => edges.map(([a,b]) => {
         const from = new THREE.Vector3(...nodes[a].pos), to = new THREE.Vector3(...nodes[b].pos);
@@ -172,7 +176,7 @@ const BranchScene = () => {
         const t = state.clock.getElapsedTime();
         if (groupRef.current) { groupRef.current.rotation.y=t*0.28; groupRef.current.rotation.x=Math.sin(t*0.18)*0.15; }
         nodeRefs.current.forEach((m,i)=>{ if(m) m.scale.setScalar(0.88+0.12*Math.sin(t*2.5+i*0.9)); });
-        edges.forEach(([a,b],i) => {
+        edges.forEach((_,i) => {
             signalProgress.current[i] = (signalProgress.current[i]+0.008)%1;
             const s = signalRefs.current[i];
             if (s) {
@@ -197,10 +201,10 @@ const BranchScene = () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // AGENT PLAN 01 — orbiting satellites around a command core
 const PlannerScene = () => {
-    const coreRef = useRef(null);
-    const ring1Ref = useRef(null), ring2Ref = useRef(null), ring3Ref = useRef(null);
+    const coreRef = useRef<THREE.Mesh>(null);
+    const ring1Ref = useRef<THREE.Mesh>(null), ring2Ref = useRef<THREE.Mesh>(null), ring3Ref = useRef<THREE.Mesh>(null);
     const satCount = 6;
-    const satRefs = useRef([]);
+    const satRefs = useRef<(THREE.Mesh | null)[]>([]);
     useFrame((state) => {
         const t = state.clock.getElapsedTime();
         if (coreRef.current) { coreRef.current.rotation.x=t*.4; coreRef.current.rotation.y=t*.3; }
@@ -227,16 +231,16 @@ const PlannerScene = () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // S L 011 — neural net with animated signal pulses
 const NeuralScene = () => {
-    const groupRef = useRef(null);
-    const nodeRefs = useRef([]);
-    const pulseRefs = useRef([]);
-    const layers = [
+    const groupRef = useRef<THREE.Group>(null);
+    const nodeRefs = useRef<(THREE.Mesh | null)[]>([]);
+    const pulseRefs = useRef<(THREE.Mesh | null)[]>([]);
+    const layers: [number, number, number][][] = [
         [[-1,-.9,0],[-1,0,0],[-1,.9,0]],
         [[0,-.6,.3],[0,.6,-.3]],
         [[1,-.9,0],[1,0,0],[1,.9,0]],
     ];
     const allNodes = layers.flat();
-    const edges = [];
+    const edges: [number, number][] = [];
     layers[0].forEach((_,a)=>layers[1].forEach((__,b)=>edges.push([a,3+b])));
     layers[1].forEach((_,a)=>layers[2].forEach((__,b)=>edges.push([3+a,5+b])));
     const pulseProgress = useRef(edges.map((_,i)=>i/edges.length));
