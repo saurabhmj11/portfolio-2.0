@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import useIsMobile from '../hooks/useIsMobile';
 import { Brain, Code, Cpu, Globe, Rocket, Zap } from 'lucide-react';
+import Card3DTilt from './Card3DTilt';
 
 // ─── Generative Backgrounds ────────────────────────────────────────────────
 
@@ -280,7 +281,7 @@ const CapabilityCard = ({ service, bgIndex }: { service: typeof services[0]; bgI
             transition={{ duration: 0.6, delay: bgIndex * 0.07, ease: [0.22, 1, 0.36, 1] }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            className={`relative overflow-hidden border border-white/10 bg-[#080808] ${service.span} min-h-[220px] md:min-h-[240px] group cursor-default`}
+            className={`relative overflow-hidden border border-white/10 bg-[#080808] w-full h-full min-h-[220px] md:min-h-[240px] group cursor-default`}
             style={{ borderRadius: '1.5rem' }}
         >
             {/* Generative Background — disabled on mobile, paused off-screen */}
@@ -423,7 +424,9 @@ const Services = () => {
                 {/* Bento Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 auto-rows-[300px] gap-4 pb-48 md:pb-28">
                     {services.map((service, i) => (
-                        <CapabilityCard key={service.num} service={service} bgIndex={i} />
+                        <Card3DTilt key={service.num} intensity={0.6} glareEnabled={true} className={service.span}>
+                            <CapabilityCard service={service} bgIndex={i} />
+                        </Card3DTilt>
                     ))}
                 </div>
             </div>

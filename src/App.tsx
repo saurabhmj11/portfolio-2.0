@@ -13,6 +13,7 @@ const ScrollToTop = React.lazy(() => import('./components/ScrollToTop'));
 const Spotlight = React.lazy(() => import('./components/Spotlight'));
 const ScrollProgress = React.lazy(() => import('./components/ScrollProgress'));
 const CommandPalette = React.lazy(() => import('./components/CommandPalette'));
+const PWAPrompt = React.lazy(() => import('./components/PWAPrompt'));
 import MobileBottomNav from './components/MobileBottomNav';
 
 
@@ -139,6 +140,12 @@ function App() {
               )}
               {/* Mobile bottom navigation bar */}
               {!isLoading && <MobileBottomNav />}
+              {/* PWA install prompt + offline toast */}
+              {!isLoading && (
+                <React.Suspense fallback={null}>
+                  <PWAPrompt />
+                </React.Suspense>
+              )}
             </React.Fragment>
           </SmoothScroll>
         </HelmetProvider>

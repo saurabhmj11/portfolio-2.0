@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Loader2, Mail, MapPin } from 'lucide-react';
 import Magnetic from './Magnetic';
@@ -6,6 +6,8 @@ import { Helmet } from 'react-helmet-async';
 import { useInView } from 'react-intersection-observer';
 import { useAudioDirector } from '../context/AudioContext';
 import ScrambleText from './ScrambleText';
+
+const ContactVortex3D = lazy(() => import('./ContactVortex3D'));
 
 // ─── Matrix Rain Canvas ────────────────────────────────────────────────────────
 
@@ -234,6 +236,9 @@ const Contact = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
+  // Derived state for the 3D vortex
+  const isTyping = Object.values(formState).some(v => v.length > 0) || focusedField !== null;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -296,7 +301,14 @@ const Contact = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 lg:gap-24">
 
           {/* ── Left Column ── */}
-          <div>
+          <div className="relative">
+            {/* 3D Vortex — sits behind the text, desktop only */}
+            <div className="absolute -top-20 -left-20 w-[340px] h-[340px] pointer-events-none hidden lg:block opacity-70" aria-hidden="true">
+              <Suspense fallback={null}>
+                <ContactVortex3D isTyping={isTyping} isSubmitting={isSubmitting} isSuccess={isSuccess} />
+              </Suspense>
+            </div>
+            <div className="relative z-10">
             <h2 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500 font-mono">
               <ScrambleText text="INITIALIZE CONNECTION" className="" />
             </h2>
@@ -332,6 +344,7 @@ const Contact = () => {
                   <span className="text-lg font-medium text-gray-300 group-hover:text-purple-400 transition-colors">Remote / Available Worldwide</span>
                 </div>
               </div>
+            </div>
             </div>
           </div>
 

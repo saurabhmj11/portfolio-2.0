@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer';
 import { Helmet } from 'react-helmet-async';
 import ScrollReveal from './ScrollReveal';
 import ScrambleText from './ScrambleText';
+import Card3DTilt from './Card3DTilt';
 
 // ─── Tech Stack Data ──────────────────────────────────────────────────────────
 const STACK = [
@@ -265,7 +266,9 @@ const Skills = () => {
                 {/* ── Domain Grid ── */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
                     {STACK.map((domain, i) => (
-                        <DomainCard key={domain.domain} {...domain} index={i} />
+                        <Card3DTilt key={domain.domain} intensity={0.7} className="rounded-2xl">
+                            <DomainCard {...domain} index={i} />
+                        </Card3DTilt>
                     ))}
                 </div>
 

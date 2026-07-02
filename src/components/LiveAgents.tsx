@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, Suspense, lazy } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { ExternalLink, Zap, Radio, Shield, Cpu, GitBranch, Navigation } from 'lucide-react';
 import ScrambleText from './ScrambleText';
+
+const AgentCore3D = lazy(() => import('./AgentCore3D'));
 
 interface Agent {
     id: string;
@@ -111,7 +113,7 @@ const STATUS_COLORS: Record<string, string> = {
     PROCESSING: 'text-sky-400 border-sky-500/30 bg-sky-500/10',
 };
 
-const AgentRow = ({ agent, index }: { agent: Agent; index: number }) => {
+const AgentRow = ({ agent, index, isActive, onHover }: { agent: Agent; index: number; isActive: boolean; onHover: (id: string | null) => void }) => {
     const [hovered, setHovered] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
     const inView = useInView(ref, { once: true, margin: '-80px' });
@@ -123,15 +125,15 @@ const AgentRow = ({ agent, index }: { agent: Agent; index: number }) => {
             initial={{ opacity: 0, x: -40 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            className="relative group border-b border-white/5"
+            onMouseEnter={() => { setHovered(true); onHover(agent.id); }}
+            onMouseLeave={() => { setHovered(false); onHover(null); }}
+            className={`relative group border-b border-white/5 ${isActive ? 'bg-white/[0.015]' : ''}`}
         >
             {/* Hover flood gradient */}
             <motion.div
                 className={`absolute inset-0 bg-gradient-to-r ${agent.accent} pointer-events-none`}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: hovered ? 1 : 0 }}
+                animate={{ opacity: (hovered || isActive) ? 1 : 0 }}
                 transition={{ duration: 0.4 }}
             />
 
@@ -139,15 +141,31 @@ const AgentRow = ({ agent, index }: { agent: Agent; index: number }) => {
             <motion.div
                 className="absolute left-0 top-0 bottom-0 w-[2px] bg-green-400"
                 initial={{ scaleY: 0 }}
-                animate={{ scaleY: hovered ? 1 : 0 }}
+                animate={{ scaleY: (hovered || isActive) ? 1 : 0 }}
                 transition={{ duration: 0.3 }}
                 style={{ originY: 0 }}
             />
+
+            {/* Active indicator when 3D viewer is showing this agent */}
+            {isActive && (
+                <motion.div
+                    layoutId="active-indicator"
+                    className="absolute right-0 top-0 bottom-0 w-[2px] bg-white/30"
+                />
+            )}
 
             <a
                 href={agent.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => {
+                    // On mobile/tablet, the first tap should just select the agent and show its 3D model
+                    if (!isActive && window.innerWidth < 1024) {
+                        e.preventDefault();
+                        onHover(agent.id);
+                        setHovered(true);
+                    }
+                }}
                 className="flex flex-col md:flex-row md:items-center justify-between px-8 py-7 gap-6 relative z-10"
             >
                 {/* Left: Icon + Name block */}
@@ -206,7 +224,7 @@ const AgentRow = ({ agent, index }: { agent: Agent; index: number }) => {
 
                     {/* CTA Arrow */}
                     <motion.div
-                        animate={{ x: hovered ? 0 : -4, opacity: hovered ? 1 : 0.3 }}
+                        animate={{ x: (hovered || isActive) ? 0 : -4, opacity: (hovered || isActive) ? 1 : 0.3 }}
                         transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                     >
                         <ExternalLink className="w-5 h-5 text-white" />
@@ -265,6 +283,13 @@ const StatsTicker = () => {
 
 const LiveAgents = () => {
     const ref = useRef<HTMLElement>(null);
+    const [activeAgentId, setActiveAgentId] = useState<string>('travel-guru');
+    const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+    // Keep showing last hovered even after mouse leaves, so 3D doesn't flicker
+    useEffect(() => {
+        if (hoveredId) setActiveAgentId(hoveredId);
+    }, [hoveredId]);
 
     return (
         <section ref={ref} className="bg-[#050505] text-white relative z-10 overflow-hidden" id="agents">
@@ -335,11 +360,81 @@ const LiveAgents = () => {
                     <StatsTicker />
                 </div>
 
-                {/* Agent Rows */}
-                <div className="pb-28">
-                    {agents.map((agent, index) => (
-                        <AgentRow key={agent.id} agent={agent} index={index} />
-                    ))}
+                {/* Mobile 3D viewer — shown above agent list on small screens */}
+                <div className="lg:hidden mb-6 mx-0">
+                    <div className="relative h-[220px] rounded-2xl overflow-hidden bg-white/[0.02] border border-white/5">
+                        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 60%, rgba(99,102,241,0.15) 0%, transparent 70%)' }} />
+                        {/* Labels */}
+                        <div className="absolute top-3 left-0 right-0 flex flex-col items-center gap-0.5 z-10 pointer-events-none">
+                            <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.3em]">AGENT CORE</span>
+                            <motion.span
+                                key={activeAgentId}
+                                initial={{ opacity: 0, y: 3 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.35 }}
+                                className="text-[10px] font-mono text-white/50 uppercase tracking-widest"
+                            >
+                                {agents.find(a => a.id === activeAgentId)?.name ?? '—'}
+                            </motion.span>
+                        </div>
+                        <Suspense fallback={
+                            <div className="w-full h-full flex items-center justify-center">
+                                <div className="w-6 h-6 border-2 border-white/10 border-t-white/40 rounded-full animate-spin" />
+                            </div>
+                        }>
+                            <AgentCore3D agentId={activeAgentId} className="w-full h-full" />
+                        </Suspense>
+                        <div className="absolute bottom-3 left-0 right-0 flex justify-center z-10 pointer-events-none">
+                            <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.25em]">TAP AGENT TO SWITCH</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Main content: Agent List + 3D Viewer */}
+                <div className="pb-28 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-0">
+
+                    {/* Agent Rows */}
+                    <div>
+                        {agents.map((agent, index) => (
+                            <AgentRow
+                                key={agent.id}
+                                agent={agent}
+                                index={index}
+                                isActive={activeAgentId === agent.id}
+                                onHover={setHoveredId}
+                            />
+                        ))}
+                    </div>
+
+                    {/* 3D Agent Core Viewer — desktop only */}
+                    <div className="hidden lg:flex flex-col items-center justify-center sticky top-24 self-start h-[400px] border-l border-white/5">
+                        <div className="w-full h-full relative rounded-2xl overflow-hidden bg-white/[0.02] border border-white/5">
+                            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 60%, rgba(99,102,241,0.12) 0%, transparent 70%)' }} />
+                            <div className="absolute top-4 left-0 right-0 flex flex-col items-center gap-1 z-10 pointer-events-none">
+                                <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.3em]">AGENT CORE</span>
+                                <motion.span
+                                    key={activeAgentId}
+                                    initial={{ opacity: 0, y: 4 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.4 }}
+                                    className="text-[11px] font-mono text-white/40 uppercase tracking-widest"
+                                >
+                                    {agents.find(a => a.id === activeAgentId)?.name ?? '—'}
+                                </motion.span>
+                            </div>
+                            <Suspense fallback={
+                                <div className="w-full h-full flex items-center justify-center">
+                                    <div className="w-8 h-8 border-2 border-white/10 border-t-white/40 rounded-full animate-spin" />
+                                </div>
+                            }>
+                                <AgentCore3D agentId={activeAgentId} className="w-full h-full" />
+                            </Suspense>
+                            <div className="absolute bottom-4 left-0 right-0 flex justify-center z-10 pointer-events-none">
+                                <span className="text-[8px] font-mono text-white/15 uppercase tracking-[0.3em]">TAP OR HOVER TO SWITCH</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useInView, animate } from 'framer-motion';
+import { motion, useInView, animate, AnimationPlaybackControls } from 'framer-motion';
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
 const ROLES = [
@@ -140,7 +140,7 @@ const MetricBar = ({ metric, accent, cardHovered }: {
   const [displayStr, setDisplayStr] = useState('0');
 
   useEffect(() => {
-    let animControls: any;
+    let animControls: AnimationPlaybackControls | undefined;
     if (cardHovered) {
       animControls = animate(0, 1, {
         duration: 1.5,
@@ -359,7 +359,7 @@ const ShellHeader = () => {
   const [runtimeCount, setRuntimeCount] = useState(3);
 
   useEffect(() => {
-    let anim: any;
+    let anim: AnimationPlaybackControls | undefined;
     if (hovered) {
       anim = animate(0, 1, {
         duration: 0.8,
@@ -420,8 +420,8 @@ const ShellHeader = () => {
           <motion.span
             className="block"
             animate={{
-              WebkitTextFillColor: hovered ? 'rgba(96,165,250,0.9)' : 'transparent',
-              filter: hovered ? 'drop-shadow(0 0 20px rgba(96,165,250,0.55))' : 'drop-shadow(0 0 0px transparent)',
+              WebkitTextFillColor: hovered ? 'rgba(96,165,250,0.9)' : 'rgba(96,165,250,0)',
+              filter: hovered ? 'drop-shadow(0 0 20px rgba(96,165,250,0.55))' : 'drop-shadow(0 0 0px rgba(96,165,250,0))',
             }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
             style={{ WebkitTextStroke: '1.5px rgba(96,165,250,0.6)', display: 'block' }}

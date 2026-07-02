@@ -120,7 +120,7 @@ const LangGraphInteractive = () => {
                 </div>
 
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5" />
+                    <div className="noise-texture opacity-5" />
                     <div className="space-y-6 relative z-10">
                         {NODES.map((node) => (
                             <div key={node.id} className="flex items-center gap-4">
@@ -142,7 +142,7 @@ const LangGraphInteractive = () => {
     return (
         <section className="min-h-screen bg-[#020202] py-32 relative overflow-hidden flex flex-col items-center justify-center border-t border-white/5" id="architecture">
             {/* Background Noise */}
-            <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] mix-blend-screen bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
+            <div className="noise-texture z-0 opacity-[0.03] mix-blend-screen" />
 
             <div className="container mx-auto px-4 relative z-10">
                 <div className="text-center mb-16">

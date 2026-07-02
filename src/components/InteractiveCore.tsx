@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import useIsMobile from '../hooks/useIsMobile';
@@ -677,13 +677,29 @@ const Scene = () => {
 // ── Export ───────────────────────────────────────────────────────────────────
 const InteractiveCore = () => {
     const isMobile = useIsMobile();
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    const [frameloop, setFrameloop] = useState<'always' | 'never'>('always');
+
+    // Stop rendering when the hero section scrolls out of view — saves GPU
+    useEffect(() => {
+        const el = wrapperRef.current;
+        if (!el) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => setFrameloop(entry.isIntersecting ? 'always' : 'never'),
+            { rootMargin: '100px', threshold: 0 }
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
+
     if (isMobile) return null;
     return (
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-100 overflow-hidden mix-blend-screen">
+        <div ref={wrapperRef} className="absolute inset-0 z-0 pointer-events-none opacity-100 overflow-hidden mix-blend-screen">
             <Canvas
                 camera={{ position: [0, 0, 7], fov: 50 }}
                 gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
                 dpr={1}
+                frameloop={frameloop}
                 style={{ position: 'absolute', inset: 0, pointerEvents: 'auto' }}
             >
                 <Scene />

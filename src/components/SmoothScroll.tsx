@@ -1,3 +1,4 @@
+import React from 'react';
 import { ReactLenis } from '@studio-freight/react-lenis';
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
@@ -88,6 +89,51 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
 
         return () => clearTimeout(timeout);
     }, [useLenis]);
+
+    // ── Section Ambient Color Morphing ──────────────────────────────────────
+    // Each section can declare data-ambient-hue="<number>" to set a scroll-driven
+    // background hue that smoothly transitions via a CSS variable on <html>.
+    useEffect(() => {
+        // Inject base CSS transition on the root once
+        const root = document.documentElement;
+        root.style.setProperty('--ambient-hue', '230');
+        root.style.setProperty('--ambient-sat', '15%');
+        root.style.setProperty('--ambient-lit', '4%');
+
+        // Wait for DOM to settle
+        const timer = setTimeout(() => {
+            const sections = Array.from(
+                document.querySelectorAll<HTMLElement>('[data-ambient-hue]')
+            );
+            if (!sections.length) return;
+
+            const triggers = sections.map(section => {
+                const hue = section.dataset.ambientHue ?? '230';
+                const sat = section.dataset.ambientSat ?? '15%';
+                const lit = section.dataset.ambientLit ?? '4%';
+
+                return ScrollTrigger.create({
+                    trigger: section,
+                    start: 'top 60%',
+                    end: 'bottom 40%',
+                    onEnter: () => {
+                        root.style.setProperty('--ambient-hue', hue);
+                        root.style.setProperty('--ambient-sat', sat);
+                        root.style.setProperty('--ambient-lit', lit);
+                    },
+                    onEnterBack: () => {
+                        root.style.setProperty('--ambient-hue', hue);
+                        root.style.setProperty('--ambient-sat', sat);
+                        root.style.setProperty('--ambient-lit', lit);
+                    },
+                });
+            });
+
+            return () => triggers.forEach(t => t.kill());
+        }, 600);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     if (!useLenis) {
         // Mobile / reduced-motion: plain wrapper, GSAP ScrollTrigger still active

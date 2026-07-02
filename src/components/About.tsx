@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import GitHubActivity from './GitHubActivity';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -201,7 +202,11 @@ const AboutDesktop = () => {
 
   return (
     // ⚠️ CRITICAL: NO overflow-hidden here — it breaks GSAP pin
-    <div ref={containerRef} className="bg-[#050505] relative z-10" id="about">
+    <div ref={containerRef} className="bg-[#050505] relative z-10" id="about"
+      data-ambient-hue="200"
+      data-ambient-sat="25%"
+      data-ambient-lit="3%"
+    >
       {/* Flash overlay for cinematic entry */}
       <div
         ref={overlayRef}
@@ -226,13 +231,13 @@ const AboutDesktop = () => {
           style={{ perspective: '1000px' }}
         />
 
-        {/* Central content: image + bio + stats */}
+        {/* Central content: image + bio + stats — NO heatmap here so height fits in viewport */}
         <div className="relative z-20 text-center max-w-2xl w-full flex flex-col items-center px-4">
           <img
             ref={imageRef}
             src="/profile.jpg"
             alt="Saurabh Lokhande — AI Engineer"
-            className="w-48 h-48 md:w-64 md:h-64 object-cover mb-8 rounded-full shadow-[0_0_80px_rgba(96,165,250,0.3)] border-4 border-white/10 bg-[#111]"
+            className="w-32 h-32 md:w-44 md:h-44 lg:w-52 lg:h-52 object-cover object-top mb-4 md:mb-6 rounded-full shadow-[0_0_80px_rgba(96,165,250,0.3)] border-4 border-white/10 bg-[#111]"
             onError={(e) => {
               (e.target as HTMLImageElement).src =
                 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop';
@@ -242,19 +247,19 @@ const AboutDesktop = () => {
           {/* Bio words rendered inline — GSAP sets individual word opacities */}
           <p
             ref={bioRef}
-            className="text-gray-300 text-lg md:text-xl font-medium leading-relaxed mb-12 max-w-xl"
+            className="text-gray-300 text-sm md:text-base lg:text-lg font-medium leading-relaxed mb-6 md:mb-8 max-w-xl"
           />
 
           <div
             ref={statsRef}
-            className="flex items-start justify-center gap-6 sm:gap-12 md:gap-20"
+            className="flex items-start justify-center gap-6 sm:gap-12 md:gap-16"
           >
             {STATS.map((stat, i) => (
               <div key={i} className="flex flex-col items-center gap-2">
-                <span className="stat-num font-display font-black text-4xl md:text-6xl text-white leading-none tabular-nums tracking-tighter">
+                <span className="stat-num font-display font-black text-3xl md:text-5xl lg:text-6xl text-white leading-none tabular-nums tracking-tighter">
                   0{stat.suffix}
                 </span>
-                <span className="font-mono text-[10px] text-white/30 uppercase tracking-[0.25em] text-center whitespace-pre-line">
+                <span className="font-mono text-[9px] md:text-[10px] text-white/30 uppercase tracking-[0.25em] text-center whitespace-pre-line">
                   {stat.label}
                 </span>
               </div>
@@ -272,6 +277,14 @@ const AboutDesktop = () => {
           }}
         />
       </section>
+
+      {/* GitHub Activity Heatmap — outside pinned section so it doesn't affect h-screen layout */}
+      <div className="relative z-20 flex justify-center px-4 pb-16 bg-[#050505]">
+        <div className="w-full max-w-3xl overflow-x-auto">
+          <GitHubActivity username="saurabhmj11" />
+        </div>
+      </div>
+
     </div>
   );
 };

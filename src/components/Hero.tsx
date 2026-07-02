@@ -86,6 +86,9 @@ const Hero = () => {
         <section
             id="home"
             ref={setRefs}
+            data-ambient-hue="230"
+            data-ambient-sat="20%"
+            data-ambient-lit="3%"
             className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-x-hidden bg-black text-white px-4 pt-24 pb-32 md:pt-0 md:pb-24"
         >
             {/* Background — Gradient (No heavy video) */}

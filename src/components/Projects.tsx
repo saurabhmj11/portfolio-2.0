@@ -225,7 +225,7 @@ const Projects = () => {
                 <div ref={triggerRef} className="max-h-screen h-[100vh] w-full flex flex-col justify-center items-center relative custom-cursor-area overflow-hidden">
 
                     {/* Background Noise & Grid */}
-                    <div className="absolute inset-0 z-0 pointer-events-none opacity-5 mix-blend-screen bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
+                    <div className="noise-texture opacity-5 mix-blend-screen z-0" />
                     <div className="absolute inset-0 z-0 pointer-events-none opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/10 via-[#020202] to-[#020202]" />
 
                     {/* Prominent Section Heading */}
