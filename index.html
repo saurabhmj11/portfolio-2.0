@@ -146,6 +146,17 @@
   <!-- Preconnect for performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://portfolio-backend-43ii.onrender.com" crossorigin />
+
+  <!-- Preload profile image (LCP candidate on About section) -->
+  <link
+    rel="preload"
+    as="image"
+    href="/profile.webp"
+    type="image/webp"
+    imagesrcset="/profile.webp 400w, /profile@2x.webp 800w"
+    imagesizes="(max-width: 768px) 128px, (max-width: 1024px) 176px, 208px"
+  />
 
   <!-- Preload fonts CSS to avoid FOIT -->
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" />

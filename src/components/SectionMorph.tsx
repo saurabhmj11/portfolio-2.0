@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import useIsMobile from '../hooks/useIsMobile';
@@ -31,7 +31,7 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
     const markerRef = useRef<HTMLDivElement>(null);
     const isMobile = useIsMobile();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         // Skip if prefers-reduced-motion is active
         const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (prefersReduced) return;

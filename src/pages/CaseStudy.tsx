@@ -1,4 +1,4 @@
-import { useEffect, useRef, useLayoutEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import gsap from 'gsap';
@@ -18,7 +18,7 @@ gsap.registerPlugin(ScrollTrigger);
 const AnimatedMetric = ({ value, label }: { value: string; label: string }) => {
     const ref = useRef<HTMLSpanElement>(null);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (!ref.current) return;
         const numericMatch = value.match(/[\d.]+/);
         if (!numericMatch) return;

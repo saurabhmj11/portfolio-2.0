@@ -1,5 +1,5 @@
 
-import React, { useRef, useLayoutEffect, Suspense, useEffect } from 'react';
+import React, { useRef, Suspense, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -52,7 +52,7 @@ const Hero = () => {
     const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
     const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const ctx = gsap.context(() => {
             // Sequence for non-TextReveal elements (like the description and "I'm a")
             const tl = gsap.timeline({ delay: 0.1 });

@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { X, ArrowUpRight, ArrowRight } from 'lucide-react';
@@ -135,7 +135,7 @@ const Projects = () => {
     }, [selectedProject]);
 
     // Pinning the neural web container
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (isMobile) return;
         const ctx = gsap.context(() => {
             ScrollTrigger.refresh();

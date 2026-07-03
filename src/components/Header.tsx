@@ -90,13 +90,14 @@ const Header = () => {
         ))}
 
         {/* Command Palette Hint */}
-        <div
+        <button
           className="ml-4 h-8 px-2 bg-white/5 border border-white/10 rounded-lg flex items-center gap-1.5 cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-300 group/k"
           onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+          aria-label="Open Command Palette"
         >
           <Command className="w-3 h-3 text-gray-500 group-hover/k:text-white transition-colors" />
           <span className="text-[10px] font-mono text-gray-500 group-hover/k:text-white transition-colors">K</span>
-        </div>
+        </button>
       </nav>
     </motion.header>
   );

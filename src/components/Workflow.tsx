@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -43,7 +43,7 @@ const steps = [
 const Workflow = () => {
     const containerRef = useRef<HTMLElement>(null);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const items = gsap.utils.toArray<Element>('.workflow-item');
 
         ScrollTrigger.refresh();

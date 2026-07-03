@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -47,7 +47,7 @@ const QuoteIcon = ({ hue }: { hue: number }) => (
 const TestimonialCard = ({ quote, author, role, hue }: typeof testimonials[0]) => {
   const starsRef = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const stars = starsRef.current?.querySelectorAll('.star');
     if (!stars) return;
     const ctx = gsap.context(() => {
@@ -129,7 +129,7 @@ const Testimonials = () => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const content = sliderRef.current;
     if (!content) return;
 

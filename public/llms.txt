@@ -1,0 +1,32 @@
+# Saurabh Lokhande — AI Engineer & Generative AI Specialist
+
+AI Engineer with 3+ years of experience building production-grade Agentic AI systems, RAG pipelines, and LLM-powered applications. Based in India. Open to AI engineering roles, freelance AI projects, and collaborations.
+
+## Site Navigation
+
+- [Home — Hero & Overview](/)
+- [About — Bio, stats, and GitHub activity](/#about)
+- [Skills — Tech stack and capabilities](/#skills)
+- [Services — What I offer](/#services)
+- [Projects — Case studies and live demos](/#projects)
+- [Live Agents — Real-time autonomous agent demos](/#agents)
+- [Experience — Work history and milestones](/#experience)
+- [Blog — Research notes and technical articles](/blog)
+- [Contact — Get in touch](/#contact)
+- [Résumé — Full CV](/resume)
+
+## Featured Projects
+
+- [Hire Me OS 2.0](/project/hire-me-os) — Autonomous career intelligence SaaS with 6-block job evaluation, Autopilot 24/7 scheduler, AI resume tailor, and Chrome extension. Built with React, FastAPI, LangChain.
+- [Doc AI (Ultra Doc Intelligence)](/project/doc-ai) — Logistics document intelligence with hybrid BM25 + ChromaDB RAG, HIPAA-compliant PII masking via Microsoft Presidio, and confidence-scored Q&A.
+- [AI Meal Planner](/project/meal-planner) — Personalized nutrition planning with LLM-powered meal generation, macro tracking, and adaptive recommendations.
+
+## Core Capabilities
+
+LLM Agents · RAG Systems · LangChain · LangGraph · OpenAI API · ChromaDB · BM25 · Hybrid Search · FastAPI · React · TypeScript · Python · Docker · PostgreSQL · Reciprocal Rank Fusion · Microsoft Presidio · Autonomous AI Workflows · Multi-Agent Orchestration
+
+## Contact & Profiles
+
+- GitHub: https://github.com/saurabhmj11
+- LinkedIn: https://www.linkedin.com/in/saurabhsl/
+- Email: Available via the contact form at /#contact

@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import GitHubActivity from './GitHubActivity';
+import { profileLqip } from '../assets/profileLqip';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,6 +14,50 @@ const STATS = [
 
 const BIO_TEXT =
   "Hi, I'm Saurabh Lokhande — an AI Engineer with 3+ years of experience building production-grade Agentic AI systems, RAG pipelines, and LLM-powered applications. I specialize in LangChain, LangGraph, and scalable full-stack architectures that deliver real-world intelligent automation.";
+
+// ── Optimised profile picture with WebP + LQIP blur-up ───────────────────────
+interface ProfileImageProps {
+  imageRef: React.RefObject<HTMLImageElement>;
+}
+const ProfileImage = ({ imageRef }: ProfileImageProps) => {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <picture className="w-32 h-32 md:w-44 md:h-44 lg:w-52 lg:h-52 shrink-0 mb-4 md:mb-6 relative">
+      {/* WebP — primary format */}
+      <source
+        type="image/webp"
+        srcSet="/profile.webp 400w, /profile@2x.webp 800w"
+        sizes="(max-width: 768px) 128px, (max-width: 1024px) 176px, 208px"
+      />
+      {/* JPEG fallback */}
+      <source
+        type="image/jpeg"
+        srcSet="/profile.jpg"
+        sizes="(max-width: 768px) 128px, (max-width: 1024px) 176px, 208px"
+      />
+      {/* Actual img — GSAP animates this via imageRef */}
+      <img
+        ref={imageRef}
+        src="/profile.webp"
+        alt="Saurabh Lokhande — AI Engineer"
+        fetchPriority="high"
+        decoding="async"
+        loading="eager"
+        className="w-full h-full object-cover object-top rounded-full shadow-[0_0_80px_rgba(96,165,250,0.3)] border-4 border-white/10 bg-[#111] transition-[filter] duration-500"
+        style={{
+          backgroundImage: `url(${profileLqip})`,
+          backgroundSize: 'cover',
+          filter: loaded ? undefined : 'blur(8px)',
+        }}
+        onLoad={() => setLoaded(true)}
+        onError={(e) => {
+          (e.target as HTMLImageElement).src =
+            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop';
+        }}
+      />
+    </picture>
+  );
+};
 
 // ── Desktop version: Award-winning GSAP pinned scroll ────────────────────────
 const AboutDesktop = () => {
@@ -233,16 +278,7 @@ const AboutDesktop = () => {
 
         {/* Central content: image + bio + stats — NO heatmap here so height fits in viewport */}
         <div className="relative z-20 text-center max-w-2xl w-full flex flex-col items-center px-4">
-          <img
-            ref={imageRef}
-            src="/profile.jpg"
-            alt="Saurabh Lokhande — AI Engineer"
-            className="w-32 h-32 md:w-44 md:h-44 lg:w-52 lg:h-52 object-cover object-top mb-4 md:mb-6 rounded-full shadow-[0_0_80px_rgba(96,165,250,0.3)] border-4 border-white/10 bg-[#111]"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src =
-                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop';
-            }}
-          />
+          <ProfileImage imageRef={imageRef} />
 
           {/* Bio words rendered inline — GSAP sets individual word opacities */}
           <p

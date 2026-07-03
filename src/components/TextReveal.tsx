@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -15,7 +15,7 @@ interface TextRevealProps {
 const TextReveal: React.FC<TextRevealProps> = ({ children, className, el: Wrapper = 'p', delay = 0, threshold = 0.85 }) => {
     const ref = useRef<HTMLElement>(null);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const ctx = gsap.context(() => {
             const words = ref.current?.querySelectorAll('.word');
             if (words) {
