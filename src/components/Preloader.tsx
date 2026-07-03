@@ -94,7 +94,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
         setTimeout(() => {
             onComplete();
             document.body.style.overflow = '';
-        }, 600); // Wait for exit animation
+        }, 300); // Shortened exit animation
     };
 
     const words = nameString.split(" ");
@@ -106,7 +106,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                     className="fixed inset-0 z-[100] bg-[#0a0a0a] flex flex-col items-center justify-center overflow-hidden"
                     exit={{
                         opacity: 0,
-                        transition: { duration: 1.2, ease: [0.76, 0, 0.24, 1], delay: 0.2 }
+                        transition: { duration: 0.4, ease: [0.76, 0, 0.24, 1], delay: 0 }
                     }}
                 >
                     <style>{PRELOADER_KEYFRAMES}</style>
@@ -157,7 +157,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                         exit={{
                             scale: 15,
                             opacity: 0,
-                            transition: { duration: 1.5, ease: [0.76, 0, 0.24, 1] }
+                            transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] }
                         }}
                     >
                         {ringsData.map((ring, index) => (
@@ -186,9 +186,9 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                                             initial={{ y: 100, opacity: 0 }}
                                             animate={{ y: 0, opacity: 1 }}
                                             transition={{
-                                                duration: 1,
+                                                duration: 0.5,
                                                 ease: [0.76, 0, 0.24, 1],
-                                                delay: 0.1 + ((wordIndex * 7 + charIndex) * 0.05)
+                                                delay: 0.05 + ((wordIndex * 7 + charIndex) * 0.025)
                                             }}
                                         >
                                             {char}
@@ -203,7 +203,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
                             className="flex flex-wrap items-center justify-center gap-3 mb-12 text-xs md:text-sm font-mono tracking-[0.2em] uppercase"
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.6 }}
+                            transition={{ duration: 0.3, delay: 0.3 }}
                         >
                             <span className="px-3 py-1 border border-cyan-400/30 text-cyan-400 bg-cyan-400/10 rounded-full">AI Systems</span>
                             <span className="text-white/30">•</span>
@@ -232,10 +232,10 @@ const ProgressIndicator = ({ onComplete }: { onComplete: () => void }) => {
 
     useEffect(() => {
         const controls = animate(progress, 100, {
-            duration: 1, // 1 second
+            duration: 0.5, // 0.5 seconds — fast, snappy
             ease: "linear",
             onComplete: () => {
-                setTimeout(onComplete, 200);
+                setTimeout(onComplete, 100);
             }
         });
         return controls.stop;

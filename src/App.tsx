@@ -4,7 +4,6 @@ import SmoothScroll from './components/SmoothScroll';
 import { AnimatePresence, motion } from 'framer-motion';
 import Header from './components/Header';
 const Terminal = React.lazy(() => import('./components/Terminal'));
-import Footer from './components/Footer';
 import Preloader from './components/Preloader';
 const CustomCursor = React.lazy(() => import('./components/CustomCursor'));
 const Chatbot = React.lazy(() => import('./components/Chatbot'));
@@ -17,14 +16,16 @@ const PWAPrompt = React.lazy(() => import('./components/PWAPrompt'));
 import MobileBottomNav from './components/MobileBottomNav';
 
 
-// Pages
-import Home from './pages/Home';
+// Pages — all lazy-loaded; none block the initial bootstrap bundle
+const Home = React.lazy(() => import('./pages/Home'));
 const BlogPage = React.lazy(() => import('./pages/BlogPage'));
 const BlogPostPage = React.lazy(() => import('./pages/BlogPostPage'));
 const AdminPage = React.lazy(() => import('./pages/Admin'));
 const Resume = React.lazy(() => import('./pages/Resume'));
 const NotFound = React.lazy(() => import('./pages/NotFound'));
 const CaseStudy = React.lazy(() => import('./pages/CaseStudy'));
+// Layout — deferred until after preloader exits
+const Footer = React.lazy(() => import('./components/Footer'));
 
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { TerminalProvider } from './context/TerminalContext';
@@ -128,7 +129,11 @@ function App() {
               </div>
 
               {/* Fixed Footer (Behind the content) */}
-              {!isLoading && <Footer />}
+              {!isLoading && (
+                <React.Suspense fallback={null}>
+                  <Footer />
+                </React.Suspense>
+              )}
 
               {!isLoading && (
                 <React.Suspense fallback={null}>

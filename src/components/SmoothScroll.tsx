@@ -87,7 +87,21 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
             ScrollTrigger.refresh();
         }, 200);
 
-        return () => clearTimeout(timeout);
+        // ── Debounced resize → ScrollTrigger.refresh() ──────────────────────
+        // Calling refresh() on every 'resize' event forces a full layout
+        // recalculation (reflow) each pixel the user drags the window edge.
+        // Debouncing to 250 ms means the reflow fires at most once per resize.
+        let resizeTimer: ReturnType<typeof setTimeout>;
+        const onResize = () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => ScrollTrigger.refresh(), 250);
+        };
+        window.addEventListener('resize', onResize, { passive: true });
+
+        return () => {
+            clearTimeout(timeout);
+            window.removeEventListener('resize', onResize);
+        };
     }, [useLenis]);
 
     // ── Section Ambient Color Morphing ──────────────────────────────────────

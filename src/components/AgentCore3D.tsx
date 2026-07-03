@@ -101,33 +101,74 @@ const TravelScene = () => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 90-DAY LAUNCHPAD
+// 90-DAY LAUNCHPAD — GPU-driven particle exhaust (no CPU for-loop)
+const ROCKET_VERT = /* glsl */`
+  attribute vec3 aVelocity;       // per-particle velocity baked in
+  attribute float aOffset;        // random time offset per particle
+  uniform float uTime;
+  uniform float uSpeed;
+
+  void main() {
+    // Each particle cycles every 2 s (modulated by aOffset)
+    float t = mod(uTime * uSpeed + aOffset, 2.0) / 2.0; // 0→1 cycle
+
+    // Start position: near nozzle (0, -1, 0) + spread
+    vec3 pos = position + aVelocity * t * 60.0;
+    // Gravity pull
+    pos.y -= 0.5 * t * t * 4.0;
+
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+    // Fade out as they age
+    gl_PointSize = mix(6.0, 1.0, t);
+  }
+`;
+const ROCKET_FRAG = /* glsl */`
+  uniform float uTime;
+  void main() {
+    vec2 uv = gl_PointCoord - 0.5;
+    float d = length(uv);
+    if (d > 0.5) discard;
+    float alpha = (1.0 - d * 2.0) * 0.85;
+    gl_FragColor = vec4(1.0, 0.5, 0.1, alpha);
+  }
+`;
+
 const RocketScene = () => {
     const rocketRef = useRef<THREE.Group>(null);
-    const particlesRef = useRef<THREE.Points>(null);
     const ring1 = useRef<THREE.Mesh>(null); const ring2 = useRef<THREE.Mesh>(null); const ring3 = useRef<THREE.Mesh>(null);
-    const count = 120;
-    const [positions, velocities] = useMemo(() => {
-        const p = new Float32Array(count * 3), v = new Float32Array(count * 3);
+    const shaderRef = useRef<THREE.ShaderMaterial>(null);
+
+    // Build static CPU buffers — only done ONCE (no per-frame JS)
+    const particleGeo = useMemo(() => {
+        const count = 120;
+        const positions  = new Float32Array(count * 3);
+        const velocities = new Float32Array(count * 3);
+        const offsets    = new Float32Array(count);
         for (let i = 0; i < count; i++) {
-            const r = Math.random() * 0.2, a = Math.random() * Math.PI * 2;
-            p[i*3]=Math.cos(a)*r; p[i*3+1]=-1.0-Math.random()*1.8; p[i*3+2]=Math.sin(a)*r;
-            v[i*3]=(Math.random()-.5)*.015; v[i*3+1]=-(0.02+Math.random()*.05); v[i*3+2]=(Math.random()-.5)*.015;
+            const r = Math.random() * 0.18, a = Math.random() * Math.PI * 2;
+            positions[i*3]   = Math.cos(a) * r;
+            positions[i*3+1] = -1.0;
+            positions[i*3+2] = Math.sin(a) * r;
+            velocities[i*3]   = (Math.random() - 0.5) * 0.015;
+            velocities[i*3+1] = -(0.02 + Math.random() * 0.05);
+            velocities[i*3+2] = (Math.random() - 0.5) * 0.015;
+            offsets[i] = Math.random() * 2.0; // stagger cycle start
         }
-        return [p, v];
+        const g = new THREE.BufferGeometry();
+        g.setAttribute('position',  new THREE.BufferAttribute(positions, 3));
+        g.setAttribute('aVelocity', new THREE.BufferAttribute(velocities, 3));
+        g.setAttribute('aOffset',   new THREE.BufferAttribute(offsets, 1));
+        return g;
     }, []);
-    const particleGeo = useMemo(() => { const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(positions),3)); return g; }, [positions]);
+
     useFrame((state) => {
         const t = state.clock.getElapsedTime();
         if (rocketRef.current) { rocketRef.current.position.y=Math.sin(t*.7)*.12; rocketRef.current.rotation.z=Math.sin(t*.4)*.04; }
         if (ring1.current) ring1.current.scale.setScalar(1+.1*Math.sin(t*2.0));
         if (ring2.current) ring2.current.scale.setScalar(1+.1*Math.sin(t*2.0+1.2));
         if (ring3.current) ring3.current.scale.setScalar(1+.1*Math.sin(t*2.0+2.4));
-        if (particlesRef.current) {
-            const pos = particlesRef.current.geometry.attributes.position.array;
-            for (let i=0;i<count;i++) { pos[i*3]+=velocities[i*3]; pos[i*3+1]+=velocities[i*3+1]; pos[i*3+2]+=velocities[i*3+2]; if(pos[i*3+1]<-3){const r2=Math.random()*.2,a2=Math.random()*Math.PI*2;pos[i*3]=Math.cos(a2)*r2;pos[i*3+1]=-1.0;pos[i*3+2]=Math.sin(a2)*r2;} }
-            particlesRef.current.geometry.attributes.position.needsUpdate = true;
-        }
+        // Update GPU uniform — O(1), no JS array mutation
+        if (shaderRef.current) shaderRef.current.uniforms.uTime.value = t;
     });
     return (
         <>
@@ -141,13 +182,24 @@ const RocketScene = () => {
             <mesh ref={ring1} position={[0,-.45,0]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[.55,.013,8,64]}/><meshBasicMaterial color='#f59e0b' transparent opacity={.55}/></mesh>
             <mesh ref={ring2} position={[0,-.45,0]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[.90,.010,8,64]}/><meshBasicMaterial color='#fbbf24' transparent opacity={.35}/></mesh>
             <mesh ref={ring3} position={[0,-.45,0]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[1.28,.007,8,64]}/><meshBasicMaterial color='#fde68a' transparent opacity={.18}/></mesh>
-            <points ref={particlesRef} geometry={particleGeo}><pointsMaterial color='#f97316' size={0.065} transparent opacity={0.9} sizeAttenuation/></points>
+            {/* GPU-driven particles — no CPU loop, zero needsUpdate */}
+            <points geometry={particleGeo}>
+                <shaderMaterial
+                    ref={shaderRef}
+                    vertexShader={ROCKET_VERT}
+                    fragmentShader={ROCKET_FRAG}
+                    uniforms={{ uTime: { value: 0 }, uSpeed: { value: 0.5 } }}
+                    transparent
+                    depthWrite={false}
+                />
+            </points>
             <ambientLight intensity={0.2}/>
             <pointLight color='#f59e0b' intensity={6} distance={7} position={[0,-0.7,0]}/>
             <pointLight color='#fde68a' intensity={1.5} distance={4} position={[0,2,0]}/>
         </>
     );
 };
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DUDUSL001 — data flowing through git branches
