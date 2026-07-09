@@ -85,7 +85,7 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
 
             lenis.on('scroll', ScrollTrigger.update);
             ScrollTrigger.refresh();
-        }, 200);
+        }, 100);
 
         // ── Debounced resize → ScrollTrigger.refresh() ──────────────────────
         // Calling refresh() on every 'resize' event forces a full layout
@@ -94,13 +94,22 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
         let resizeTimer: ReturnType<typeof setTimeout>;
         const onResize = () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => ScrollTrigger.refresh(), 250);
+            resizeTimer = setTimeout(() => {
+                ScrollTrigger.refresh();
+            }, 250);
         };
         window.addEventListener('resize', onResize, { passive: true });
+
+        // Also watch for DOM height changes (e.g. from React.lazy components mounting)
+        const resizeObserver = new ResizeObserver(() => {
+            onResize();
+        });
+        resizeObserver.observe(document.body);
 
         return () => {
             clearTimeout(timeout);
             window.removeEventListener('resize', onResize);
+            resizeObserver.disconnect();
         };
     }, [useLenis]);
 
@@ -160,14 +169,16 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
             ref={lenisRef}
             autoRaf={false}
             options={{
-                lerp: 0.07,
-                duration: 1.5,
+                // 0.1 = snappier & more physical than 0.07 while still silky
+                lerp: 0.1,
+                duration: 1.2,
                 smoothWheel: true,
-                wheelMultiplier: 1,
-                touchMultiplier: 1.5,
+                wheelMultiplier: 0.9,
+                // syncTouch keeps finger-tracking 1:1; lerp only applies on release
+                touchMultiplier: 2.0,
                 syncTouch: true,
-                syncTouchLerp: 0.08,
-                touchInertiaMultiplier: 35,
+                syncTouchLerp: 0.12,
+                touchInertiaMultiplier: 30,
             }}
         >
             <div style={{ position: 'relative' }}>

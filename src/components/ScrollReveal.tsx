@@ -21,15 +21,18 @@ const ScrollReveal = ({
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: isMobile ? 15 : 30, filter: isMobile ? 'none' : 'blur(10px)' }}
-            whileInView={{ opacity: 1, y: 0, filter: isMobile ? 'none' : 'blur(0px)' }}
-            viewport={{ once: true, margin: isMobile ? "-20px" : "-50px", amount: threshold }}
+            // Compositor-only properties (opacity + translateY) — no repaints.
+            // Removed blur() filter: it forces a full-screen repaint on every
+            // animation frame and causes visible judder during scroll-driven reveals.
+            initial={{ opacity: 0, y: isMobile ? 12 : 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: isMobile ? "-10px" : "-40px", amount: threshold }}
             transition={{
-                duration: isMobile ? 0.6 : 0.8,
-                ease: [0.22, 1, 0.36, 1], // Custom bezier for premium feel
-                delay: delay
+                duration: isMobile ? 0.5 : 0.65,
+                ease: [0.22, 1, 0.36, 1],
+                delay: delay,
             }}
-            style={{ width }}
+            style={{ width, willChange: 'transform, opacity' }}
             className={className}
         >
             {children}

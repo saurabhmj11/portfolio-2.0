@@ -282,27 +282,30 @@ const PlannerScene = () => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // S L 011 — neural net with animated signal pulses
+const NEURAL_LAYERS: [number, number, number][][] = [
+    [[-1,-.9,0],[-1,0,0],[-1,.9,0]],
+    [[0,-.6,.3],[0,.6,-.3]],
+    [[1,-.9,0],[1,0,0],[1,.9,0]],
+];
 const NeuralScene = () => {
     const groupRef = useRef<THREE.Group>(null);
     const nodeRefs = useRef<(THREE.Mesh | null)[]>([]);
     const pulseRefs = useRef<(THREE.Mesh | null)[]>([]);
-    const layers: [number, number, number][][] = [
-        [[-1,-.9,0],[-1,0,0],[-1,.9,0]],
-        [[0,-.6,.3],[0,.6,-.3]],
-        [[1,-.9,0],[1,0,0],[1,.9,0]],
-    ];
-    const allNodes = layers.flat();
-    const edges: [number, number][] = [];
-    layers[0].forEach((_,a)=>layers[1].forEach((__,b)=>edges.push([a,3+b])));
-    layers[1].forEach((_,a)=>layers[2].forEach((__,b)=>edges.push([3+a,5+b])));
-    const pulseProgress = useRef(edges.map((_,i)=>i/edges.length));
-    const edgeData = useMemo(()=>edges.map(([a,b])=>{
+    const allNodes = useMemo(() => NEURAL_LAYERS.flat(), []);
+    const edges: [number, number][] = useMemo(() => {
+        const e: [number, number][] = [];
+        NEURAL_LAYERS[0].forEach((_,a) => NEURAL_LAYERS[1].forEach((__,b) => e.push([a, 3+b])));
+        NEURAL_LAYERS[1].forEach((_,a) => NEURAL_LAYERS[2].forEach((__,b) => e.push([3+a, 5+b])));
+        return e;
+    }, []);
+    const pulseProgress = useRef(edges.map((_,i) => i/edges.length));
+    const edgeData = useMemo(() => edges.map(([a,b]) => {
         const from=new THREE.Vector3(...allNodes[a]),to=new THREE.Vector3(...allNodes[b]);
         const mid=from.clone().lerp(to,.5),len=from.distanceTo(to);
         const dir=to.clone().sub(from).normalize();
         const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),dir);
         return{from,to,mid,len,q};
-    }),[]);
+    }),[allNodes, edges]);
     const layerColors=['#f43f5e','#f43f5e','#f43f5e','#fb7185','#fb7185','#fda4af','#fda4af','#fda4af'];
     useFrame((state)=>{
         const t=state.clock.getElapsedTime();

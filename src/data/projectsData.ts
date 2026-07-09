@@ -114,7 +114,7 @@ const projectsData: Project[] = [
             'Full-stack multi-tenant SaaS with a 6-block A–F evaluation engine, Autopilot 24/7 scheduler, Chrome extension, and Kanban pipeline — scans LinkedIn, Indeed & Glassdoor, tailors resumes, and auto-applies. Live on Render.',
         image:
             'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2670&auto=format&fit=crop',
-        technologies: ['Next.js 16', 'Supabase', 'Prisma 6', 'shadcn/ui', 'Zustand 5', 'Nodemailer'],
+        technologies: ['Next.js 15', 'Supabase', 'Prisma 6', 'shadcn/ui', 'Zustand 5', 'Nodemailer'],
         details: {
             problem:
                 'Job searching is a full-time job — manual applications, per-role resume tailoring, and tracking across LinkedIn, Indeed, Glassdoor, and Wellfound burns hours every day.',

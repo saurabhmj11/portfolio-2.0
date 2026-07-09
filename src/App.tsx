@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Analytics from './components/Analytics';
 import SmoothScroll from './components/SmoothScroll';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import Header from './components/Header';
 const Terminal = React.lazy(() => import('./components/Terminal'));
 import Preloader from './components/Preloader';
@@ -88,16 +88,6 @@ function App() {
 
             {/* Main Content — always in DOM so Googlebot indexes it */}
             <React.Fragment>
-              {!isLoading && (
-                <motion.div
-                  className="fixed inset-0 bg-black z-[60] pointer-events-none"
-                  initial={{ scaleY: 1 }}
-                  animate={{ scaleY: 0 }}
-                  exit={{ scaleY: 0 }}
-                  transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                  style={{ originY: 0 }}
-                />
-              )}
 
               {/* Main Content */}
               <div

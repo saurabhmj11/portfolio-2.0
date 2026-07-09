@@ -1,16 +1,16 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import Footer from '../Footer';
 import { BrowserRouter } from 'react-router-dom';
 
-// Mock dependencies
-vi.mock('./ScrollReveal', () => ({
+// Mock dependencies — paths are relative to the component under test (Footer.tsx)
+vi.mock('../ScrollReveal', () => ({
     default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
 }));
 
 // Mock Magnetic to pass-through children and avoid framer-motion props on DOM
-vi.mock('./Magnetic', () => ({
+vi.mock('../Magnetic', () => ({
     default: ({ children }: { children: React.ReactNode }) => <div data-testid="magnetic-mock">{children}</div>
 }));
 
@@ -46,6 +46,7 @@ describe('Footer Component', () => {
 
     afterEach(() => {
         vi.useRealTimers();
+        vi.restoreAllMocks();
     });
 
     const renderFooter = () => {
@@ -84,19 +85,21 @@ describe('Footer Component', () => {
     });
 
     it('renders system status bar with location and version', async () => {
-        // Mock fetch for location using spyOn
-        const spy = vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
-            Promise.resolve({
-                ok: true,
-                json: () => Promise.resolve({ city: 'NEW YORK', region_code: 'NY' }),
-            } as Response)
-        );
+        // Use real timers for this test so Promises resolve normally
+        vi.useRealTimers();
+
+        const spy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
+            ok: true,
+            json: () => Promise.resolve({ city: 'NEW YORK', region_code: 'NY' }),
+        } as Response);
 
         renderFooter();
 
-        // Should wait for the dynamic text to appear
-        const locElement = await screen.findByText(/NEW YORK, NY/i);
-        expect(locElement).toBeInTheDocument();
+        // Wait for the async fetch to resolve and state to update
+        await waitFor(() => {
+            expect(screen.getByText(/NEW YORK, NY/i)).toBeInTheDocument();
+        }, { timeout: 5000 });
+
         expect(screen.getByText(/V_2026\.1/i)).toBeInTheDocument();
         expect(screen.getByText(/DEPLOYMENT READY/i)).toBeInTheDocument();
 

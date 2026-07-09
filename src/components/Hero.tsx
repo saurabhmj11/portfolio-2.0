@@ -1,6 +1,6 @@
 
 import React, { useRef, Suspense, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, MotionStyle } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useInView } from 'react-intersection-observer';
@@ -27,7 +27,8 @@ const Hero = () => {
     const { stats, loading } = useGitHubStats('saurabhmj11');
 
     const { playSectionChime } = useAudioDirector();
-    const [inViewRef, inView] = useInView({ threshold: 0.5 });
+    // Lower threshold so audio fires immediately on mobile
+    const [inViewRef, inView] = useInView({ threshold: 0.1 });
 
     const [coreInViewRef, coreInView] = useInView({ threshold: 0, rootMargin: "200px" });
 
@@ -54,27 +55,28 @@ const Hero = () => {
 
     useEffect(() => {
         const ctx = gsap.context(() => {
-            // Sequence for non-TextReveal elements (like the description and "I'm a")
-            const tl = gsap.timeline({ delay: 0.1 });
+            // Use a shorter delay on mobile to prevent perceived black screen
+            const isMobileDevice = window.innerWidth < 768;
+            const tl = gsap.timeline({ delay: isMobileDevice ? 0 : 0.1 });
 
             tl.fromTo('.hero-intro',
-                { opacity: 0, x: -50 },
-                { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' }
+                { opacity: 0, x: isMobileDevice ? 0 : -50 },
+                { opacity: 1, x: 0, duration: isMobileDevice ? 0.4 : 0.8, ease: 'power3.out' }
             )
                 .fromTo('.hero-connector',
                     { opacity: 0, rotation: -20, scale: 0.8 },
-                    { opacity: 1, rotation: 0, scale: 1, duration: 0.8, ease: 'back.out(1.7)' },
-                    "-=0.4"
+                    { opacity: 1, rotation: 0, scale: 1, duration: 0.6, ease: 'back.out(1.7)' },
+                    "-=0.3"
                 )
                 .fromTo('.hero-desc',
-                    { opacity: 0, y: 30 },
-                    { opacity: 1, y: 0, duration: 1, ease: 'power3.out' },
+                    { opacity: 0, y: isMobileDevice ? 15 : 30 },
+                    { opacity: 1, y: 0, duration: isMobileDevice ? 0.5 : 1, ease: 'power3.out' },
                     "-=0.2"
                 )
                 .fromTo('.hero-cta',
-                    { opacity: 0, scale: 0.8 },
-                    { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.5)' },
-                    "-=0.4"
+                    { opacity: 0, scale: 0.9 },
+                    { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.5)' },
+                    "-=0.3"
                 );
 
         }, containerRef);
@@ -98,9 +100,9 @@ const Hero = () => {
 
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />
 
-            {/* 3D Components — Desktop only, z-30 so clicks reach the Canvas */}
+            {/* 3D Components — Desktop only, behind text (z-20), text is z-40 */}
             {!isMobile && coreInView ? (
-                <div className="absolute inset-0 z-30 pointer-events-auto mix-blend-screen overflow-hidden">
+                <div className="absolute inset-0 z-20 pointer-events-auto mix-blend-screen overflow-hidden">
                     <Suspense fallback={null}>
                         <InteractiveCore />
                     </Suspense>
@@ -109,9 +111,9 @@ const Hero = () => {
                 <div className="absolute inset-0 z-10 mobile-mesh-bg pointer-events-none" />
             )}
 
-            {/* Main Content */}
+            {/* Main Content — always on top of 3D canvas, with isolation so blend modes don't bleed */}
             <motion.div
-                style={{ y, opacity }}
+                style={{ y, opacity, isolation: 'isolate' } as MotionStyle}
                 className="relative z-40 pointer-events-none flex flex-col items-center text-center w-full px-2 md:px-0 max-w-[90vw]"
             >
                 {/* ── Open to Work badge ── */}

@@ -46,7 +46,7 @@ const STACK = [
         border: 'border-emerald-500/20 hover:border-emerald-500/50',
         dot: 'bg-emerald-400',
         skills: [
-            { name: 'React / Next.js 16', level: 95 },
+            { name: 'React / Next.js 15', level: 95 },
             { name: 'TypeScript', level: 92 },
             { name: 'Framer Motion', level: 90 },
             { name: 'GSAP / ScrollTrigger', level: 87 },
@@ -73,7 +73,7 @@ const STACK = [
 
 // Marquee tech logos (text-based, no images)
 const MARQUEE_TAGS = [
-    'Python', 'TypeScript', 'Next.js 16', 'FastAPI', 'LangGraph', 'Gemini',
+    'Python', 'TypeScript', 'Next.js 15', 'FastAPI', 'LangGraph', 'Gemini',
     'ChromaDB', 'Supabase', 'Prisma', 'Framer Motion', 'GSAP', 'Docker',
     'Zustand', 'shadcn/ui', 'React', 'OpenAI', 'Tailwind', 'RAG', 'SSE',
     'PostgreSQL', 'Node.js', 'Three.js', 'Presidio', 'Render',

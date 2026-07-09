@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 const chars = "-_~`!@#$%^&*()+=[]{}|;:,.<>?/";
 
@@ -9,7 +9,7 @@ const HackerText = ({ text, className = "", speed = 40, trigger = false }: { tex
     // We need a stable reference to the original text
     const originalText = text;
 
-    const startScramble = () => {
+    const startScramble = useCallback(() => {
         let iteration = 0;
         if (intervalRef.current) clearInterval(intervalRef.current);
 
@@ -32,13 +32,13 @@ const HackerText = ({ text, className = "", speed = 40, trigger = false }: { tex
 
             iteration += 1 / 2; // Slower reveal
         }, speed);
-    };
+    }, [originalText, speed]);
 
     useEffect(() => {
         if (trigger) {
             startScramble();
         }
-    }, [trigger]);
+    }, [trigger, startScramble]);
 
     return (
         <span

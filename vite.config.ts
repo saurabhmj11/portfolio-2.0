@@ -49,6 +49,10 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     outDir: 'dist',
     cssCodeSplit: true,
+    // Don't inject modulepreload polyfill — all target browsers support it natively
+    modulePreload: { polyfill: false },
+    // Inline assets ≤ 4 KB directly into JS bundles to save round-trips
+    assetsInlineLimit: 4096,
     minify: 'terser',
     terserOptions: {
       compress: {

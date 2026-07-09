@@ -244,33 +244,29 @@ const Contact = () => {
     setIsSubmitting(true);
     setSubmitError(null);
 
-    const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID;
-
-    // Guard: if no Formspree ID configured, surface a clear mailto fallback
-    if (!FORMSPREE_ID || FORMSPREE_ID === 'YOUR_FORM_ID') {
-      setIsSubmitting(false);
-      setSubmitError('direct-email');
-      return;
-    }
-
     try {
-      const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          name: formState.name,
-          email: formState.email,
-          message: formState.message,
-          _subject: `[Portfolio] New message from ${formState.name}`,
-        }),
+      // Netlify Forms: submit as URL-encoded form data to the page itself.
+      // Netlify's build bot detects the <form data-netlify> attribute at deploy
+      // time and intercepts these submissions server-side.
+      const body = new URLSearchParams({
+        'form-name': 'portfolio-contact',
+        name: formState.name,
+        email: formState.email,
+        message: formState.message,
       });
+
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString(),
+      });
+
       if (response.ok) {
         setIsSuccess(true);
         setFormState({ name: '', email: '', message: '' });
       } else {
-        const data = await response.json();
-        const msg = data?.errors?.map((e: { message: string }) => e.message).join(', ') || 'Submission failed.';
-        setSubmitError(msg);
+        // Non-200 response (e.g., form not found on Netlify) — surface mailto
+        setSubmitError('direct-email');
       }
     } catch {
       setSubmitError('network');
@@ -418,7 +414,16 @@ const Contact = () => {
                       <span className="ml-3 font-mono text-[9px] text-white/15 uppercase tracking-widest">new_connection.sh</span>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-8">
+                    <form
+                      onSubmit={handleSubmit}
+                      className="space-y-8"
+                      name="portfolio-contact"
+                      data-netlify="true"
+                      data-netlify-honeypot="bot-field"
+                    >
+                      {/* Netlify hidden fields required for form detection */}
+                      <input type="hidden" name="form-name" value="portfolio-contact" />
+                      <input name="bot-field" className="hidden" />
                       <TerminalField
                         label="Name" id="name" name="name" value={formState.name}
                         onChange={handleChange}
