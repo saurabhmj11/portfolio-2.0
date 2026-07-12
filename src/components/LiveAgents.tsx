@@ -1,9 +1,6 @@
-import { useEffect, useRef, useState, Suspense, lazy } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { ExternalLink, Zap, Radio, Shield, Cpu, GitBranch, Navigation } from 'lucide-react';
-import ScrambleText from './ScrambleText';
-
-const AgentCore3D = lazy(() => import('./AgentCore3D'));
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ExternalLink, Bot, Zap, Brain, Rocket, Crosshair, Activity, Cpu, Network } from 'lucide-react';
 
 interface Agent {
     id: string;
@@ -11,432 +8,259 @@ interface Agent {
     url: string;
     description: string;
     role: string;
-    status: 'ACTIVE' | 'STANDBY' | 'PROCESSING';
-    uptime: number; // in hours
+    accent: string;
     icon: React.ElementType;
-    accent: string; // tailwind gradient class
-    tasks: number;
+    stats: {
+        latency: string;
+        successRate: string;
+        uptime: string;
+    };
 }
 
 const agents: Agent[] = [
     {
-        id: 'travel-guru',
+        id: 'guru',
         name: 'Travel Guru',
         url: 'https://agent.ai/agent/gurutravel',
-        description: 'Your personal AI concierge for planning perfect trips with real-time insights.',
+        description: 'Your personal AI concierge for planning perfect trips with real-time insights and autonomous itinerary generation.',
         role: 'Travel Assistant',
-        status: 'ACTIVE',
-        uptime: 2847,
-        icon: Navigation,
-        accent: 'from-sky-500/20 to-cyan-500/5',
-        tasks: 1243,
+        accent: '#3b82f6', // blue
+        icon: Rocket,
+        stats: { latency: '24ms', successRate: '99.8%', uptime: '99.99%' }
     },
     {
-        id: '90day',
+        id: 'launchpad',
         name: '90-Day Launchpad',
         url: 'https://agent.ai/agent/90day',
-        description: 'A focused accelerator agent to help you achieve your startup goals in 3 months.',
+        description: 'A focused accelerator agent designed to help you achieve your startup goals in 3 months with structured milestones.',
         role: 'Goal Accelerator',
-        status: 'PROCESSING',
-        uptime: 1934,
+        accent: '#8b5cf6', // violet
         icon: Zap,
-        accent: 'from-amber-500/20 to-orange-500/5',
-        tasks: 874,
+        stats: { latency: '18ms', successRate: '98.5%', uptime: '99.95%' }
     },
     {
-        id: 'dudusl001',
+        id: 'dudu',
         name: 'DuduSL001',
         url: 'https://agent.ai/agent/dudusl001',
-        description: 'Experimental custom agent designed for specialized recursive tasks.',
+        description: 'Experimental custom agent designed for specialized recursive tasks and complex autonomous tool usage.',
         role: 'Experimental Unit',
-        status: 'ACTIVE',
-        uptime: 512,
-        icon: GitBranch,
-        accent: 'from-purple-500/20 to-violet-500/5',
-        tasks: 321,
+        accent: '#f43f5e', // rose
+        icon: Brain,
+        stats: { latency: '42ms', successRate: '94.2%', uptime: '98.50%' }
     },
     {
-        id: 'agentplan01',
+        id: 'plan01',
         name: 'Agent Plan 01',
         url: 'https://agent.ai/agent/Agentplan01',
-        description: 'Strategic task planner that breaks down complex objectives into actionable steps.',
+        description: 'Strategic task planner that breaks down complex, ambiguous objectives into actionable, deterministic execution steps.',
         role: 'Task Planner',
-        status: 'ACTIVE',
-        uptime: 3210,
-        icon: Shield,
-        accent: 'from-emerald-500/20 to-green-500/5',
-        tasks: 2190,
+        accent: '#10b981', // emerald
+        icon: Crosshair,
+        stats: { latency: '12ms', successRate: '99.9%', uptime: '99.99%' }
     },
     {
         id: 'sl011',
         name: 'S L 011',
         url: 'https://agent.ai/agent/S_L_011',
-        description: 'Advanced logic unit capable of handling multi-step reasoning problems.',
+        description: 'Advanced logic unit capable of handling multi-step reasoning problems, data extraction, and edge-case validations.',
         role: 'Logic Unit',
-        status: 'STANDBY',
-        uptime: 1102,
-        icon: Cpu,
-        accent: 'from-rose-500/20 to-pink-500/5',
-        tasks: 553,
-    },
+        accent: '#f59e0b', // amber
+        icon: Bot,
+        stats: { latency: '35ms', successRate: '97.4%', uptime: '99.90%' }
+    }
 ];
 
-// Animated bars that simulate a live signal waveform
-const SignalBars = ({ active }: { active: boolean }) => {
-    const heights = [3, 7, 12, 5, 16, 8, 4, 11, 6, 14, 9, 3, 7, 13, 5];
-    return (
-        <div className="flex items-end gap-[2px] h-6">
-            {heights.map((h, i) => (
-                <motion.div
-                    key={i}
-                    className={`w-[2px] rounded-full ${active ? 'bg-green-400' : 'bg-white/20'}`}
-                    animate={active && !window.matchMedia('(max-width: 768px)').matches ? {
-                        height: [`${h}px`, `${Math.max(2, h * (0.4 + Math.random() * 0.8))}px`, `${h}px`],
-                    } : { height: active ? `${h}px` : '3px' }}
-                    transition={{
-                        duration: 0.6 + i * 0.05,
-                        repeat: Infinity,
-                        repeatType: 'mirror',
-                        ease: 'easeInOut',
-                        delay: i * 0.04,
-                    }}
-                    style={{ height: `${h}px` }}
-                />
-            ))}
-        </div>
-    );
-};
+const LiveAgents = () => {
+    const [activeAgentIndex, setActiveAgentIndex] = useState(0);
+    const activeAgent = agents[activeAgentIndex];
+    const ActiveIcon = activeAgent.icon;
 
-const STATUS_COLORS: Record<string, string> = {
-    ACTIVE: 'text-green-400 border-green-500/30 bg-green-500/10',
-    STANDBY: 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
-    PROCESSING: 'text-sky-400 border-sky-500/30 bg-sky-500/10',
-};
-
-const AgentRow = ({ agent, index, isActive, onHover }: { agent: Agent; index: number; isActive: boolean; onHover: (id: string | null) => void }) => {
-    const [hovered, setHovered] = useState(false);
-    const ref = useRef<HTMLDivElement>(null);
-    const inView = useInView(ref, { once: true, margin: '-80px' });
-    const Icon = agent.icon;
-
-    return (
-        <motion.div
-            ref={ref}
-            initial={{ opacity: 0, x: -40 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
-            onMouseEnter={() => { setHovered(true); onHover(agent.id); }}
-            onMouseLeave={() => { setHovered(false); onHover(null); }}
-            className={`relative group border-b border-white/5 ${isActive ? 'bg-white/[0.015]' : ''}`}
-        >
-            {/* Hover flood gradient */}
-            <motion.div
-                className={`absolute inset-0 bg-gradient-to-r ${agent.accent} pointer-events-none`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: (hovered || isActive) ? 1 : 0 }}
-                transition={{ duration: 0.4 }}
-            />
-
-            {/* Left accent bar */}
-            <motion.div
-                className="absolute left-0 top-0 bottom-0 w-[2px] bg-green-400"
-                initial={{ scaleY: 0 }}
-                animate={{ scaleY: (hovered || isActive) ? 1 : 0 }}
-                transition={{ duration: 0.3 }}
-                style={{ originY: 0 }}
-            />
-
-            {/* Active indicator when 3D viewer is showing this agent */}
-            {isActive && (
-                <motion.div
-                    layoutId="active-indicator"
-                    className="absolute right-0 top-0 bottom-0 w-[2px] bg-white/30"
-                />
-            )}
-
-            <a
-                href={agent.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => {
-                    // On mobile/tablet, the first tap should just select the agent and show its 3D model
-                    if (!isActive && window.innerWidth < 1024) {
-                        e.preventDefault();
-                        onHover(agent.id);
-                        setHovered(true);
-                    }
-                }}
-                className="flex flex-col md:flex-row md:items-center justify-between px-8 py-7 gap-6 relative z-10"
-            >
-                {/* Left: Icon + Name block */}
-                <div className="flex items-center gap-6 flex-1 min-w-0">
-                    {/* Index */}
-                    <span className="text-[10px] font-mono text-white/20 w-5 shrink-0 select-none">
-                        {String(index + 1).padStart(2, '0')}
-                    </span>
-
-                    {/* Icon */}
-                    <div className="relative shrink-0">
-                        <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-white/20 transition-colors">
-                            <Icon className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
-                        </div>
-                        {agent.status === 'ACTIVE' && (
-                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-400 rounded-full border border-black">
-                                <span className="absolute inset-0 rounded-full bg-green-400 md:animate-ping opacity-75" />
-                            </span>
-                        )}
-                    </div>
-
-                    {/* Name and description */}
-                    <div className="min-w-0">
-                        <h3 className="text-white font-display font-bold text-xl leading-none tracking-tight mb-1.5 group-hover:text-white transition-colors">
-                            {agent.name}
-                        </h3>
-                        <p className="text-white/40 text-sm leading-snug font-light truncate max-w-xs">
-                            {agent.description}
-                        </p>
-                    </div>
-                </div>
-
-                {/* Mid: Signal waveform */}
-                <div className="hidden md:flex items-center justify-center w-32 shrink-0">
-                    <SignalBars active={agent.status !== 'STANDBY'} />
-                </div>
-
-                {/* Right: Stats cluster */}
-                <div className="flex items-center gap-8 shrink-0">
-                    {/* Status badge */}
-                    <span className={`text-[10px] font-mono font-bold uppercase tracking-widest px-3 py-1.5 rounded border ${STATUS_COLORS[agent.status]}`}>
-                        {agent.status}
-                    </span>
-
-                    {/* Uptime */}
-                    <div className="hidden sm:block text-right">
-                        <div className="text-white font-mono font-bold text-sm">{agent.uptime.toLocaleString()}h</div>
-                        <div className="text-white/30 text-[9px] uppercase tracking-widest font-mono">Uptime</div>
-                    </div>
-
-                    {/* Tasks */}
-                    <div className="hidden sm:block text-right">
-                        <div className="text-white font-mono font-bold text-sm">{agent.tasks.toLocaleString()}</div>
-                        <div className="text-white/30 text-[9px] uppercase tracking-widest font-mono">Tasks</div>
-                    </div>
-
-                    {/* CTA Arrow */}
-                    <motion.div
-                        animate={{ x: (hovered || isActive) ? 0 : -4, opacity: (hovered || isActive) ? 1 : 0.3 }}
-                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    >
-                        <ExternalLink className="w-5 h-5 text-white" />
-                    </motion.div>
-                </div>
-            </a>
-        </motion.div>
-    );
-};
-
-// Scrolling marquee ticker for live system stats
-const StatsTicker = () => {
-    const [latency, setLatency] = useState('1.20');
+    // Optional: Auto-rotate agents if the user hasn't interacted recently
     useEffect(() => {
-        const id = setInterval(() => {
-            const v = 1.2 + (Math.random() * 0.2 - 0.1);
-            setLatency(v.toFixed(2));
-        }, 1400);
-        return () => clearInterval(id);
+        const interval = setInterval(() => {
+            setActiveAgentIndex((prev) => (prev + 1) % agents.length);
+        }, 5000);
+        return () => clearInterval(interval);
     }, []);
 
-    const items = [
-        `NEURAL_UPTIME: 99.97%`,
-        `AVG_LATENCY: ${latency}s`,
-        `AGENTS_ONLINE: 5`,
-        `TASKS_COMPLETED: 5,181+`,
-        `SYSTEM: STABLE`,
-        `RUNTIME: DISTRIBUTED`,
-        `MODEL: GPT-4o / CLAUDE-3.5`,
-        `FRAMEWORK: LANGCHAIN`,
-    ];
-
     return (
-        <div className="relative overflow-hidden border-y border-white/5 py-3 select-none">
-            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#050505] to-transparent z-10" />
-            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#050505] to-transparent z-10" />
-            <motion.div
-                className="flex gap-16 whitespace-nowrap"
-                animate={{ x: ['0%', '-50%'] }}
-                transition={{ 
-                    duration: typeof window !== 'undefined' && window.innerWidth < 768 ? 45 : 30, 
-                    repeat: Infinity, 
-                    ease: 'linear' 
-                }}
-            >
-                {[...items, ...items].map((item, i) => (
-                    <span key={i} className="text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] flex items-center gap-4">
-                        <Radio className="w-2.5 h-2.5 text-green-400 shrink-0" />
-                        {item}
-                    </span>
-                ))}
-            </motion.div>
-        </div>
-    );
-};
-
-const LiveAgents = () => {
-    const ref = useRef<HTMLElement>(null);
-    const [activeAgentId, setActiveAgentId] = useState<string>('travel-guru');
-    const [hoveredId, setHoveredId] = useState<string | null>(null);
-
-    // Keep showing last hovered even after mouse leaves, so 3D doesn't flicker
-    useEffect(() => {
-        if (hoveredId) setActiveAgentId(hoveredId);
-    }, [hoveredId]);
-
-    return (
-        <section ref={ref} className="bg-[#050505] text-white relative z-10 overflow-hidden" id="agents">
-
-            {/* SVG Grid Background */}
-            <div className="absolute inset-0 pointer-events-none opacity-[0.035]"
-                style={{
-                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
-                    backgroundSize: '80px 80px',
-                }}
+        <section id="agents" className="min-h-screen bg-[#030712] relative flex flex-col justify-center py-32 px-4 md:px-8 overflow-hidden z-10">
+            {/* Ambient Background Glow matching active agent */}
+            <motion.div 
+                className="absolute inset-0 opacity-10 pointer-events-none transition-colors duration-1000 ease-in-out z-0"
+                animate={{ backgroundColor: activeAgent.accent }}
+            />
+            
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] rounded-full blur-[120px] opacity-20 pointer-events-none transition-colors duration-1000 z-0"
+                style={{ backgroundColor: activeAgent.accent }}
             />
 
-            {/* Radial ambient glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-green-500/5 blur-[120px] rounded-full pointer-events-none" />
-
-            <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
-
-                {/* Header Block */}
-                <div className="pt-28 pb-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-end border-b border-white/10">
+            <div className="container mx-auto relative z-20">
+                {/* Section Header */}
+                <div className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-8 gap-8">
                     <div>
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.7 }}
-                            className="flex items-center gap-3 mb-8"
-                        >
-                            <div className="relative flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-green-400">
-                                    <span className="absolute inset-0 rounded-full bg-green-400 md:animate-ping" />
-                                </div>
-                                <span className="font-mono text-xs text-green-400 uppercase tracking-[0.4em]">
-                                    <ScrambleText text="// NETWORK ONLINE" />
-                                </span>
-                            </div>
-                        </motion.div>
-                        <motion.h2
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.7, delay: 0.1 }}
-                            className="text-[13vw] md:text-[7vw] font-display font-black leading-[0.85] tracking-tighter uppercase"
-                        >
-                            Live
-                            <br />
-                            <span className="text-white/20 italic">Agents</span>
-                        </motion.h2>
-                    </div>
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.7, delay: 0.2 }}
-                        className="flex flex-col justify-end gap-6"
-                    >
-                        <p className="text-white/40 text-lg leading-relaxed font-light">
-                            A constellation of autonomous agents deployed in production, each specializing in a domain — from travel planning to structured reasoning.
-                        </p>
-                        <div className="flex items-center gap-4">
-                            <div className="h-[1px] flex-1 bg-gradient-to-r from-white/20 to-transparent" />
-                            <span className="font-mono text-xs text-white/30 uppercase tracking-widest">5 nodes active</span>
+                        <div className="flex items-center gap-3 mb-4 text-white/50">
+                            <Activity className="w-5 h-5 animate-pulse" style={{ color: activeAgent.accent }} />
+                            <span className="font-mono text-xs tracking-[0.3em] uppercase">
+                                Production Grid Online
+                            </span>
                         </div>
-                    </motion.div>
+                        <h2 className="text-5xl md:text-7xl font-display font-black tracking-tighter text-white uppercase leading-none">
+                            Live<br />Agents
+                        </h2>
+                    </div>
+                    <p className="text-white/40 max-w-sm text-sm md:text-base font-light text-right">
+                        Select an autonomous entity from the roster to view its operational parameters and initialize deployment.
+                    </p>
                 </div>
 
-                {/* Scrolling stats ticker */}
-                <div className="py-4">
-                    <StatsTicker />
-                </div>
-
-                {/* Mobile 3D viewer — shown above agent list on small screens */}
-                <div className="lg:hidden mb-6 mx-0">
-                    <div className="relative h-[220px] rounded-2xl overflow-hidden bg-white/[0.02] border border-white/5">
-                        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 60%, rgba(99,102,241,0.15) 0%, transparent 70%)' }} />
-                        {/* Labels */}
-                        <div className="absolute top-3 left-0 right-0 flex flex-col items-center gap-0.5 z-10 pointer-events-none">
-                            <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.3em]">AGENT CORE</span>
-                            <motion.span
-                                key={activeAgentId}
-                                initial={{ opacity: 0, y: 3 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.35 }}
-                                className="text-[10px] font-mono text-white/50 uppercase tracking-widest"
-                            >
-                                {agents.find(a => a.id === activeAgentId)?.name ?? '—'}
-                            </motion.span>
-                        </div>
-                        <Suspense fallback={
-                            <div className="w-full h-full flex items-center justify-center">
-                                <div className="w-6 h-6 border-2 border-white/10 border-t-white/40 rounded-full animate-spin" />
-                            </div>
-                        }>
-                            <AgentCore3D agentId={activeAgentId} className="w-full h-full" />
-                        </Suspense>
-                        <div className="absolute bottom-3 left-0 right-0 flex justify-center z-10 pointer-events-none">
-                            <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.25em]">TAP AGENT TO SWITCH</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Main content: Agent List + 3D Viewer */}
-                <div className="pb-28 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-0">
-
-                    {/* Agent Rows */}
-                    <div>
-                        {agents.map((agent, index) => (
-                            <AgentRow
-                                key={agent.id}
-                                agent={agent}
-                                index={index}
-                                isActive={activeAgentId === agent.id}
-                                onHover={setHoveredId}
-                            />
-                        ))}
-                    </div>
-
-                    {/* 3D Agent Core Viewer — desktop only */}
-                    <div className="hidden lg:flex flex-col items-center justify-center sticky top-24 self-start h-[400px] border-l border-white/5">
-                        <div className="w-full h-full relative rounded-2xl overflow-hidden bg-white/[0.02] border border-white/5">
-                            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 60%, rgba(99,102,241,0.12) 0%, transparent 70%)' }} />
-                            <div className="absolute top-4 left-0 right-0 flex flex-col items-center gap-1 z-10 pointer-events-none">
-                                <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.3em]">AGENT CORE</span>
-                                <motion.span
-                                    key={activeAgentId}
-                                    initial={{ opacity: 0, y: 4 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.4 }}
-                                    className="text-[11px] font-mono text-white/40 uppercase tracking-widest"
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                    
+                    {/* Left Column: Agent Roster */}
+                    <div className="lg:col-span-5 flex flex-col gap-2">
+                        {agents.map((agent, index) => {
+                            const isActive = index === activeAgentIndex;
+                            return (
+                                <button
+                                    key={agent.id}
+                                    onMouseEnter={() => setActiveAgentIndex(index)}
+                                    onClick={() => setActiveAgentIndex(index)}
+                                    className={`relative w-full text-left py-6 px-8 rounded-2xl transition-all duration-500 overflow-hidden group ${
+                                        isActive ? 'bg-white/5' : 'hover:bg-white-[0.02]'
+                                    }`}
                                 >
-                                    {agents.find(a => a.id === activeAgentId)?.name ?? '—'}
-                                </motion.span>
-                            </div>
-                            <Suspense fallback={
-                                <div className="w-full h-full flex items-center justify-center">
-                                    <div className="w-8 h-8 border-2 border-white/10 border-t-white/40 rounded-full animate-spin" />
-                                </div>
-                            }>
-                                <AgentCore3D agentId={activeAgentId} className="w-full h-full" />
-                            </Suspense>
-                            <div className="absolute bottom-4 left-0 right-0 flex justify-center z-10 pointer-events-none">
-                                <span className="text-[8px] font-mono text-white/15 uppercase tracking-[0.3em]">TAP OR HOVER TO SWITCH</span>
-                            </div>
-                        </div>
+                                    {/* Active Indicator Line */}
+                                    {isActive && (
+                                        <motion.div 
+                                            layoutId="activeIndicator"
+                                            className="absolute left-0 top-0 bottom-0 w-1"
+                                            style={{ backgroundColor: agent.accent }}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ duration: 0.3 }}
+                                        />
+                                    )}
+
+                                    <div className="flex items-center justify-between relative z-10">
+                                        <div className="flex flex-col">
+                                            <span 
+                                                className="font-mono text-[10px] tracking-widest uppercase mb-1 transition-colors duration-300"
+                                                style={{ color: isActive ? agent.accent : 'rgba(255,255,255,0.3)' }}
+                                            >
+                                                UNIT // {String(index + 1).padStart(2, '0')}
+                                            </span>
+                                            <h3 
+                                                className={`text-2xl md:text-4xl font-display font-bold transition-all duration-300 ${
+                                                    isActive ? 'text-white translate-x-2' : 'text-white/30 group-hover:text-white/60'
+                                                }`}
+                                            >
+                                                {agent.name}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Subtle hover gradient */}
+                                    <div 
+                                        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none"
+                                        style={{ background: `linear-gradient(90deg, ${agent.accent}, transparent)` }}
+                                    />
+                                </button>
+                            );
+                        })}
                     </div>
 
-                </div>
+                    {/* Right Column: Active Agent HUD (Heads Up Display) */}
+                    <div className="lg:col-span-7 h-full min-h-[500px] relative">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={activeAgent.id}
+                                initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+                                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                                exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
+                                transition={{ duration: 0.4, ease: "easeOut" }}
+                                className="w-full h-full border border-white/10 rounded-[2rem] bg-black/40 backdrop-blur-xl p-8 md:p-12 relative overflow-hidden flex flex-col justify-between"
+                            >
+                                {/* HUD Grid Lines */}
+                                <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+                                     style={{
+                                         backgroundImage: `linear-gradient(${activeAgent.accent} 1px, transparent 1px), linear-gradient(90deg, ${activeAgent.accent} 1px, transparent 1px)`,
+                                         backgroundSize: '40px 40px'
+                                     }}
+                                />
 
+                                {/* HUD Top Section */}
+                                <div className="relative z-10">
+                                    <div className="flex items-center justify-between mb-8">
+                                        <div className="flex items-center gap-4">
+                                            <div 
+                                                className="w-14 h-14 rounded-xl flex items-center justify-center border"
+                                                style={{ backgroundColor: `${activeAgent.accent}15`, borderColor: `${activeAgent.accent}40`, color: activeAgent.accent }}
+                                            >
+                                                <ActiveIcon size={24} />
+                                            </div>
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: activeAgent.accent }} />
+                                                    <span className="font-mono text-xs uppercase tracking-wider text-white/70">Status: Online</span>
+                                                </div>
+                                                <span className="font-mono text-[10px] tracking-widest text-white/40 uppercase">
+                                                    ID: {activeAgent.id.toUpperCase()}_OS_V2
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h3 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">
+                                        {activeAgent.name}
+                                    </h3>
+                                    <p className="text-white/60 text-lg md:text-xl font-light leading-relaxed max-w-xl">
+                                        {activeAgent.description}
+                                    </p>
+                                </div>
+
+                                {/* HUD Bottom Section (Stats & Action) */}
+                                <div className="relative z-10 mt-12 pt-8 border-t border-white/10">
+                                    <div className="grid grid-cols-3 gap-4 mb-8">
+                                        <div className="flex flex-col">
+                                            <span className="text-white/40 text-xs font-mono uppercase mb-1 flex items-center gap-1">
+                                                <Cpu size={12} /> Latency
+                                            </span>
+                                            <span className="text-white font-mono text-xl" style={{ color: activeAgent.accent }}>{activeAgent.stats.latency}</span>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-white/40 text-xs font-mono uppercase mb-1 flex items-center gap-1">
+                                                <Crosshair size={12} /> Success Rate
+                                            </span>
+                                            <span className="text-white font-mono text-xl">{activeAgent.stats.successRate}</span>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-white/40 text-xs font-mono uppercase mb-1 flex items-center gap-1">
+                                                <Network size={12} /> Uptime
+                                            </span>
+                                            <span className="text-white font-mono text-xl">{activeAgent.stats.uptime}</span>
+                                        </div>
+                                    </div>
+
+                                    <a
+                                        href={activeAgent.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="group relative w-full flex items-center justify-between px-8 py-5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all overflow-hidden"
+                                    >
+                                        <div 
+                                            className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                                            style={{ backgroundColor: activeAgent.accent }}
+                                        />
+                                        <span className="font-bold uppercase tracking-widest text-sm relative z-10">
+                                            Initialize Deployment
+                                        </span>
+                                        <ExternalLink size={20} className="relative z-10 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                                    </a>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+                </div>
             </div>
         </section>
     );

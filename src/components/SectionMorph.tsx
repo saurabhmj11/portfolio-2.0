@@ -63,12 +63,12 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
                             });
                         },
                         onLeaveBack: () => {
-                            gsap.set(fromEl, { opacity: 1 });
-                            gsap.set(toEl, { clipPath: 'inset(100% 0 0 0)' });
+                            gsap.set(fromEl, { clearProps: 'all' });
+                            gsap.set(toEl, { clearProps: 'all' });
                         },
                         onLeave: () => {
-                            gsap.set(fromEl, { opacity: 1 });
-                            gsap.set(toEl, { clipPath: 'inset(0% 0 0 0)' });
+                            gsap.set(fromEl, { clearProps: 'all' });
+                            gsap.set(toEl, { clearProps: 'all' });
                         },
                     });
                     break;
@@ -87,20 +87,21 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
                             const p = self.progress;
                             gsap.set(fromEl, {
                                 y: `${p * -30}px`,
-                                opacity: 1 - p * 0.3,
+                                opacity: Math.max(0.7, 1 - p * 0.3),
                             });
                         },
                         onLeaveBack: () => {
-                            gsap.set(toEl, { clearProps: 'scale' });
-                            gsap.set(fromEl, { y: '0px', opacity: 1 });
+                            gsap.set(fromEl, { clearProps: 'all' });
+                            gsap.set(toEl, { clearProps: 'all' });
                         },
                         onLeave: () => {
-                            gsap.set(toEl, { clearProps: 'scale' });
-                            gsap.set(fromEl, { y: '0px', opacity: 1 });
+                            gsap.set(fromEl, { clearProps: 'all' });
+                            gsap.set(toEl, { clearProps: 'all' });
                         },
                     });
                     break;
                 }
+
 
                 case 'colorShift': {
                     // Background color lerp between sections
@@ -111,17 +112,16 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
                         scrub: 1,
                         onUpdate: (self) => {
                             const p = self.progress;
-                            toEl.style.opacity = String(0.6 + p * 0.4);
-                            // Subtle background tint shift
-                            fromEl.style.filter = `brightness(${1 - p * 0.15})`;
+                            gsap.set(toEl, { opacity: 0.6 + p * 0.4 });
+                            gsap.set(fromEl, { filter: `brightness(${1 - p * 0.15})` });
                         },
                         onLeaveBack: () => {
-                            toEl.style.opacity = '1';
-                            fromEl.style.filter = 'brightness(1)';
+                            gsap.set(fromEl, { clearProps: 'all' });
+                            gsap.set(toEl, { clearProps: 'all' });
                         },
                         onLeave: () => {
-                            toEl.style.opacity = '1';
-                            fromEl.style.filter = 'brightness(1)';
+                            gsap.set(fromEl, { clearProps: 'all' });
+                            gsap.set(toEl, { clearProps: 'all' });
                         },
                     });
                     break;
@@ -142,10 +142,12 @@ const SectionMorph = ({ from, to, effect, toColor = '#020202' }: SectionMorphPro
                             });
                         },
                         onLeaveBack: () => {
-                            gsap.set(fromEl, { opacity: 1, scale: 1 });
+                            gsap.set(fromEl, { clearProps: 'all' });
+                            gsap.set(toEl, { clearProps: 'all' });
                         },
                         onLeave: () => {
-                            gsap.set(fromEl, { opacity: 1, scale: 1 });
+                            gsap.set(fromEl, { clearProps: 'all' });
+                            gsap.set(toEl, { clearProps: 'all' });
                         },
                     });
                     break;

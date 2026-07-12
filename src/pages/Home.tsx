@@ -18,7 +18,6 @@ const Experience          = React.lazy(() => import('../components/Experience'))
 const Projects            = React.lazy(() => import('../components/Projects'));
 const Blog                = React.lazy(() => import('../components/Blog'));
 const LiveAgents          = React.lazy(() => import('../components/LiveAgents'));
-const Contact             = React.lazy(() => import('../components/Contact'));
 const Testimonials        = React.lazy(() => import('../components/Testimonials'));
 const Workflow            = React.lazy(() => import('../components/Workflow'));
 const LangGraphInteractive = React.lazy(() => import('../components/LangGraphInteractive'));
@@ -60,7 +59,6 @@ const Home = () => {
                 <S><AutonomousAgentHUD /></S>
                 <S><LiveAgents /></S>
                 <S><Blog /></S>
-                <S><Contact /></S>
             </div>
         </main>
     );

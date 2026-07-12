@@ -67,7 +67,6 @@ const AboutDesktop = () => {
   const bioRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -83,181 +82,166 @@ const AboutDesktop = () => {
     headlineEl.style.opacity = '0';
 
     const timer = setTimeout(() => {
-    headlineEl.style.opacity = '1';
+      headlineEl.style.opacity = '1';
 
-    const ctx = gsap.context(() => {
-      // ── 1. Build headline: per-character spans scattered in 3D ───────────
-      const HEADLINE = 'ENGINEERING AGENTIC ARCHITECTURES';
-      headlineEl.innerHTML = '';
+      const ctx = gsap.context(() => {
+        // ── 1. Build headline: per-character spans scattered in 3D ───────────
+        const HEADLINE = 'ENGINEERING AGENTIC ARCHITECTURES';
+        headlineEl.innerHTML = '';
 
-      HEADLINE.split(' ').forEach((word) => {
-        const wordDiv = document.createElement('div');
-        wordDiv.style.cssText =
-          'display:inline-flex; margin:0 1vw; overflow:visible;';
-        word.split('').forEach((char) => {
-          const span = document.createElement('span');
-          span.textContent = char;
-          span.className = 'gsap-char';
-          span.style.cssText =
-            'display:inline-block; font-size:clamp(1.2rem,6vw,8rem); font-weight:900; font-family:inherit; color:#ffffff; line-height:1; text-transform:uppercase; will-change:transform,opacity;';
-          wordDiv.appendChild(span);
+        HEADLINE.split(' ').forEach((word) => {
+          const wordDiv = document.createElement('div');
+          wordDiv.style.cssText =
+            'display:inline-flex; margin:0 1vw; overflow:visible;';
+          word.split('').forEach((char) => {
+            const span = document.createElement('span');
+            span.textContent = char;
+            span.className = 'gsap-char';
+            span.style.cssText =
+              'display:inline-block; font-size:clamp(1.2rem,6vw,8rem); font-weight:900; font-family:inherit; color:#ffffff; line-height:1; text-transform:uppercase; will-change:transform,opacity;';
+            wordDiv.appendChild(span);
+          });
+          headlineEl.appendChild(wordDiv);
         });
-        headlineEl.appendChild(wordDiv);
-      });
 
-      // ── 2. Build bio: per-word opacity scrub ─────────────────────────────
-      bioEl.innerHTML = '';
-      BIO_TEXT.split(' ').forEach((word) => {
-        const wordSpan = document.createElement('span');
-        wordSpan.style.cssText =
-          'display:inline-block; margin-right:0.4em; opacity:0.08; will-change:opacity; color:#e5e7eb;';
-        wordSpan.textContent = word;
-        bioEl.appendChild(wordSpan);
-      });
-
-      const largeChars = headlineEl.querySelectorAll<HTMLElement>('.gsap-char');
-      const bioWords = bioEl.querySelectorAll<HTMLElement>('span');
-
-      // ── 3. Scatter headline chars into random 3D positions ──────────────
-      largeChars.forEach((char) => {
-        gsap.set(char, {
-          x: (Math.random() - 0.5) * window.innerWidth * 1.8,
-          y: (Math.random() - 0.5) * window.innerHeight * 1.8,
-          rotation: (Math.random() - 0.5) * 480,
-          rotationX: (Math.random() - 0.5) * 180,
-          rotationY: (Math.random() - 0.5) * 180,
-          scale: 0.2 + Math.random() * 0.8,
-          opacity: 0,
+        // ── 2. Build bio: per-word opacity scrub ─────────────────────────────
+        bioEl.innerHTML = '';
+        BIO_TEXT.split(' ').forEach((word) => {
+          const wordSpan = document.createElement('span');
+          wordSpan.style.cssText =
+            'display:inline-block; margin-right:0.4em; opacity:0.08; will-change:opacity; color:#e5e7eb;';
+          wordSpan.textContent = word;
+          bioEl.appendChild(wordSpan);
         });
-      });
 
-      gsap.set(imageEl, { scale: 0.4, opacity: 0, filter: 'blur(20px)' });
-      gsap.set(statsRef.current, { opacity: 0, y: 50 });
+        const largeChars = headlineEl.querySelectorAll<HTMLElement>('.gsap-char');
+        const bioWords = bioEl.querySelectorAll<HTMLElement>('span');
 
-      // ── 4. Master timeline pinned to the section ─────────────────────────
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: '+=250%',       // section occupies 3.5x viewport heights of scroll
-          pin: true,
-          scrub: 0.8,
-          anticipatePin: 1,
-        },
-      });
+        // ── 3. Scatter headline chars into random 3D positions ──────────────
+        largeChars.forEach((char) => {
+          gsap.set(char, {
+            x: (Math.random() - 0.5) * window.innerWidth * 1.8,
+            y: (Math.random() - 0.5) * window.innerHeight * 1.8,
+            rotation: (Math.random() - 0.5) * 480,
+            rotationX: (Math.random() - 0.5) * 180,
+            rotationY: (Math.random() - 0.5) * 180,
+            scale: 0.2 + Math.random() * 0.8,
+            opacity: 0,
+          });
+        });
 
-      // Phase 1 (0–0.3): Chars fly IN from scattered positions
-      tl.to(
-        largeChars,
-        {
-          x: 0,
-          y: 0,
-          rotation: 0,
-          rotationX: 0,
-          rotationY: 0,
-          scale: 1,
-          opacity: 1,
-          duration: 2,
-          ease: 'power3.out',
-          stagger: { amount: 0.8, from: 'random' },
-        },
-        0
-      );
+        gsap.set(imageEl, { scale: 0.4, opacity: 0, filter: 'blur(20px)' });
+        gsap.set(statsRef.current, { opacity: 0, y: 50 });
 
-      // Overlay flash on entry
-      tl.fromTo(
-        overlayRef.current,
-        { opacity: 0.7 },
-        { opacity: 0, duration: 0.5, ease: 'power2.out' },
-        0
-      );
-
-      // Phase 2 (0.3–0.55): Headline chars EXPLODE out, image reveals
-      tl.to(
-        largeChars,
-        {
-          x: () => (Math.random() - 0.5) * window.innerWidth * 2.5,
-          y: () => (Math.random() - 0.5) * window.innerHeight * 2.5,
-          rotation: () => (Math.random() - 0.5) * 720,
-          scale: () => 0.1 + Math.random() * 0.5,
-          opacity: 0,
-          duration: 2.5,
-          ease: 'power4.in',
-          stagger: { amount: 0.6, from: 'center' },
-        },
-        1.5
-      );
-
-      // Phase 2b: Image blooms into view as chars scatter
-      tl.to(
-        imageEl,
-        {
-          scale: 1,
-          opacity: 1,
-          filter: 'blur(0px)',
-          duration: 2,
-          ease: 'power2.out',
-        },
-        1.8
-      );
-
-      // Phase 3 (0.6–1.0): Bio words scrub in one by one, stats fade up
-      tl.to(
-        bioWords,
-        {
-          opacity: 1,
-          duration: 0.3,
-          stagger: { amount: 2, ease: 'none' },
-          ease: 'none',
-        },
-        3
-      );
-
-      tl.to(
-        statsRef.current,
-        { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out' },
-        3.2
-      );
-
-      // Live count-up for stats synced with scroll scrub
-      STATS.forEach((stat, i) => {
-        const el = statsRef.current?.querySelectorAll('.stat-num')[i] as HTMLElement;
-        if (!el) return;
-        const obj = { val: 0 };
-        tl.to(
-          obj,
-          {
-            val: stat.value,
-            duration: 1.5,
-            ease: 'power2.out',
-            onUpdate: () => {
-              el.textContent = Math.round(obj.val) + stat.suffix;
-            },
+        // ── 4. Master timeline pinned to the section ─────────────────────────
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: '+=250%',       // section occupies 3.5x viewport heights of scroll
+            pin: true,
+            scrub: 0.8,
+            anticipatePin: 1,
           },
-          3.4 + i * 0.15
-        );
-      });
-    }, containerRef);
+        });
 
-    return () => ctx.revert();
+        // Phase 1 (0–0.3): Chars fly IN from scattered positions
+        tl.to(
+          largeChars,
+          {
+            x: 0,
+            y: 0,
+            rotation: 0,
+            rotationX: 0,
+            rotationY: 0,
+            scale: 1,
+            opacity: 1,
+            duration: 2,
+            ease: 'power3.out',
+            stagger: { amount: 0.8, from: 'random' },
+          },
+          0
+        );
+
+        // Phase 2 (0.3–0.55): Headline chars EXPLODE out, image reveals
+        tl.to(
+          largeChars,
+          {
+            x: () => (Math.random() - 0.5) * window.innerWidth * 2.5,
+            y: () => (Math.random() - 0.5) * window.innerHeight * 2.5,
+            rotation: () => (Math.random() - 0.5) * 720,
+            scale: () => 0.1 + Math.random() * 0.5,
+            opacity: 0,
+            duration: 2.5,
+            ease: 'power4.in',
+            stagger: { amount: 0.6, from: 'center' },
+          },
+          1.5
+        );
+
+        // Phase 2b: Image blooms into view as chars scatter
+        tl.to(
+          imageEl,
+          {
+            scale: 1,
+            opacity: 1,
+            filter: 'blur(0px)',
+            duration: 2,
+            ease: 'power2.out',
+          },
+          1.8
+        );
+
+        // Phase 3 (0.6–1.0): Bio words scrub in one by one, stats fade up
+        tl.to(
+          bioWords,
+          {
+            opacity: 1,
+            duration: 0.3,
+            stagger: { amount: 2, ease: 'none' },
+            ease: 'none',
+          },
+          3
+        );
+
+        tl.to(
+          statsRef.current,
+          { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out' },
+          3.2
+        );
+
+        // Live count-up for stats synced with scroll scrub
+        STATS.forEach((stat, i) => {
+          const el = statsRef.current?.querySelectorAll('.stat-num')[i] as HTMLElement;
+          if (!el) return;
+          const obj = { val: 0 };
+          tl.to(
+            obj,
+            {
+              val: stat.value,
+              duration: 1.5,
+              ease: 'power2.out',
+              onUpdate: () => {
+                el.textContent = Math.round(obj.val) + stat.suffix;
+              },
+            },
+            3.4 + i * 0.15
+          );
+        });
+      }, containerRef);
+
+      return () => ctx.revert();
     }, 120); // end loading gate setTimeout
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    // ⚠️ CRITICAL: NO overflow-hidden here — it breaks GSAP pin
     <div ref={containerRef} className="bg-[#050505] relative z-10" id="about"
       data-ambient-hue="200"
       data-ambient-sat="25%"
       data-ambient-lit="3%"
     >
-      {/* Flash overlay for cinematic entry */}
-      <div
-        ref={overlayRef}
-        className="absolute inset-0 bg-white pointer-events-none z-50 opacity-0"
-      />
-
       {/* Ambient background blobs */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-blue-700/10 rounded-full blur-[180px]" />

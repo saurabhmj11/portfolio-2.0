@@ -36,7 +36,7 @@ const TextReveal: React.FC<TextRevealProps> = ({ children, className, el: Wrappe
                         scrollTrigger: {
                             trigger: ref.current,
                             start: `top ${threshold * 100}%`,
-                            toggleActions: 'play none none reverse'
+                            toggleActions: 'play none none none'
                         }
                     }
                 );
