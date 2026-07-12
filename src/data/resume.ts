@@ -7,7 +7,7 @@ export const resumeData = {
         phone: "+91-7767913887",
         github: "github.com/saurabhmj11",
         linkedin: "linkedin.com/in/saurabhmj11",
-        portfolio: "saurabh-anil-lokhande.netlify.app"
+        portfolio: "saurabh-a-lokhande.netlify.app"
     },
     summary: "AI Engineer with 2+ years of experience designing and deploying production-grade Generative AI systems, including agentic architectures, Retrieval-Augmented Generation (RAG), and LLM-powered applications. Experienced in building AI SaaS platforms, multi-agent workflows, and scalable AI backends using Python, FastAPI, LangGraph, and vector databases. Strong focus on production architecture, orchestration, and real-world AI deployment beyond basic chatbot implementations.",
     skills: {

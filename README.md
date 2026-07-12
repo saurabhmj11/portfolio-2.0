@@ -1,6 +1,6 @@
 # Saurabh Lokhande - AI Engineer Portfolio
 
-The codebase for [saurabh-anil-lokhande.netlify.app](https://saurabh-anil-lokhande.netlify.app/), a "Top 1%" portfolio showcasing advanced frontend engineering, 3D visualizations, and autonomous agent integrations.
+The codebase for [saurabh-a-lokhande.netlify.app](https://saurabh-a-lokhande.netlify.app/), a "Top 1%" portfolio showcasing advanced frontend engineering, 3D visualizations, and autonomous agent integrations.
 
 ## 🚀 Key Features
 

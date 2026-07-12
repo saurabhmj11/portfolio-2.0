@@ -11,4 +11,4 @@ Disallow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://saurabh-anil-lokhande.netlify.app/sitemap.xml
+Sitemap: https://saurabh-a-lokhande.netlify.app/sitemap.xml

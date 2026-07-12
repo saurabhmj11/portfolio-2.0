@@ -6,7 +6,7 @@
 
   <!-- Homepage -->
   <url>
-    <loc>https://saurabh-anil-lokhande.netlify.app/</loc>
+    <loc>https://saurabh-a-lokhande.netlify.app/</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -14,7 +14,7 @@
 
   <!-- Blog Index -->
   <url>
-    <loc>https://saurabh-anil-lokhande.netlify.app/blog</loc>
+    <loc>https://saurabh-a-lokhande.netlify.app/blog</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -22,25 +22,25 @@
 
   <!-- Blog Posts -->
   <url>
-    <loc>https://saurabh-anil-lokhande.netlify.app/blog/evolutionary-architectures-hyper-scale-computation</loc>
+    <loc>https://saurabh-a-lokhande.netlify.app/blog/evolutionary-architectures-hyper-scale-computation</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://saurabh-anil-lokhande.netlify.app/blog/ai-chip-design-co-pilot</loc>
+    <loc>https://saurabh-a-lokhande.netlify.app/blog/ai-chip-design-co-pilot</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://saurabh-anil-lokhande.netlify.app/blog/the-era-of-agentic-ai</loc>
+    <loc>https://saurabh-a-lokhande.netlify.app/blog/the-era-of-agentic-ai</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://saurabh-anil-lokhande.netlify.app/blog/generative-ai-software-engineering</loc>
+    <loc>https://saurabh-a-lokhande.netlify.app/blog/generative-ai-software-engineering</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

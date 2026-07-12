@@ -21,7 +21,7 @@ const RAGSimulator = () => {
         "who is saurabh": "Saurabh Lokhande is an AI Engineer specializing in Generative AI, Agentic Systems, and LLM Architecture. He has 2+ years of experience building production-grade AI platforms like OpenReception and AGEN.",
         "skills": "Saurabh's core skills include Agentic AI Systems, Multi-Agent Architectures, RAG, Prompt Engineering, and Backend Engineering with Python and FastAPI. He is proficient in tools like LangChain, LangGraph, and Vector Databases (FAISS, Pinecone).",
         "experience": "Saurabh is currently a Generative AI / LLM Engineer at OneOfficeAutomation. He has built several production-style AI systems, including an AI receptionist SaaS, an open-source AI agent browser platform, and a stateful multi-agent research automation system using LangGraph.",
-        "contact": "You can contact Saurabh via email at saurabhmj11@gmail.com or connect with him on LinkedIn at linkedin.com/in/saurabhmj11. His portfolio is available at saurabh-anil-lokhande.netlify.app."
+        "contact": "You can contact Saurabh via email at saurabhmj11@gmail.com or connect with him on LinkedIn at linkedin.com/in/saurabhmj11. His portfolio is available at saurabh-a-lokhande.netlify.app."
     };
 
     const DEFAULT_RESPONSE = "Based on the provided context, Saurabh deployed an event-driven OCR pipeline using AWS Textract, Tesseract, and OpenCV, automating 95% of processing with <1% critical error rate.";
