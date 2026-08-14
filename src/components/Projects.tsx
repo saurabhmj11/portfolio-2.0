@@ -70,7 +70,7 @@ const ProjectNode = ({ project, index, isHovered, setHovered, setSelectedProject
             onClick={() => { setSelectedProject(project); }}
             layoutId={`project-container-${project.id}`}
         >
-            <div className="relative w-full h-full rounded-[2rem] overflow-hidden group border border-white/10 shadow-2xl bg-[#0a0a0a]" style={{ filter: 'url(#liquid-filter)' }}>
+            <div className="relative w-full h-full rounded-[2rem] overflow-hidden group border border-white/10 shadow-2xl bg-white/5 backdrop-blur-md hover:border-neon-purple/50 hover:shadow-[0_0_20px_rgba(168,85,247,0.2)] transition-all duration-300" style={{ filter: 'url(#liquid-filter)' }}>
                 {/* Embedded image with parallax */}
                 <motion.div style={{ x: smoothX, y: smoothY }} className="absolute inset-[-20%] w-[140%] h-[140%]">
                     <OptimizedImage
@@ -161,7 +161,7 @@ const Projects = () => {
                 sectionRef.current = node;
                 ref(node);
             }}
-            className="bg-[#020202] relative z-10 w-full overflow-hidden"
+            className="bg-transparent relative z-10 w-full overflow-hidden"
             id="projects"
         >
             {inView && (
@@ -185,7 +185,7 @@ const Projects = () => {
 
             {isMobile ? (
                 // Mobile View - Vertical Stack
-                <div className="py-24 px-4 w-full min-h-screen bg-[#020202] flex flex-col justify-center">
+                <div className="py-24 px-4 w-full min-h-screen bg-transparent flex flex-col justify-center">
                     <div className="mb-16 text-center">
                         <ScrollReveal>
                             <h2 className="text-[11vw] font-display font-black leading-[0.9] tracking-tighter uppercase mb-4 text-white text-center">
@@ -201,7 +201,7 @@ const Projects = () => {
                             <ScrollReveal key={project.id} width="100%">
                                 <motion.div
                                     layoutId={`project-container-${project.id}`}
-                                    className="w-full bg-[#0a0a0a] border border-white/10 rounded-3xl overflow-hidden cursor-pointer"
+                                    className="w-full bg-white/5 backdrop-blur-md border border-white/10 hover:border-neon-purple/50 hover:shadow-[0_0_20px_rgba(168,85,247,0.2)] transition-all duration-300 rounded-3xl overflow-hidden cursor-pointer"
                                     onClick={() => setSelectedProject(project)}
                                 >
                                     <div className="h-64 overflow-hidden relative w-full">

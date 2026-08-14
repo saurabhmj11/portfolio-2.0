@@ -1,6 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import useIsMobile from '../hooks/useIsMobile';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface ScrollRevealProps {
     children: React.ReactNode;
@@ -18,25 +21,45 @@ const ScrollReveal = ({
     threshold = 0.2
 }: ScrollRevealProps) => {
     const isMobile = useIsMobile();
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+
+        const ctx = gsap.context(() => {
+            gsap.fromTo(el,
+                { 
+                    opacity: 0, 
+                    y: isMobile ? 12 : 24 
+                },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: isMobile ? 0.5 : 0.65,
+                    ease: 'power3.out',
+                    delay: delay,
+                    scrollTrigger: {
+                        trigger: el,
+                        start: `top ${100 - (threshold * 100)}%`, // equivalent to threshold
+                        toggleActions: 'play none none none',
+                        once: true,
+                    }
+                }
+            );
+        }, containerRef);
+
+        return () => ctx.revert();
+    }, [isMobile, delay, threshold]);
 
     return (
-        <motion.div
-            // Compositor-only properties (opacity + translateY) — no repaints.
-            // Removed blur() filter: it forces a full-screen repaint on every
-            // animation frame and causes visible judder during scroll-driven reveals.
-            initial={{ opacity: 0, y: isMobile ? 12 : 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: isMobile ? "-10px" : "-40px", amount: threshold }}
-            transition={{
-                duration: isMobile ? 0.5 : 0.65,
-                ease: [0.22, 1, 0.36, 1],
-                delay: delay,
-            }}
-            style={{ width, willChange: 'transform, opacity' }}
+        <div 
+            ref={containerRef} 
             className={className}
+            style={{ width, willChange: 'transform, opacity' }}
         >
             {children}
-        </motion.div>
+        </div>
     );
 };
 

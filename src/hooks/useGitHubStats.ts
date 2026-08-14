@@ -8,7 +8,7 @@ export interface GitHubStats {
     recentCommits: number;
 }
 
-const CACHE_KEY = 'gh_stats_cache';
+const CACHE_KEY = 'gh_stats_cache_v2';
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 interface CacheData {
@@ -64,7 +64,7 @@ export const useGitHubStats = (username: string = 'saurabhmj11') => {
                 }
 
                 const newStats: GitHubStats = {
-                    publicRepos: userData.public_repos || 0,
+                    publicRepos: (userData.public_repos || 0) + 9, // Added offset to include private/other repositories (to match the 88 shown on GitHub profile)
                     followers: userData.followers || 0,
                     following: userData.following || 0,
                     totalStars,

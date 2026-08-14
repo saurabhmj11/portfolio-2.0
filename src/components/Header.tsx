@@ -1,24 +1,13 @@
-import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Magnetic from './Magnetic';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { Atom, Command } from 'lucide-react';
+import { Atom, Command, Volume2, VolumeX } from 'lucide-react';
+import { useAudioDirector } from '../context/AudioContext';
 
 const Header = () => {
-  const { scrollY } = useScroll();
   const location = useLocation();
   const navigate = useNavigate();
-
-  // Progressive Glassmorphism values mapped to exactly 0px-100px of scroll
-  const bgOpacity = useTransform(scrollY, [0, 100], [0, 0.05]);
-  const backgroundColor = useMotionTemplate`rgba(255, 255, 255, ${bgOpacity})`;
-
-  const blurValue = useTransform(scrollY, [0, 100], [0, 16]);
-  const backdropFilter = useMotionTemplate`blur(${blurValue}px)`;
-
-  const borderOpacity = useTransform(scrollY, [0, 100], [0, 0.1]);
-  const borderBottom = useMotionTemplate`1px solid rgba(255, 255, 255, ${borderOpacity})`;
-
-  const py = useTransform(scrollY, [0, 100], ["2rem", "1rem"]);
+  const { isMuted, toggleMute } = useAudioDirector();
 
   const handleNavClick = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
@@ -34,17 +23,10 @@ const Header = () => {
 
   return (
     <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-      style={{
-        backgroundColor,
-        backdropFilter,
-        borderBottom,
-        paddingTop: py,
-        paddingBottom: py,
-      }}
-      className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 md:px-12 text-white"
+      initial={{ y: -100, x: '-50%', opacity: 0 }}
+      animate={{ y: 0, x: '-50%', opacity: 1 }}
+      transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.2 }}
+      className="fixed top-6 left-1/2 z-50 flex justify-between items-center px-4 py-3 md:py-2 md:px-6 w-[92%] max-w-5xl rounded-full bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] text-white"
     >
       {/* Interactive Sliding Logo */}
       <Magnetic>
@@ -89,9 +71,22 @@ const Header = () => {
           </Magnetic>
         ))}
 
+        {/* Audio Toggle */}
+        <button
+          onClick={toggleMute}
+          className="ml-2 h-8 w-8 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer"
+          aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
+        >
+          {isMuted ? (
+            <VolumeX className="w-4 h-4 text-gray-400" />
+          ) : (
+            <Volume2 className="w-4 h-4 text-white" />
+          )}
+        </button>
+
         {/* Command Palette Hint */}
         <button
-          className="ml-4 h-8 px-2 bg-white/5 border border-white/10 rounded-lg flex items-center gap-1.5 cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-300 group/k"
+          className="h-8 px-2 bg-white/5 border border-white/10 rounded-lg flex items-center gap-1.5 cursor-pointer hover:bg-white/10 hover:border-white/20 transition-all duration-300 group/k"
           onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
           aria-label="Open Command Palette"
         >

@@ -1,5 +1,15 @@
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
+
+interface Step {
+    num: string;
+    title: string;
+    tag: string;
+    desc: string;
+    accent: string;
+    gradient: string;
+    icon: string;
+}
 
 const steps = [
     {
@@ -40,7 +50,7 @@ const steps = [
     },
 ];
 
-const StackedCard = ({ step, index, progress }: { step: any; index: number; progress: any }) => {
+const StackedCard = ({ step, index, progress }: { step: Step; index: number; progress: MotionValue<number> }) => {
     // We want the card to slightly scale down and darken as the next cards stack on top of it.
     // progress is 0 to 1 for the whole section.
     // There are 4 cards, so we can map based on the index.
@@ -53,13 +63,13 @@ const StackedCard = ({ step, index, progress }: { step: any; index: number; prog
 
     return (
         <motion.div
-            className="sticky w-full max-w-5xl mx-auto rounded-[2rem] border backdrop-blur-xl overflow-hidden shadow-2xl flex flex-col md:flex-row items-center p-8 md:p-16 gap-8 md:gap-16"
+            className="sticky w-full max-w-5xl mx-auto rounded-[2rem] overflow-hidden flex flex-col md:flex-row items-center p-8 md:p-16 gap-8 md:gap-16 bg-white/5 backdrop-blur-xl border border-white/10"
             style={{
                 top: `calc(15vh + ${index * 40}px)`,
                 height: '65vh',
                 marginBottom: '10vh',
-                backgroundColor: 'rgba(10, 10, 12, 0.7)',
-                borderColor: `${step.accent}30`,
+                borderColor: `${step.accent}50`,
+                boxShadow: `0 0 30px ${step.accent}15`,
                 scale,
                 opacity,
                 transformOrigin: 'top center'
@@ -131,7 +141,7 @@ const Workflow = () => {
         <section
             ref={containerRef}
             id="workflow"
-            className="w-full bg-[#030712] relative pt-32 pb-48 px-4"
+            className="w-full relative pt-32 pb-48 px-4 bg-transparent"
         >
             {/* Header */}
             <div className="text-center mb-24 max-w-3xl mx-auto relative z-20">

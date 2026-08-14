@@ -39,7 +39,7 @@ const AudioVisualizer = React.lazy(() => import('./components/AudioVisualizer'))
 import PageTransition from './components/PageTransition';
 
 function App() {
-  const [isDark] = useState(false);
+  const [isDark] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isChatOpen, setIsChatOpen] = useState(false);
   // Swipe-to-navigate between sections on mobile (Disabled to allow smooth Lenis/ScrollTrigger animations)
@@ -91,7 +91,7 @@ function App() {
 
               {/* Main Content */}
               <div
-                className={`relative z-10 min-h-screen ${isDark ? 'dark' : ''} bg-off-white shadow-2xl`}
+                className={`relative z-10 min-h-screen ${isDark ? 'dark' : ''} bg-background text-off-white shadow-2xl`}
               >
                 {/* Noise Overlay */}
                 <div className="noise-overlay" />

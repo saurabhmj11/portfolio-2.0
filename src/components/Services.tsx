@@ -281,7 +281,7 @@ const CapabilityCard = ({ service, bgIndex }: { service: typeof services[0]; bgI
             transition={{ duration: 0.6, delay: bgIndex * 0.07, ease: [0.22, 1, 0.36, 1] }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            className={`relative overflow-hidden border border-white/10 bg-[#080808] w-full h-full min-h-[220px] md:min-h-[240px] group cursor-default`}
+            className={`relative overflow-hidden border border-white/10 bg-white/5 backdrop-blur-md hover:border-neon-cyan/50 hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-300 w-full h-full min-h-[220px] md:min-h-[240px] group cursor-default`}
             style={{ borderRadius: '1.5rem' }}
         >
             {/* Generative Background — disabled on mobile, paused off-screen */}
@@ -368,7 +368,7 @@ const Services = () => {
     };
 
     return (
-        <section id="services" className="bg-[#030303] text-white relative overflow-hidden">
+        <section id="services" className="bg-transparent text-white relative overflow-hidden">
 
             {/* Subtle ambient glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-white/[0.02] blur-[100px] pointer-events-none" />

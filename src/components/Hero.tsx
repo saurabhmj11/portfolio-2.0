@@ -91,14 +91,14 @@ const Hero = () => {
             data-ambient-hue="230"
             data-ambient-sat="20%"
             data-ambient-lit="3%"
-            className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-x-hidden bg-black text-white px-4 pt-24 pb-32 md:pt-0 md:pb-24"
+            className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-x-hidden bg-transparent text-white px-4 pt-24 pb-32 md:pt-0 md:pb-24"
         >
-            {/* Background — Gradient (No heavy video) */}
-            <div className="absolute inset-0 z-0">
-                <div className="w-full h-full bg-gradient-to-br from-[#030303] via-[#0a0a1a] to-[#030303]" />
+            {/* Background — Global gradient handles this now, adding a subtle glow */}
+            <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+                <div className="w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] rounded-full bg-neon-purple/20 blur-[100px] animate-pulse-glow" />
             </div>
 
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 z-10" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/90 z-10" />
 
             {/* 3D Components — Desktop only, behind text (z-20), text is z-40 */}
             {!isMobile && coreInView ? (
@@ -114,7 +114,7 @@ const Hero = () => {
             {/* Main Content — always on top of 3D canvas, with isolation so blend modes don't bleed */}
             <motion.div
                 style={{ y, opacity, isolation: 'isolate' } as MotionStyle}
-                className="relative z-40 pointer-events-none flex flex-col items-center text-center w-full px-2 md:px-0 max-w-[90vw]"
+                className="relative z-40 pointer-events-none flex flex-col items-center text-center w-full px-2 md:px-0 max-w-[90vw] mt-24 md:mt-16"
             >
                 {/* ── Open to Work badge ── */}
                 <motion.div
@@ -134,11 +134,11 @@ const Hero = () => {
                 <div className="flex flex-col w-full max-w-7xl mx-auto leading-[0.85] font-display font-bold tracking-tighter uppercase cursor-default relative text-white px-0 lg:px-12">
 
                     {/* Row 1: I'm a Generative AI */}
-                    <div className="flex flex-col items-center md:items-start relative z-10 w-full md:pl-[10%] mb-4 md:-mb-6">
-                        <span className="hero-intro font-serif italic text-3xl md:text-5xl text-blue-400 opacity-0 normal-case tracking-normal md:pl-16 mb-2 mix-blend-screen">
+                    <div className="flex flex-col items-center md:items-start relative z-10 w-full md:pl-[10%] mb-4 md:-mb-6 animate-float">
+                        <span className="hero-intro font-serif italic text-3xl md:text-5xl text-neon-cyan opacity-0 normal-case tracking-normal md:pl-16 mb-2 mix-blend-screen">
                             I'm a
                         </span>
-                        <h1 className="text-[clamp(2rem,11.5vw,9rem)] text-center md:text-left leading-none">
+                        <h1 className="text-[clamp(2rem,11.5vw,9rem)] text-center md:text-left leading-none bg-clip-text text-transparent bg-gradient-to-r from-neon-blue via-neon-cyan to-neon-purple animate-gradient-x drop-shadow-lg">
                             <HackerText text="Generative AI" speed={40} />
                         </h1>
                     </div>
@@ -174,12 +174,13 @@ const Hero = () => {
 
                     <div className="hero-cta flex flex-col sm:flex-row gap-3 sm:gap-6 items-center pointer-events-auto">
                         <Magnetic>
-                            <a href="#projects" className="px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-black font-medium rounded-full hover:bg-gray-200 transition-colors duration-300 inline-block text-sm sm:text-base w-48 sm:w-auto text-center">
-                                View Projects
+                            <a href="#projects" className="px-6 sm:px-8 py-3.5 sm:py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-medium rounded-full hover:bg-white/20 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:border-neon-purple/50 transition-all duration-300 inline-block text-sm sm:text-base w-48 sm:w-auto text-center relative overflow-hidden group">
+                                <span className="relative z-10">View Projects</span>
+                                <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]" />
                             </a>
                         </Magnetic>
                         <Magnetic>
-                            <a href="#contact" className="px-6 sm:px-8 py-3.5 sm:py-4 border border-white/20 backdrop-blur-sm text-white font-medium rounded-full hover:bg-white/10 transition-colors duration-300 inline-block text-sm sm:text-base w-48 sm:w-auto text-center">
+                            <a href="#contact" className="px-6 sm:px-8 py-3.5 sm:py-4 border border-white/10 bg-black/20 backdrop-blur-md text-gray-300 font-medium rounded-full hover:bg-white/10 hover:text-white hover:border-white/30 transition-all duration-300 inline-block text-sm sm:text-base w-48 sm:w-auto text-center">
                                 Contact Me
                             </a>
                         </Magnetic>

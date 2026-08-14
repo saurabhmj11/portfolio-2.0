@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import gsap from 'gsap';
+import { useAudioDirector } from '../context/AudioContext';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type CursorState = 'default' | 'hover-link' | 'hover-text' | 'hover-drag';
@@ -15,9 +16,9 @@ interface Particle {
 }
 
 // ── Constants ──────────────────────────────────────────────────────────────
-const TRAIL_LENGTH = 18;
-const BASE_HUE = 210; // blue
-const HOVER_HUE = 280; // violet on hover
+const TRAIL_LENGTH = 25;
+const BASE_HUE = 280; // purple
+const HOVER_HUE = 320; // pink on hover
 
 // ── Particle Trail Canvas ─────────────────────────────────────────────────
 const useParticleTrail = (isHovering: boolean) => {
@@ -119,6 +120,8 @@ const useParticleTrail = (isHovering: boolean) => {
 
 // ── Main Cursor Component ──────────────────────────────────────────────────
 const CustomCursor = () => {
+  const { playHoverTick, playClickPop } = useAudioDirector();
+
   const isTouchDevice =
     typeof window !== 'undefined' &&
     (window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 1024);
@@ -127,31 +130,42 @@ const CustomCursor = () => {
   const isHovering = cursorState !== 'default';
   const canvasRef = useParticleTrail(isHovering);
 
-  const mouse = {
-    x: useMotionValue(-200),
-    y: useMotionValue(-200),
-  };
-
-  const smoothOptions = { damping: 22, stiffness: 350, mass: 0.4 };
-  const smoothMouse = {
-    x: useSpring(mouse.x, smoothOptions),
-    y: useSpring(mouse.y, smoothOptions),
-  };
-
-  // Slower ring for magnetic lag
-  const ringOptions = { damping: 28, stiffness: 120, mass: 0.8 };
-  const ringMouse = {
-    x: useSpring(mouse.x, ringOptions),
-    y: useSpring(mouse.y, ringOptions),
-  };
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isTouchDevice) return;
 
+    // Center elements on their (x, y) coordinates
+    gsap.set([cursorRef.current, ringRef.current, labelRef.current], {
+      xPercent: -50,
+      yPercent: -50,
+      left: 0,
+      top: 0
+    });
+
+    // GSAP quickTo for ultra-fast, non-react-rendering movement
+    const xMoveCursor = gsap.quickTo(cursorRef.current, 'x', { duration: 0.1, ease: 'power3' });
+    const yMoveCursor = gsap.quickTo(cursorRef.current, 'y', { duration: 0.1, ease: 'power3' });
+    
+    // Ring has more lag for the magnetic feel
+    const xMoveRing = gsap.quickTo(ringRef.current, 'x', { duration: 0.35, ease: 'power3' });
+    const yMoveRing = gsap.quickTo(ringRef.current, 'y', { duration: 0.35, ease: 'power3' });
+
+    const xMoveLabel = gsap.quickTo(labelRef.current, 'x', { duration: 0.15, ease: 'power3' });
+    const yMoveLabel = gsap.quickTo(labelRef.current, 'y', { duration: 0.15, ease: 'power3' });
+
     const onMove = (e: MouseEvent) => {
-      const { clientX: cx, clientY: cy } = e;
-      mouse.x.set(cx);
-      mouse.y.set(cy);
+      const { clientX, clientY } = e;
+      xMoveCursor(clientX);
+      yMoveCursor(clientY);
+      xMoveRing(clientX);
+      yMoveRing(clientY);
+      if (labelRef.current) {
+        xMoveLabel(clientX);
+        yMoveLabel(clientY + 24); // Offset below cursor
+      }
     };
 
     const onOver = (e: MouseEvent) => {
@@ -162,113 +176,130 @@ const CustomCursor = () => {
       const isText = target.tagName === 'P' || target.tagName === 'SPAN' || target.tagName === 'H1'
         || target.tagName === 'H2' || target.tagName === 'H3';
 
-      if (isDrag) setCursorState('hover-drag');
-      else if (isLink || isBtn) setCursorState('hover-link');
-      else if (isText) setCursorState('hover-text');
-      else setCursorState('default');
+      if (isDrag) {
+        setCursorState('hover-drag');
+      } else if (isLink || isBtn) {
+        if (cursorState !== 'hover-link') playHoverTick();
+        setCursorState('hover-link');
+      } else if (isText) {
+        setCursorState('hover-text');
+      } else {
+        setCursorState('default');
+      }
+    };
+
+    const onClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const isLink = target.tagName === 'A' || !!target.closest('a');
+      const isBtn = target.tagName === 'BUTTON' || !!target.closest('button');
+      if (isLink || isBtn) {
+        playClickPop();
+      }
     };
 
     window.addEventListener('mousemove', onMove, { passive: true });
     window.addEventListener('mouseover', onOver, { passive: true });
+    window.addEventListener('click', onClick, { passive: true });
     return () => {
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseover', onOver);
+      window.removeEventListener('click', onClick);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isTouchDevice]);
+  }, [isTouchDevice, cursorState, playHoverTick, playClickPop]);
+
+  // GSAP state animations
+  useEffect(() => {
+    if (isTouchDevice) return;
+
+    const ringSize = {
+      'default': 36,
+      'hover-link': 56,
+      'hover-text': 44,
+      'hover-drag': 48,
+    }[cursorState];
+
+    const ringColor = {
+      'default': 'rgba(255,255,255,0.25)',
+      'hover-link': 'rgba(139,92,246,0.6)',
+      'hover-text': 'rgba(59,130,246,0.5)',
+      'hover-drag': 'rgba(34,211,238,0.5)',
+    }[cursorState];
+
+    const dotSize = cursorState !== 'default' ? 6 : 10;
+    const dotColor = cursorState === 'default' ? '#ffffff' : ringColor;
+    const dotScale = cursorState !== 'default' ? 1.2 : 1;
+    const ringRotate = cursorState === 'hover-drag' ? 45 : 0;
+    const ringBorderRadius = cursorState === 'hover-drag' ? '6px' : '50%';
+
+    gsap.to(ringRef.current, {
+      width: ringSize,
+      height: ringSize,
+      borderColor: ringColor,
+      rotate: ringRotate,
+      borderRadius: ringBorderRadius,
+      duration: 0.35,
+      ease: 'back.out(1.7)'
+    });
+
+    gsap.to(cursorRef.current, {
+      width: dotSize,
+      height: dotSize,
+      backgroundColor: dotColor,
+      scale: dotScale,
+      duration: 0.2,
+      ease: 'power2.out'
+    });
+
+    if (cursorState === 'hover-drag' && labelRef.current) {
+        gsap.to(labelRef.current, { opacity: 1, duration: 0.2 });
+    } else if (labelRef.current) {
+        gsap.to(labelRef.current, { opacity: 0, duration: 0.2 });
+    }
+  }, [cursorState, isTouchDevice]);
 
   if (isTouchDevice) return null;
 
-  // Ring size & color per state
-  const ringSize = {
-    'default': 36,
-    'hover-link': 56,
-    'hover-text': 44,
-    'hover-drag': 48,
-  }[cursorState];
-
-  const ringColor = {
-    'default': 'rgba(255,255,255,0.25)',
-    'hover-link': 'rgba(139,92,246,0.6)',
-    'hover-text': 'rgba(59,130,246,0.5)',
-    'hover-drag': 'rgba(34,211,238,0.5)',
-  }[cursorState];
-
-  const dotSize = cursorState !== 'default' ? 6 : 10;
-
   return (
     <>
-      {/* Particle trail canvas — behind everything */}
       <canvas
         ref={canvasRef}
         className="fixed inset-0 pointer-events-none z-[9990]"
         style={{ mixBlendMode: 'screen' }}
       />
 
-      {/* Outer ring — slow magnetic lag */}
-      <motion.div
+      {/* Ring */}
+      <div
+        ref={ringRef}
         className="fixed pointer-events-none z-[9998]"
         style={{
-          left: ringMouse.x,
-          top: ringMouse.y,
-          translateX: '-50%',
-          translateY: '-50%',
+          width: 36, 
+          height: 36,
+          border: '1.5px solid rgba(255,255,255,0.8)',
+          borderRadius: '50%',
+          transformOrigin: 'center center',
+          mixBlendMode: 'difference'
         }}
-      >
-        <motion.div
-          animate={{
-            width: ringSize,
-            height: ringSize,
-            borderColor: ringColor,
-            rotate: cursorState === 'hover-drag' ? 45 : 0,
-          }}
-          transition={{ duration: 0.25, ease: 'backOut' }}
-          style={{
-            border: '1.5px solid',
-            borderRadius: cursorState === 'hover-drag' ? '6px' : '50%',
-          }}
-        />
-      </motion.div>
+      />
 
-      {/* Center dot — fast, stays exactly on cursor */}
-      <motion.div
-        className="fixed pointer-events-none z-[9999]"
+      {/* Dot */}
+      <div
+        ref={cursorRef}
+        className="fixed pointer-events-none z-[9999] rounded-full bg-white"
         style={{
-          left: smoothMouse.x,
-          top: smoothMouse.y,
-          translateX: '-50%',
-          translateY: '-50%',
+          width: 10, 
+          height: 10,
+          transformOrigin: 'center center',
+          mixBlendMode: 'difference'
         }}
-      >
-        <motion.div
-          animate={{
-            width: dotSize,
-            height: dotSize,
-            backgroundColor: cursorState === 'default' ? '#ffffff' : ringColor,
-            scale: cursorState !== 'default' ? 1.2 : 1,
-          }}
-          transition={{ duration: 0.2, ease: 'backOut' }}
-          className="rounded-full"
-        />
-      </motion.div>
+      />
 
-      {/* "Drag" label for grab state */}
-      {cursorState === 'hover-drag' && (
-        <motion.div
-          className="fixed pointer-events-none z-[9997] text-[10px] font-mono tracking-widest text-cyan-300 uppercase"
-          style={{
-            left: smoothMouse.x,
-            top: smoothMouse.y,
-            translateX: '-50%',
-            translateY: '24px',
-          }}
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-        >
-          drag
-        </motion.div>
-      )}
+      {/* Label */}
+      <div
+        ref={labelRef}
+        className="fixed pointer-events-none z-[9997] text-[10px] font-mono tracking-widest text-cyan-300 uppercase opacity-0"
+      >
+        drag
+      </div>
     </>
   );
 };
