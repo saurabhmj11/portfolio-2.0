@@ -52,6 +52,7 @@ const Hero = () => {
     // Slight parallax for the text
     const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
     const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+    const videoOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -93,22 +94,44 @@ const Hero = () => {
             data-ambient-lit="3%"
             className="relative min-h-[100dvh] w-full flex flex-col items-center justify-start overflow-x-hidden bg-transparent text-white px-4 pt-32 pb-24"
         >
-            {/* Background — Global gradient handles this now, adding a subtle glow */}
-            <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+            {/* ── Background Video (desktop only) ── */}
+            {!isMobile && (
+                <motion.div
+                    className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
+                    style={{ opacity: videoOpacity }}
+                >
+                    <video
+                        src="/hero-video.webm"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="absolute inset-0 w-full h-full object-cover scale-105"
+                        style={{ filter: 'brightness(0.35) saturate(1.4)' }}
+                        aria-hidden="true"
+                    />
+                    {/* Vignette so edges blend into the dark bg */}
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,#020202_80%)]" />
+                </motion.div>
+            )}
+
+            {/* Ambient glow — sits above video */}
+            <div className="absolute inset-0 z-[1] flex items-center justify-center pointer-events-none">
                 <div className="w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] rounded-full bg-neon-purple/20 blur-[100px] animate-pulse-glow" />
             </div>
 
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/90 z-10" />
+            {/* Gradient fade to bg at the bottom */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/90 z-[2]" />
 
             {/* 3D Components — Desktop only, behind text (z-20), text is z-40 */}
             {!isMobile && coreInView ? (
-                <div className="absolute inset-0 z-20 pointer-events-auto mix-blend-screen overflow-hidden">
+                <div className="absolute inset-0 z-[3] pointer-events-auto mix-blend-screen overflow-hidden">
                     <Suspense fallback={null}>
                         <InteractiveCore />
                     </Suspense>
                 </div>
             ) : (
-                <div className="absolute inset-0 z-10 mobile-mesh-bg pointer-events-none" />
+                <div className="absolute inset-0 z-[1] mobile-mesh-bg pointer-events-none" />
             )}
 
             {/* Main Content — always on top of 3D canvas, with isolation so blend modes don't bleed */}
