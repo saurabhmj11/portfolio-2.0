@@ -91,7 +91,7 @@ const Hero = () => {
             data-ambient-hue="230"
             data-ambient-sat="20%"
             data-ambient-lit="3%"
-            className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-x-hidden bg-transparent text-white px-4 pt-24 pb-32 md:pt-0 md:pb-24"
+            className="relative min-h-[100dvh] w-full flex flex-col items-center justify-start overflow-x-hidden bg-transparent text-white px-4 pt-32 pb-24"
         >
             {/* Background — Global gradient handles this now, adding a subtle glow */}
             <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
@@ -114,7 +114,7 @@ const Hero = () => {
             {/* Main Content — always on top of 3D canvas, with isolation so blend modes don't bleed */}
             <motion.div
                 style={{ y, opacity, isolation: 'isolate' } as MotionStyle}
-                className="relative z-40 pointer-events-none flex flex-col items-center text-center w-full px-2 md:px-0 max-w-[90vw] mt-24 md:mt-16"
+                className="relative z-40 pointer-events-none flex flex-col items-center text-center w-full px-2 md:px-0 max-w-[90vw] my-auto"
             >
                 {/* ── Open to Work badge ── */}
                 <motion.div
