@@ -20,6 +20,8 @@ export interface Project {
     liveUrl?: string;    // alias used by Projects.tsx modal
     repo?: string;
     position: { x: string; y: string }; // used by neural web layout
+    topology?: import('../components/AnimatedTopology').TopologyData;
+    codeHighlight?: { language: string; code: string; filename?: string };
 }
 
 const projectsData: Project[] = [
@@ -51,6 +53,51 @@ const projectsData: Project[] = [
         link: 'https://doc-ai-frontend.onrender.com',
         repo: 'https://github.com/saurabhmj11/Doc-AI',
         position: { x: '10%', y: '15%' },
+        topology: {
+            nodes: [
+                { id: 'ui', label: 'React UI', icon: 'globe', x: 10, y: 50 },
+                { id: 'api', label: 'FastAPI', icon: 'server', x: 35, y: 50 },
+                { id: 'mask', label: 'Presidio', icon: 'shield', x: 50, y: 20 },
+                { id: 'db', label: 'ChromaDB', icon: 'database', x: 65, y: 50 },
+                { id: 'llm', label: 'Gemini 1.5', icon: 'brain', x: 90, y: 50 },
+            ],
+            edges: [
+                { from: 'ui', to: 'api', animated: true },
+                { from: 'api', to: 'mask', animated: true },
+                { from: 'mask', to: 'db', animated: true },
+                { from: 'db', to: 'llm', animated: true },
+                { from: 'api', to: 'llm', animated: true },
+            ]
+        },
+        codeHighlight: {
+            language: 'python',
+            filename: 'rag_pipeline.py',
+            code: `from fastapi import APIRouter, Depends
+from langchain_google_genai import ChatGoogleGenerativeAI
+from src.core.presidio import Anonymizer
+from src.db.chroma import vector_store
+
+router = APIRouter()
+llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0)
+
+@router.post("/query")
+async def process_document_query(query: str, doc_id: str):
+    # 1. Mask PII/PHI before any processing
+    safe_query = Anonymizer.anonymize(query)
+    
+    # 2. Retrieve relevant chunks (Top 10)
+    retriever = vector_store.as_retriever(search_kwargs={"k": 10})
+    context = retriever.get_relevant_documents(safe_query)
+    
+    # 3. Cross-Encoder Reranking
+    reranked = reranker.rank(safe_query, context, top_k=3)
+    
+    # 4. Strict Guardrails & Generation
+    if reranked[0].score < 0.5:
+        return {"answer": "Confidence too low to answer safely."}
+        
+    return llm.invoke(f"Context: {reranked}\\nQuery: {safe_query}")`
+        }
     },
     {
         id: 'agen',
@@ -78,6 +125,48 @@ const projectsData: Project[] = [
         ],
         repo: 'https://github.com/saurabhmj11/multi-agent-research-auto',
         position: { x: '60%', y: '5%' },
+    },
+    {
+        id: 'oneoffice-automation',
+        title: 'OneOffice Automation',
+        category: 'Enterprise RPA & AI',
+        description:
+            'Enterprise Intelligent Automation platform providing RPA, AI/ML, BPM, Python, and SAP automation solutions for businesses in India and Qatar.',
+        image:
+            'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2670&auto=format&fit=crop',
+        technologies: ['UiPath', 'Python', 'AI/ML', 'SAP Automation', 'RPA'],
+        details: {
+            problem:
+                'Enterprise clients face operational bottlenecks with repetitive, manual tasks across legacy systems like SAP, leading to inefficiencies and human errors.',
+            solution:
+                'Designed and deployed intelligent software bots that automate complex business processes by integrating RPA with Machine Learning models and custom Python scripts.',
+            architecture:
+                'Built on industry-leading RPA platforms coupled with Python microservices for custom AI/ML integrations, orchestrated centrally for enterprise-scale deployment.',
+            impact:
+                'Eliminated repetitive tasks for 50+ enterprise clients, drastically reducing processing time and operational costs while maintaining high accuracy.',
+        },
+        metrics: [
+            { label: 'Enterprise Clients', value: '50+' },
+            { label: 'Automation', value: '100%' },
+            { label: 'Regions', value: 'IN & QA' },
+        ],
+        liveUrl: 'https://oneofficeautomation.com',
+        link: 'https://oneofficeautomation.com',
+        position: { x: '80%', y: '40%' },
+        topology: {
+            nodes: [
+                { id: 'rpa', label: 'RPA Bots', icon: 'server', x: 20, y: 50 },
+                { id: 'sap', label: 'SAP ERP', icon: 'database', x: 50, y: 20 },
+                { id: 'ai', label: 'AI/ML Engine', icon: 'brain', x: 50, y: 80 },
+                { id: 'orchestrator', label: 'Orchestrator', icon: 'globe', x: 80, y: 50 },
+            ],
+            edges: [
+                { from: 'rpa', to: 'sap', animated: true },
+                { from: 'rpa', to: 'ai', animated: true },
+                { from: 'sap', to: 'orchestrator', animated: true },
+                { from: 'ai', to: 'orchestrator', animated: true },
+            ]
+        }
     },
     {
         id: 'research-agent',
@@ -134,6 +223,55 @@ const projectsData: Project[] = [
         link: 'https://hireme-os-2-0.onrender.com',
         repo: 'https://github.com/saurabhmj11/hireme-os-2.0',
         position: { x: '70%', y: '45%' },
+        topology: {
+            nodes: [
+                { id: 'cron', label: 'Autopilot', icon: 'zap', x: 10, y: 50 },
+                { id: 'next', label: 'Next.js API', icon: 'code', x: 35, y: 50 },
+                { id: 'eval', label: 'Eval Engine', icon: 'brain', x: 50, y: 20 },
+                { id: 'db', label: 'Supabase', icon: 'database', x: 65, y: 50 },
+                { id: 'mail', label: 'Nodemailer', icon: 'network', x: 90, y: 50 },
+            ],
+            edges: [
+                { from: 'cron', to: 'next', animated: true },
+                { from: 'next', to: 'eval', animated: true },
+                { from: 'eval', to: 'db', animated: true },
+                { from: 'db', to: 'mail', animated: true },
+                { from: 'next', to: 'db', animated: true },
+            ]
+        },
+        codeHighlight: {
+            language: 'typescript',
+            filename: 'eval-engine.ts',
+            code: `import { prisma } from '@/lib/prisma';
+import { openai } from '@/lib/openai';
+import { z } from 'zod';
+
+const MatchSchema = z.object({
+  score: z.number().min(0).max(100),
+  missingSkills: z.array(z.string()),
+  cultureFit: z.enum(['LOW', 'MEDIUM', 'HIGH']),
+  resumeTailorSuggestions: z.array(z.string())
+});
+
+export async function runEvaluationCycle(jobId: string, profileId: string) {
+  const [job, profile] = await Promise.all([
+    prisma.job.findUnique({ where: { id: jobId } }),
+    prisma.profile.findUnique({ where: { id: profileId } })
+  ]);
+
+  // Execute strict multi-shot evaluation
+  const completion = await openai.beta.chat.completions.parse({
+    model: 'gpt-4o-2024-08-06',
+    messages: [
+      { role: 'system', content: 'You are an elite Tech Recruiter for FAANG.' },
+      { role: 'user', content: \`Evaluate Profile \${profile.cv} against Job \${job.desc}\` }
+    ],
+    response_format: zodResponseFormat(MatchSchema, 'evaluation'),
+  });
+
+  return completion.choices[0].message.parsed;
+}`
+        }
     },
     {
         id: 'quantrag-fintech',
@@ -186,6 +324,28 @@ const projectsData: Project[] = [
             { label: 'Latency', value: '<500ms' },
         ],
         position: { x: '85%', y: '75%' },
+    },
+    {
+        id: 'oneoffice-automation',
+        title: 'OneOffice Automation',
+        category: 'Enterprise RPA & Intelligent Automation',
+        description: 'Enterprise intelligent automation solutions using RPA, AI/ML, BPM, Python, and SAP. Eliminating repetitive tasks for enterprise clients.',
+        image: 'https://oneofficeautomation.com/assets/og-image.jpg',
+        technologies: ['RPA', 'Python', 'AI/ML', 'SAP', 'BPM'],
+        details: {
+            problem: 'Enterprise companies struggle with repetitive, manual tasks and disconnected legacy systems, leading to high operational costs and slow processes.',
+            solution: 'Designed and deployed intelligent software bots to automate business processes, integrating RPA with machine learning and enterprise systems.',
+            architecture: 'Robotic Process Automation (RPA) combined with AI/ML capabilities, custom Python scripting, and SAP automation frameworks.',
+            impact: 'Helped 50+ enterprise clients in India and Qatar streamline operations, reducing manual workload and improving process accuracy.'
+        },
+        metrics: [
+            { label: 'Clients', value: '50+' },
+            { label: 'Regions', value: 'IN & QA' },
+            { label: 'Core', value: 'RPA & AI' },
+        ],
+        liveUrl: 'https://oneofficeautomation.com/',
+        link: 'https://oneofficeautomation.com/',
+        position: { x: '35%', y: '30%' }
     }
 ];
 

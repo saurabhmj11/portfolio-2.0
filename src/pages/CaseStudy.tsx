@@ -9,6 +9,8 @@ import OptimizedImage from '../components/OptimizedImage';
 import ScrollReveal from '../components/ScrollReveal';
 import ScrambleText from '../components/ScrambleText';
 import { Helmet } from 'react-helmet-async';
+import AnimatedTopology from '../components/AnimatedTopology';
+import CodeShowcase from '../components/CodeShowcase';
 // ── Single source of truth: shared with Projects.tsx neural web ──
 import projectsData from '../data/projectsData';
 
@@ -221,7 +223,7 @@ const CaseStudy = () => {
             {/* ── 5. Architecture ── */}
             <section className="py-16 md:py-24 px-6 md:px-16 max-w-6xl mx-auto">
                 <ScrollReveal>
-                    <div className="bg-white/[0.02] border border-white/5 p-8 md:p-12 relative overflow-hidden group">
+                    <div className="bg-white/[0.02] border border-white/5 p-8 md:p-12 relative overflow-hidden group mb-12">
                         {/* Hover shimmer */}
                         <div className="absolute inset-0 bg-white/[0.02] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-1000 ease-out" />
                         <h3 className="font-mono text-xs uppercase tracking-[0.3em] text-gray-500 mb-6 relative z-10">
@@ -231,6 +233,28 @@ const CaseStudy = () => {
                             {project.details.architecture}
                         </p>
                     </div>
+
+                    {project.topology && (
+                        <div className="mb-20">
+                            <h3 className="font-mono text-xs uppercase tracking-[0.3em] text-gray-500 mb-6">
+                                SYSTEM TOPOLOGY
+                            </h3>
+                            <AnimatedTopology data={project.topology} />
+                        </div>
+                    )}
+
+                    {project.codeHighlight && (
+                        <div className="mb-12">
+                            <h3 className="font-mono text-xs uppercase tracking-[0.3em] text-gray-500 mb-6">
+                                KEY IMPLEMENTATION LOGIC
+                            </h3>
+                            <CodeShowcase 
+                                code={project.codeHighlight.code} 
+                                language={project.codeHighlight.language} 
+                                filename={project.codeHighlight.filename} 
+                            />
+                        </div>
+                    )}
                 </ScrollReveal>
             </section>
 
