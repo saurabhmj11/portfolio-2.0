@@ -326,25 +326,25 @@ export async function runEvaluationCycle(jobId: string, profileId: string) {
         position: { x: '85%', y: '75%' },
     },
     {
-        id: 'oneoffice-automation',
-        title: 'OneOffice Automation',
-        category: 'Enterprise RPA & Intelligent Automation',
-        description: 'Enterprise intelligent automation solutions using RPA, AI/ML, BPM, Python, and SAP. Eliminating repetitive tasks for enterprise clients.',
-        image: 'https://oneofficeautomation.com/assets/og-image.jpg',
-        technologies: ['RPA', 'Python', 'AI/ML', 'SAP', 'BPM'],
+        id: 'recovery-lab-qatar',
+        title: 'Recovery Lab Qatar',
+        category: 'Health & Wellness Platform',
+        description: 'Elevate your well-being with our wide range of therapies. Technology-driven treatments backed by scientific research to enhance your health and support your inner healing process.',
+        image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2670&auto=format&fit=crop',
+        technologies: ['React', 'JavaScript', 'HTML5', 'CSS3'],
         details: {
-            problem: 'Enterprise companies struggle with repetitive, manual tasks and disconnected legacy systems, leading to high operational costs and slow processes.',
-            solution: 'Designed and deployed intelligent software bots to automate business processes, integrating RPA with machine learning and enterprise systems.',
-            architecture: 'Robotic Process Automation (RPA) combined with AI/ML capabilities, custom Python scripting, and SAP automation frameworks.',
-            impact: 'Helped 50+ enterprise clients in India and Qatar streamline operations, reducing manual workload and improving process accuracy.'
+            problem: 'Providing a seamless digital experience for clients to discover and book advanced, technology-driven health and wellness treatments.',
+            solution: 'Developed a modern, responsive web application using React to showcase therapies and support the inner healing process of users with a smooth UI.',
+            architecture: 'Single Page Application (SPA) built with React, leveraging modern web practices for fast loading times and optimal user experience.',
+            impact: 'Enhanced the digital presence of Recovery Lab Qatar, making it easier for clients to explore treatments and elevating overall customer engagement.'
         },
         metrics: [
-            { label: 'Clients', value: '50+' },
-            { label: 'Regions', value: 'IN & QA' },
-            { label: 'Core', value: 'RPA & AI' },
+            { label: 'Performance', value: 'Optimized' },
+            { label: 'UI/UX', value: 'Modern' },
+            { label: 'Platform', value: 'Web' }
         ],
-        liveUrl: 'https://oneofficeautomation.com/',
-        link: 'https://oneofficeautomation.com/',
+        liveUrl: 'https://recoverylabqatar.com/',
+        link: 'https://recoverylabqatar.com/',
         position: { x: '35%', y: '30%' }
     }
 ];
