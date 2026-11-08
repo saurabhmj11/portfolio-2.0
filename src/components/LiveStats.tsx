@@ -1,11 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { GitCommit, Github, Star, GitFork, Activity } from 'lucide-react';
+import { GitCommit, Github, Star, GitFork, Activity, RefreshCw } from 'lucide-react';
 import { useGitHubStats } from '../hooks/useGitHubStats';
 
 const LiveStats: React.FC = () => {
-    // ── Replace 3 API calls with 1 cached hook ──
-    const { stats, loading, error } = useGitHubStats('saurabhmj11');
+    const { stats, loading, error, isRefreshing, isRateLimited, lastUpdated, refresh } = useGitHubStats('saurabhmj11');
+    const [timeAgo, setTimeAgo] = useState<string>('just now');
+
+    // Update relative time readout every 30 seconds
+    useEffect(() => {
+        if (!lastUpdated) return;
+
+        const updateRelative = () => {
+            const diffSeconds = Math.floor((Date.now() - lastUpdated) / 1000);
+            if (diffSeconds < 60) {
+                setTimeAgo('just now');
+            } else if (diffSeconds < 3600) {
+                const mins = Math.floor(diffSeconds / 60);
+                setTimeAgo(`${mins}m ago`);
+            } else {
+                const hours = Math.floor(diffSeconds / 3600);
+                setTimeAgo(`${hours}h ago`);
+            }
+        };
+
+        updateRelative();
+        const interval = setInterval(updateRelative, 30000);
+        return () => clearInterval(interval);
+    }, [lastUpdated]);
 
     const statVariants = {
         hidden: { opacity: 0, y: 20 },
@@ -27,7 +49,7 @@ const LiveStats: React.FC = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/10 blur-[120px] rounded-full pointer-events-none" />
 
             <div className="container mx-auto px-4 relative z-10">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12">
                     <div>
                         <h2 className="text-3xl md:text-5xl font-display font-bold mb-4 flex items-center gap-4">
                             <Github className="w-8 h-8 md:w-12 md:h-12 text-green-400" />
@@ -38,16 +60,47 @@ const LiveStats: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10">
-                        <span className={`w-2 h-2 rounded-full ${loading ? 'bg-yellow-400 animate-pulse' : error ? 'bg-red-500' : 'bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]'}`} />
-                        <span className="font-mono text-xs text-gray-300">
-                            {loading ? 'CONNECTING...' : error ? 'SYNC_FAILED' : 'SYS.ONLINE'}
-                        </span>
+                    {/* Live connection badge + manual sync trigger */}
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                            <span className={`w-2 h-2 rounded-full ${
+                                loading || isRefreshing
+                                    ? 'bg-yellow-400 animate-pulse'
+                                    : isRateLimited
+                                    ? 'bg-amber-400'
+                                    : error
+                                    ? 'bg-red-500'
+                                    : 'bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]'
+                            }`} />
+                            <span className="font-mono text-xs text-gray-300">
+                                {loading
+                                    ? 'CONNECTING...'
+                                    : isRefreshing
+                                    ? 'SYNCING...'
+                                    : isRateLimited
+                                    ? 'CACHED (GH LIMIT)'
+                                    : error
+                                    ? 'SYNC_FAILED'
+                                    : `SYS.ONLINE · ${timeAgo}`}
+                            </span>
+                        </div>
+
+                        {/* Force Sync button */}
+                        <button
+                            onClick={() => refresh(true)}
+                            disabled={loading || isRefreshing}
+                            className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-mono text-gray-300 hover:text-white transition-all cursor-pointer disabled:opacity-50"
+                            aria-label="Refresh GitHub statistics"
+                            title="Fetch fresh data from GitHub API"
+                        >
+                            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-green-400' : ''}`} />
+                            <span className="hidden sm:inline">SYNC</span>
+                        </button>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                    {/* Stat Item 1 */}
+                    {/* Stat Item 1: Public Repos */}
                     <motion.div
                         custom={0}
                         variants={statVariants}
@@ -61,12 +114,12 @@ const LiveStats: React.FC = () => {
                         </div>
                         <h3 className="text-gray-400 font-mono text-xs md:text-sm tracking-wider mb-2">PUBLIC_REPOS</h3>
                         <div className="text-4xl md:text-6xl font-bold text-white mb-2">
-                            {loading ? '--' : error ? '?!' : stats?.publicRepos}
+                            {loading ? '--' : error && !stats ? '?!' : stats?.publicRepos}
                         </div>
                         <p className="text-xs text-green-400 font-mono">Repositories deployed</p>
                     </motion.div>
 
-                    {/* Stat Item 2 */}
+                    {/* Stat Item 2: Stars */}
                     <motion.div
                         custom={1}
                         variants={statVariants}
@@ -80,12 +133,12 @@ const LiveStats: React.FC = () => {
                         </div>
                         <h3 className="text-gray-400 font-mono text-xs md:text-sm tracking-wider mb-2">TOTAL_STARS</h3>
                         <div className="text-4xl md:text-6xl font-bold text-white mb-2">
-                            {loading ? '--' : error ? '?!' : stats?.totalStars}
+                            {loading ? '--' : error && !stats ? '?!' : stats?.totalStars}
                         </div>
                         <p className="text-xs text-blue-400 font-mono">Community recognition</p>
                     </motion.div>
 
-                    {/* Stat Item 3 */}
+                    {/* Stat Item 3: Recent Activity */}
                     <motion.div
                         custom={2}
                         variants={statVariants}
@@ -99,12 +152,12 @@ const LiveStats: React.FC = () => {
                         </div>
                         <h3 className="text-gray-400 font-mono text-xs md:text-sm tracking-wider mb-2">RECENT_ACTIVITY</h3>
                         <div className="text-4xl md:text-6xl font-bold text-white mb-2">
-                            {loading ? '--' : error ? '?!' : `~${stats?.recentCommits}`}
+                            {loading ? '--' : error && !stats ? '?!' : `~${stats?.recentCommits}`}
                         </div>
-                        <p className="text-xs text-purple-400 font-mono">Est. pushes (30 days)</p>
+                        <p className="text-xs text-purple-400 font-mono">Estimated pushes (30 days)</p>
                     </motion.div>
 
-                    {/* Stat Item 4 */}
+                    {/* Stat Item 4: Followers / Following */}
                     <motion.div
                         custom={3}
                         variants={statVariants}
@@ -119,11 +172,11 @@ const LiveStats: React.FC = () => {
                         <h3 className="text-gray-400 font-mono text-xs md:text-sm tracking-wider mb-2">NETWORK_PEERS</h3>
                         <div className="flex items-end gap-2 mb-2">
                             <div className="text-4xl md:text-5xl font-bold text-white">
-                                {loading ? '-' : error ? '?' : stats?.followers}
+                                {loading ? '-' : error && !stats ? '?' : stats?.followers}
                             </div>
                             <span className="text-gray-500 text-sm md:text-base pb-1">/</span>
                             <div className="text-2xl md:text-3xl font-bold text-gray-400 pb-0.5">
-                                {loading ? '-' : error ? '?' : stats?.following}
+                                {loading ? '-' : error && !stats ? '?' : stats?.following}
                             </div>
                         </div>
                         <p className="text-xs text-orange-400 font-mono">Followers / Following</p>

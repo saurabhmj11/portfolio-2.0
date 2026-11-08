@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { GitBranch, Zap, TrendingUp } from 'lucide-react';
+import { GitBranch, Zap, TrendingUp, RefreshCw } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,6 +21,8 @@ const GAP = 3;
 const COLS = 52;
 const ROWS = 7;
 const DAY_LABELS = ['', 'Mon', '', 'Wed', '', 'Fri', ''];
+const CACHE_KEY = 'gh_contributions_cache_v2';
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 const groupIntoWeeks = (days: ContributionDay[]) => {
   const weeks = [];
@@ -66,24 +68,73 @@ const GitHubActivity = ({ username = 'saurabhmj11' }: { username?: string }) => 
   const [weeks, setWeeks] = useState<ContributionDay[][]>([]);
   const [stats, setStats] = useState({ total: 0, current: 0, longest: 0 });
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [tooltip, setTooltip] = useState<{ x: number; y: number; date: string; count: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const cellsRef = useRef<(SVGRectElement | null)[]>([]);
 
-  useEffect(() => {
-    const ctrl = new AbortController();
-    fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last`, { signal: ctrl.signal })
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then((data: GitHubContributions) => {
+  const fetchContributions = useCallback(async (force: boolean = false) => {
+    setIsRefreshing(true);
+    try {
+      // 5-minute bucket for normal requests, exact millisecond timestamp on manual force
+      const cacheBuster = force ? Date.now() : Math.floor(Date.now() / CACHE_TTL_MS);
+      const url = `https://github-contributions-api.jogruber.de/v4/${username}?y=last&_cb=${cacheBuster}`;
+
+      const res = await fetch(url, {
+        headers: force ? { 'Cache-Control': 'no-cache' } : {},
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch contributions');
+
+      const data: GitHubContributions = await res.json();
+      if (Array.isArray(data.contributions)) {
         const days = data.contributions.slice(-364);
         setWeeks(groupIntoWeeks(days));
         const { current, longest } = calcStreak(data.contributions);
         setStats({ total: days.reduce((a, d) => a + d.count, 0), current, longest });
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-    return () => ctrl.abort();
+
+        // Save to cache
+        localStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({ data, timestamp: Date.now() })
+        );
+      }
+    } catch (err) {
+      console.warn('[GitHubActivity] Error fetching contributions:', err);
+    } finally {
+      setLoading(false);
+      setIsRefreshing(false);
+    }
   }, [username]);
+
+  // Initial load: check cache first, then fetch
+  useEffect(() => {
+    const cached = localStorage.getItem(CACHE_KEY);
+    let shouldFetch = true;
+
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (parsed.data?.contributions) {
+          const days = parsed.data.contributions.slice(-364);
+          setWeeks(groupIntoWeeks(days));
+          const { current, longest } = calcStreak(parsed.data.contributions);
+          setStats({ total: days.reduce((a: number, d: ContributionDay) => a + d.count, 0), current, longest });
+          setLoading(false);
+
+          if (Date.now() - parsed.timestamp < CACHE_TTL_MS) {
+            shouldFetch = false;
+          }
+        }
+      } catch {
+        // Fall back to network fetch
+      }
+    }
+
+    if (shouldFetch) {
+      fetchContributions(false);
+    }
+  }, [fetchContributions]);
 
   useEffect(() => {
     if (!weeks.length || !containerRef.current) return;
@@ -103,7 +154,7 @@ const GitHubActivity = ({ username = 'saurabhmj11' }: { username?: string }) => 
   const svgW = COLS * (CELL + GAP);
   const svgH = ROWS * (CELL + GAP) + 20;
 
-  if (loading) return (
+  if (loading && !weeks.length) return (
     <div className="mt-12 flex items-center gap-1.5 h-20">
       {[...Array(5)].map((_, i) => (
         <div key={i} className="w-2 h-2 rounded-sm bg-sky-500/30 animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
@@ -116,9 +167,25 @@ const GitHubActivity = ({ username = 'saurabhmj11' }: { username?: string }) => 
   let idx = 0;
   return (
     <div ref={containerRef} className="mt-16 w-full">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-px h-6 bg-sky-500/50" />
-        <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">GitHub Activity — @{username}</p>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-px h-6 bg-sky-500/50" />
+          <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">
+            GitHub Activity — <a href={`https://github.com/${username}`} target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition-colors">@{username}</a>
+          </p>
+        </div>
+
+        {/* Sync button for calendar */}
+        <button
+          onClick={() => fetchContributions(true)}
+          disabled={isRefreshing}
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-mono text-gray-400 hover:text-white transition-all cursor-pointer disabled:opacity-50"
+          title="Force refresh contributions from GitHub"
+          aria-label="Refresh GitHub contributions"
+        >
+          <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin text-sky-400' : ''}`} />
+          <span>{isRefreshing ? 'SYNCING...' : 'SYNC'}</span>
+        </button>
       </div>
 
       <div className="w-full overflow-x-auto pb-2">
