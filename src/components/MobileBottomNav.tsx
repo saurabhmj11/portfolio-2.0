@@ -148,17 +148,19 @@ const MobileBottomNav: React.FC = () => {
                   aria-current={isActive ? 'page' : undefined}
                 >
                   {/* Sliding active background pill */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="nav-active-pill"
-                      className="absolute inset-[2px] rounded-xl"
-                      style={{
-                        background: 'rgba(255,255,255,0.07)',
-                        border:     '1px solid rgba(255,255,255,0.1)',
-                      }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    />
-                  )}
+                  <AnimatePresence>
+                    {isActive && (
+                      <motion.div
+                        layoutId="nav-active-pill"
+                        className="absolute inset-[2px] rounded-xl"
+                        style={{
+                          background: 'rgba(255,255,255,0.07)',
+                          border:     '1px solid rgba(255,255,255,0.1)',
+                        }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                  </AnimatePresence>
 
                   {/* Icon */}
                   <span
@@ -183,14 +185,16 @@ const MobileBottomNav: React.FC = () => {
                   </span>
 
                   {/* Active accent dot */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="nav-dot"
-                      className="absolute bottom-1 w-1 h-1 rounded-full"
-                      style={{ background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)' }}
-                      transition={{ type: 'spring', stiffness: 500, damping: 40 }}
-                    />
-                  )}
+                  <AnimatePresence>
+                    {isActive && (
+                      <motion.div
+                        layoutId="nav-dot"
+                        className="absolute bottom-1 w-1 h-1 rounded-full"
+                        style={{ background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)' }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                      />
+                    )}
+                  </AnimatePresence>
                 </a>
               );
             })}

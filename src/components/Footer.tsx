@@ -417,7 +417,10 @@ const SystemStatusBar = () => {
   useEffect(() => {
     const fetchLocation = async () => {
       try {
-        const res = await fetch('https://ipapi.co/json/');
+        const controller = new AbortController();
+        const timeoutId  = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
+        clearTimeout(timeoutId);
         if (res.ok) {
           const data = await res.json();
           if (data.city && data.region_code) {
@@ -425,7 +428,7 @@ const SystemStatusBar = () => {
           }
         }
       } catch {
-        // Fallback to static location on error
+        // Network error or CSP block — static fallback stays in place
       }
     };
     fetchLocation();
