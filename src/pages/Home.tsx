@@ -24,6 +24,7 @@ const LangGraphInteractive = React.lazy(() => import('../components/LangGraphInt
 const RAGSimulator        = React.lazy(() => import('../components/RAGSimulator'));
 const TelemetryDashboard  = React.lazy(() => import('../components/TelemetryDashboard'));
 const AutonomousAgentHUD  = React.lazy(() => import('../components/AutonomousAgentHUD'));
+const Contact             = React.lazy(() => import('../components/Contact'));
 
 // Wrap a component in its own isolated Suspense boundary
 const S = ({ children }: { children: React.ReactNode }) => (
@@ -59,6 +60,7 @@ const Home = () => {
                 <S><AutonomousAgentHUD /></S>
                 <S><LiveAgents /></S>
                 <S><Blog /></S>
+                <S><Contact /></S>
             </div>
         </main>
     );
