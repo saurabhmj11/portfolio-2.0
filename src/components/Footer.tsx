@@ -412,27 +412,9 @@ const LiveClock = () => {
 };
 
 const SystemStatusBar = () => {
-  const [location, setLocation] = useState('WARDHA, MH');
-
-  useEffect(() => {
-    const fetchLocation = async () => {
-      try {
-        const controller = new AbortController();
-        const timeoutId  = setTimeout(() => controller.abort(), 4000);
-        const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
-        clearTimeout(timeoutId);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.city && data.region_code) {
-            setLocation(`${data.city.toUpperCase()}, ${data.region_code.toUpperCase()}`);
-          }
-        }
-      } catch {
-        // Network error or CSP block — static fallback stays in place
-      }
-    };
-    fetchLocation();
-  }, []);
+  // Static on purpose: looking up each visitor's city sent their IP to a
+  // third-party service on every page view.
+  const location = 'WARDHA, MH';
 
   return (
     <div className="w-full border-t border-white/5 mt-4">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Markdown from 'react-markdown';
+import Seo from '../components/Seo';
 
 interface BlogPost {
     title: string;
@@ -25,6 +26,8 @@ const AdminPage = () => {
 
     useEffect(() => {
         if (token) fetchPosts();
+        // fetchPosts only reads `token`, which is already the dependency.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -49,8 +52,12 @@ const AdminPage = () => {
     };
 
     const fetchPosts = () => {
-        fetch('/api/posts') // Admin sees all posts
-            .then(res => res.json())
+        // Drafts are only returned to an authenticated admin.
+        fetch('/api/posts', { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => {
+                if (res.status === 401) { handleLogout(); return []; }
+                return res.json();
+            })
             .then(setPosts);
     };
 
@@ -122,6 +129,7 @@ const AdminPage = () => {
     if (!token) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100">
+                <Seo title="Admin" noindex />
                 <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md w-full max-w-sm">
                     <h1 className="text-2xl font-bold mb-4">Admin Access</h1>
                     <input
@@ -148,6 +156,7 @@ const AdminPage = () => {
     if (view === 'list') {
         return (
             <div className="min-h-screen pt-32 px-6 max-w-7xl mx-auto pb-20">
+                <Seo title="Admin" noindex />
                 <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
                     <div>
                         <h1 className="text-4xl font-bold tracking-tight mb-2">Mission Control</h1>
@@ -228,6 +237,7 @@ const AdminPage = () => {
 
     return (
         <div className="min-h-screen pt-24 px-6 grid grid-cols-1 md:grid-cols-2 gap-8 h-screen">
+            <Seo title="Admin" noindex />
             {/* Editor */}
             <div className="flex flex-col gap-4 overflow-y-auto pb-10">
                 <div className="flex justify-between items-center">

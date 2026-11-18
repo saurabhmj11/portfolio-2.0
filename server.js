@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 
 import dotenv from 'dotenv';
+import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -10,26 +11,33 @@ import { fileURLToPath } from 'url';
 dotenv.config(); // Load environment variables
 
 const app = express();
+// Render (and most hosts) sit behind one reverse proxy: take the client IP from
+// X-Forwarded-For so per-IP limits are actually per visitor.
+app.set('trust proxy', 1);
 
 // Middleware
 const allowedOrigins = [
   'http://localhost:5173', // Local Vite development
   'http://localhost:5174', // Fallback Vite port
+  'http://localhost:4173', // vite preview
   'http://localhost:3000',
   process.env.FRONTEND_URL // Will be injected by Render environment variables
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin) || origin.includes('netlify.app')) {
+    // Only this site (and its own Netlify deploy previews) — not every *.netlify.app.
+    const isOwnSite = origin && /^https:\/\/([a-z0-9-]+--)?saurabh-a-lokhande\.netlify\.app$/.test(origin);
+    if (!origin || allowedOrigins.includes(origin) || isOwnSite) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      // Deny quietly: no CORS headers, the browser blocks it — no 500 / stack trace.
+      callback(null, false);
     }
   },
   credentials: true
 }));
-app.use(bodyParser.json({ limit: '50mb' })); // Increased limit for images/markdown
+app.use(bodyParser.json({ limit: '100kb' })); // chat + contact + markdown posts; 50 MB invited abuse
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -49,19 +57,67 @@ const writePosts = (posts) => {
   fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2));
 };
 
-// --- AUTH MOCK ---
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'saurabhmj11@gmail.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '123456789sl';
-const generateToken = () => "mock-jwt-token-" + Math.random().toString(36).substr(2);
+// --- AUTH ---
+// Credentials come only from the environment. With no ADMIN_EMAIL/ADMIN_PASSWORD
+// set, admin login is disabled rather than falling back to a default.
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const TOKEN_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
+
+// AUTH_SECRET signs admin tokens. If unset, a random per-process secret is used,
+// so tokens simply stop working after a restart (safe default).
+const AUTH_SECRET = process.env.AUTH_SECRET || crypto.randomBytes(32).toString('hex');
+if (!process.env.AUTH_SECRET) {
+  console.log('⚠ AUTH_SECRET not set — using a random secret; admin sessions end on restart');
+}
+
+const safeEqual = (a, b) => {
+  const ab = Buffer.from(String(a));
+  const bb = Buffer.from(String(b));
+  return ab.length === bb.length && crypto.timingSafeEqual(ab, bb);
+};
+
+const sign = (data) => crypto.createHmac('sha256', AUTH_SECRET).update(data).digest('base64url');
+
+const issueToken = (email) => {
+  const payload = Buffer.from(JSON.stringify({ sub: email, exp: Date.now() + TOKEN_TTL_MS })).toString('base64url');
+  return `${payload}.${sign(payload)}`;
+};
+
+const verifyToken = (token) => {
+  const [payload, sig] = String(token || '').split('.');
+  if (!payload || !sig || !safeEqual(sig, sign(payload))) return null;
+  try {
+    const data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
+    return data.exp > Date.now() ? data : null;
+  } catch {
+    return null;
+  }
+};
 
 // Middleware for requiring auth
 const requireAuth = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (authHeader === 'Bearer secret-token-123') { // Simplified for this demo
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+  if (verifyToken(token)) {
     next();
   } else {
     res.status(401).json({ error: 'Unauthorized' });
   }
+};
+
+// Basic in-memory login throttle: 5 failed attempts per IP per 15 minutes.
+const loginFailures = new Map();
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const tooManyFailures = (ip) => {
+  const entry = loginFailures.get(ip);
+  if (!entry || Date.now() - entry.first > LOGIN_WINDOW_MS) return false;
+  return entry.count >= 5;
+};
+const recordFailure = (ip) => {
+  const entry = loginFailures.get(ip);
+  if (!entry || Date.now() - entry.first > LOGIN_WINDOW_MS) loginFailures.set(ip, { first: Date.now(), count: 1 });
+  else entry.count += 1;
 };
 
 
@@ -157,12 +213,20 @@ app.post('/send-message', async (req, res) => {
 // --- BLOG API ---
 
 // Post Login
-// Post Login
 app.post('/api/auth/login', (req, res) => {
-  const { email, password } = req.body;
-  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-    res.json({ token: 'secret-token-123' });
+  if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
+    return res.status(503).json({ error: 'Admin login is not configured' });
+  }
+  const ip = req.ip;
+  if (tooManyFailures(ip)) {
+    return res.status(429).json({ error: 'Too many attempts. Try again later.' });
+  }
+  const { email, password } = req.body || {};
+  if (safeEqual(email, ADMIN_EMAIL) && safeEqual(password, ADMIN_PASSWORD)) {
+    loginFailures.delete(ip);
+    res.json({ token: issueToken(ADMIN_EMAIL) });
   } else {
+    recordFailure(ip);
     res.status(401).json({ error: 'Invalid credentials' });
   }
 });
@@ -173,8 +237,11 @@ app.get('/api/posts', (req, res) => {
   // Filter out drafts for public view if query param ?public=true is present
   // For admin, we return all. Assuming frontend handles filtering or we add a query param.
   // Let's just return all for now and frontend sorts it out, or basic filtering:
+  // Drafts are visible only to a signed-in admin; everyone else gets published posts.
+  const authHeader = req.headers.authorization || '';
+  const isAdmin = authHeader.startsWith('Bearer ') && Boolean(verifyToken(authHeader.slice(7)));
   const { publishedOnly } = req.query;
-  if (publishedOnly === 'true') {
+  if (publishedOnly === 'true' || !isAdmin) {
     res.json(posts.filter(p => p.status === 'published'));
   } else {
     res.json(posts);
@@ -185,7 +252,10 @@ app.get('/api/posts', (req, res) => {
 app.get('/api/posts/:slug', (req, res) => {
   const posts = readPosts();
   const post = posts.find(p => p.slug === req.params.slug);
-  if (post) res.json(post);
+  const authHeader = req.headers.authorization || '';
+  const isAdmin = authHeader.startsWith('Bearer ') && Boolean(verifyToken(authHeader.slice(7)));
+  // Drafts exist only for the signed-in admin.
+  if (post && (post.status === 'published' || isAdmin)) res.json(post);
   else res.status(404).json({ error: 'Post not found' });
 });
 
@@ -262,7 +332,7 @@ Email: saurabhmj11@gmail.com
 Phone: +91-7767913887
 Location: Open to Relocation | Immediate Joiner
 
-Summary: LLM Engineer with ~2 years of hands-on experience building production-grade AI systems using Large Language Models, Retrieval-Augmented Generation (RAG), and multi-agent architectures. Specialized in local-first LLM deployment (Ollama), agentic workflows (LangChain / LangGraph), and scalable FastAPI backends. Experienced in designing end-to-end AI pipelines including document ingestion, semantic chunking, embeddings, vector search, agent orchestration, and grounded answer generation.
+Summary: LLM Engineer building AI systems since 2022 using Large Language Models, Retrieval-Augmented Generation (RAG), and multi-agent architectures. Specialized in local-first LLM deployment (Ollama), agentic workflows (LangChain / LangGraph), and scalable FastAPI backends. Experienced in designing end-to-end AI pipelines including document ingestion, semantic chunking, embeddings, vector search, agent orchestration, and grounded answer generation.
 
 Core Skills:
 - LLM Systems & RAG: End-to-end RAG architectures, Semantic chunking & Embeddings, Vector DBs (FAISS, Qdrant, Pinecone)
@@ -270,45 +340,75 @@ Core Skills:
 - LLMs & GenAI: Ollama (Local), OpenAI (GPT), Claude, Gemini, Mistral
 - Backend & Engineering: Python (Advanced), FastAPI, Docker
 
-Key Projects:
-1. HireMeOS: Autonomous AI career system with multi-agent pipelines for resume analysis.
-2. Autonomous Research Agent: Multi-agent RAG system for researching and writing reports using LangGraph and Ollama.
-3. DataOS: Local-first AI assistant for structured dataset analysis.
-4. NeuroAdaptive Quiz Engine: Context-aware learning system.
+Key Projects (only discuss these; never invent metrics):
+1. Doc AI: cited document Q&A with hybrid BM25 + vector retrieval, RRF fusion and cross-encoder reranking. The large-corpus engine (open-source models, CPU-only) is evaluated on 12 PDFs / 4,584 pages with a 40-question synthetic set: Recall@3 97.5%, MRR@10 0.867, retrieval p50 0.55 s; full answers tuned from ~31 s to 6.7 s p50. The live demo (doc-ai-frontend.onrender.com) runs the original Gemini pipeline.
+2. Hire Me OS 2.0: Multi-tenant job-search SaaS (Next.js 16, Supabase, Prisma) with a 6-block job evaluation, 10 scored dimensions and an A–F grade. The hosted demo is paused; the source is public.
+3. Multi-Agent Research: a linear LangGraph pipeline (planner → researcher → verifier → writer) running locally on Ollama with DuckDuckGo search.
+4. DataOS: Browser-based simulation of an agentic data-analysis platform with Gemini-powered Q&A.
 
 Experience:
-Freelance & Product Projects (Jan 2024 - Present): Built multiple production-grade LLM systems, complete RAG workflows, multi-agent planners, and FastAPI backends.
+- Gen AI / LLM Engineer, OneOfficeAutomation (Jan 2024 - Present): LLM agents and RAG pipelines (LangGraph, FastAPI) alongside the company's RPA and SAP automation platform.
+- ML Engineer, Freelance (2023 - 2024): vision transformer and recommendation-engine models.
+- Data & AI Intern, Pantech Solutions (2022 - 2023): semantic retrieval and early vector search systems.
 
-Education: B.Tech in Computer Science (First Class), Amravati University (2019-2023)
+Education: Bachelor's Degree in Engineering, Amravati University (2019-2023)
 `;
 
 // Default fallback response logic (used if API key is missing or fails)
 const getFallbackResponse = (input) => {
-  const lowerInput = input.toLowerCase();
-  if (lowerInput.includes('skill') || lowerInput.includes('tools')) {
-    return "Core Expertise: LLM Systems & RAG, AI Agents (LangChain, LangGraph). Proficient in Python (FastAPI), Local LLMs (Ollama), and Vector DBs.";
-  } else if (lowerInput.includes('project')) {
-    return "Saurabh's Flagships: HireMeOS, Autonomous Research Agent, DataOS, and NeuroAdaptive Quiz Engine.";
-  } else if (lowerInput.includes('contact') || lowerInput.includes('email')) {
-    return "Contact Saurabh directly: saurabhmj11@gmail.com | +91-7767913887";
+  // Whole-word matching, so "which" doesn't count as "hi".
+  const has = (...words) => words.some(w => new RegExp(`\\b${w}\\b`, 'i').test(input));
+  if (has('skill', 'skills', 'tools', 'stack', 'tech')) {
+    return "Retrieval and agent systems: hybrid BM25 + vector RAG with reranking and citations, LangGraph agents, FastAPI backends, ChromaDB/FAISS, Ollama and hosted LLMs.";
+  } else if (has('project', 'projects', 'work', 'built', 'portfolio')) {
+    return "Selected work: Doc AI (hybrid RAG, evaluated on 4,584 pages: Recall@3 97.5%), Hire Me OS 2.0 (job-search SaaS), Multi-Agent Research (LangGraph) and DataOS. Each has a case study in Selected Work.";
+  } else if (has('contact', 'email', 'hire', 'reach')) {
+    return "Email saurabhmj11@gmail.com or use the contact form at the bottom of the page.";
   }
-  return "I am currently running in offline mode. Please contact Saurabh at saurabhmj11@gmail.com for more details!";
+  return "I'm running in quick-answer mode right now. Try asking about his projects, skills or how to contact him — or email saurabhmj11@gmail.com.";
 };
 
 // Chatbot Endpoint
-app.post('/api/chat', async (req, res) => {
-  const { messages } = req.body;
+// Chat abuse limits: per-IP burst + a global daily cap protect the LLM quota.
+const CHAT_PER_MINUTE = 10;
+const CHAT_DAILY_CAP = 500;
+const chatHits = new Map();
+let chatDay = new Date().toISOString().slice(0, 10);
+let chatToday = 0;
+const chatLimited = (ip) => {
+  const now = Date.now();
+  const today = new Date(now).toISOString().slice(0, 10);
+  if (today !== chatDay) { chatDay = today; chatToday = 0; chatHits.clear(); }
+  if (chatToday >= CHAT_DAILY_CAP) return true;
+  const recent = (chatHits.get(ip) || []).filter(t => now - t < 60_000);
+  if (recent.length === 0) chatHits.delete(ip);
+  if (recent.length >= CHAT_PER_MINUTE) { chatHits.set(ip, recent); return true; }
+  recent.push(now); chatHits.set(ip, recent); chatToday += 1;
+  return false;
+};
 
-  // Safety check - we need an array of messages
-  if (!messages || !Array.isArray(messages) || messages.length === 0) {
-    return res.status(400).json({ error: 'Invalid messages array provided.' });
+/** 1–20 messages, each { sender?: 'user'|'bot', text: string ≤ 2000 chars }. */
+export const validChatMessages = (messages) =>
+  Array.isArray(messages) && messages.length >= 1 && messages.length <= 20 &&
+  messages.every(m => m && typeof m.text === 'string' && m.text.trim().length > 0 && m.text.length <= 2000 &&
+    (m.sender === undefined || m.sender === 'user' || m.sender === 'bot'));
+
+app.post('/api/chat', async (req, res) => {
+  const messages = req.body?.messages;
+
+  if (!validChatMessages(messages)) {
+    return res.status(400).json({ error: 'Send 1–20 messages, each with a non-empty text of at most 2,000 characters.' });
+  }
+  if (chatLimited(req.ip)) {
+    return res.status(429).json({ error: 'Too many messages — please try again in a minute.' });
   }
 
   const lastMessage = messages[messages.length - 1].text;
 
   if (!ai) {
     // Fallback if no API key
-    return res.json({ response: getFallbackResponse(lastMessage) });
+    // mode tells the client this is a keyword quick answer, not the LLM.
+    return res.json({ response: getFallbackResponse(lastMessage), mode: 'fallback' });
   }
 
   try {
@@ -338,7 +438,8 @@ app.post('/api/chat', async (req, res) => {
   } catch (error) {
     console.error("Gemini API Error:", error);
     return res.json({
-      response: "I'm having a little trouble connecting to my neural net right now. You can always email Saurabh at saurabhmj11@gmail.com!"
+      response: getFallbackResponse(lastMessage),
+      mode: 'fallback',
     });
   }
 });

@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1' # weekly: catch dead project / demo links
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npx eslint .
+      - name: Typecheck
+        run: npx tsc -b
+      - name: Tests
+        run: npx vitest run
+      - name: Build (also writes per-route pages, sitemap.xml and the résumé PDF)
+        run: npm run build
+      - name: Built artifacts exist
+        run: |
+          test -f dist/sitemap.xml
+          test -f dist/project/doc-ai/index.html
+          test -f dist/Saurabh-Lokhande-AI-Engineer.pdf
+          grep -q 'rel="canonical" href="https://saurabh-a-lokhande.netlify.app/project/doc-ai"' dist/project/doc-ai/index.html
+
+  links:
+    # External links that recruiters click: repos, live demos, reports.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check project and résumé links
+        run: |
+          urls=$(grep -ohE "https://(github\.com|[a-z0-9-]+\.onrender\.com|www\.linkedin\.com)[^'\"\` )]*" src/data/projectsData.ts src/data/resume.json public/llms.txt | sort -u)
+          fail=0
+          for u in $urls; do
+            # curl prints 000 itself on DNS/timeout/connection errors; '|| true' keeps that value.
+            code=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 90 -A 'Mozilla/5.0 link-check' "$u" || true)
+            code=${code:-000}
+            echo "$code $u"
+            case "$u" in *linkedin.com*) continue;; esac  # LinkedIn blocks bots (999)
+            case "$code" in 000|[45]??) fail=1;; esac
+          done
+          exit $fail

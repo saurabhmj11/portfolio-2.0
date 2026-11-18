@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Canvas } from '@react-three/fiber';
 import { Home } from 'lucide-react';
+import Seo from '../components/Seo';
 // Lazy load to avoid circular dependencies or heavy initial load
 const Robot3D = React.lazy(() => import('../components/Robot3D'));
 
 const NotFound = () => {
     return (
         <div className="min-h-screen bg-off-white dark:bg-[#050505] flex flex-col items-center justify-center p-4 relative overflow-hidden text-primary-text dark:text-white">
+            <Seo title="Page not found" description="This page does not exist." noindex />
 
             {/* Background elements */}
             <div className="absolute inset-0 pointer-events-none">

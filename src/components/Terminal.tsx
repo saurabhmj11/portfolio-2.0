@@ -58,7 +58,6 @@ const Terminal = () => {
                 addLog("Available Commands:", "system");
                 addLog("  about     - Who is Saurabh?", "info");
                 addLog("  projects  - List Gen AI Projects", "info");
-                addLog("  agents    - List Live Agents", "info");
                 addLog("  contact   - Show contact info", "info");
                 addLog("  clear     - Clear terminal", "info");
                 addLog("  status    - Check System Status", "info");
@@ -73,20 +72,10 @@ const Terminal = () => {
             case 'projects':
                 addLog("Fetching Project Database...", "system");
                 setTimeout(() => {
-                    addLog("• OpenReception (AI SaaS Platform)", "success");
-                    addLog("• AGEN (Browser Agents)", "success");
-                    addLog("• Research Agent (Multi-Agent)", "success");
-                    addLog("• Resume Processor (AI Pipelines)", "success");
-                    soundManager.playSuccess();
-                }, 300);
-                break;
-            case 'agent':
-            case 'agents':
-                addLog("Listing Active Agents...", "system");
-                setTimeout(() => {
-                    addLog("• Travel Guru [ONLINE]", "success");
-                    addLog("• 90-Day Launchpad [ONLINE]", "success");
-                    addLog("• DuduSL001 [EXPERIMENTAL]", "warning");
+                    addLog("• Doc AI — hybrid RAG, evaluated on 4,584 pages (/project/doc-ai)", "success");
+                    addLog("• Hire Me OS 2.0 — job-search SaaS (/project/hire-me-os)", "success");
+                    addLog("• Multi-Agent Research — LangGraph (/project/multi-agent-research)", "success");
+                    addLog("• DataOS — agentic data-analysis simulation (/project/dataos)", "success");
                     soundManager.playSuccess();
                 }, 300);
                 break;

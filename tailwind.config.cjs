@@ -8,6 +8,13 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                // Accessible muted greys: every page renders on near-black (#020202–#111),
+                // where Tailwind's default gray-500/600 fail WCAG AA (4.2:1 / 2.7:1).
+                // These measure ≥ 5.9:1 and ≥ 4.9:1 on all of those backgrounds.
+                gray: {
+                    500: '#8b919c',
+                    600: '#7c828d',
+                },
                 background: '#030305',
                 'off-white': '#f9f9f9',
                 'primary-text': '#111111',
@@ -23,8 +30,10 @@ module.exports = {
                 }
             },
             fontFamily: {
-                sans: ['Inter', 'sans-serif'],
-                display: ['Outfit', 'sans-serif'],
+                sans: ['"Inter Variable"', 'Inter', 'system-ui', 'sans-serif'],
+                display: ['"Outfit Variable"', 'Outfit', 'system-ui', 'sans-serif'],
+                // A real mono, so the many mono labels look the same on every OS.
+                mono: ['"JetBrains Mono Variable"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
             },
             letterSpacing: {
                 tightest: '-0.02em',

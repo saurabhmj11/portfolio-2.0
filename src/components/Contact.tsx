@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Loader2, Mail, MapPin } from 'lucide-react';
 import Magnetic from './Magnetic';
-import { Helmet } from 'react-helmet-async';
 import { useInView } from 'react-intersection-observer';
 import { useAudioDirector } from '../context/AudioContext';
 import ScrambleText from './ScrambleText';
+
+import useIsMobile from '../hooks/useIsMobile';
 
 const ContactVortex3D = lazy(() => import('./ContactVortex3D'));
 
@@ -132,7 +133,7 @@ const TerminalSuccess = ({ onReset }: { onReset: () => void }) => {
         <div className="w-3 h-3 rounded-full bg-red-500/70" />
         <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
         <div className="w-3 h-3 rounded-full bg-green-500/70" />
-        <span className="ml-3 text-[10px] text-white/20 uppercase tracking-widest">transmission.log</span>
+        <span className="ml-3 text-[10px] text-white/65 uppercase tracking-widest">transmission.log</span>
       </div>
 
       <div className="space-y-2">
@@ -158,7 +159,7 @@ const TerminalSuccess = ({ onReset }: { onReset: () => void }) => {
         <span className="text-green-400 text-sm">▶</span>
         <button
           onClick={onReset}
-          className="font-mono text-xs text-white/30 hover:text-white uppercase tracking-widest transition-colors cursor-pointer"
+          className="font-mono text-xs text-white/65 hover:text-white uppercase tracking-widest transition-colors cursor-pointer"
         >
           Initialize New Request
         </button>
@@ -223,6 +224,8 @@ const TerminalField = ({
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const Contact = () => {
+  // 3D vortex is desktop-only; don't even download three.js on phones/tablets.
+  const isMobile = useIsMobile();
   const [ref, inView] = useInView({ threshold: 0.1 });
   const { playSectionChime } = useAudioDirector();
 
@@ -280,12 +283,6 @@ const Contact = () => {
 
   return (
     <section ref={ref} className="py-20 md:py-32 bg-black text-white relative z-10 overflow-hidden" id="contact">
-      {inView && (
-        <Helmet>
-          <title>Contact | Saurabh Lokhande</title>
-          <meta name="description" content="Get in touch for AI development, collaboration, and consulting." />
-        </Helmet>
-      )}
 
       {/* Background atmosphere */}
       <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none z-0">
@@ -299,11 +296,13 @@ const Contact = () => {
           {/* ── Left Column ── */}
           <div className="relative">
             {/* 3D Vortex — sits behind the text, desktop only */}
-            <div className="absolute -top-20 -left-20 w-[340px] h-[340px] pointer-events-none hidden lg:block opacity-70" aria-hidden="true">
-              <Suspense fallback={null}>
-                <ContactVortex3D isTyping={isTyping} isSubmitting={isSubmitting} isSuccess={isSuccess} />
-              </Suspense>
-            </div>
+            {!isMobile && (
+              <div className="absolute -top-20 -left-20 w-[340px] h-[340px] pointer-events-none hidden lg:block opacity-70" aria-hidden="true">
+                <Suspense fallback={null}>
+                  <ContactVortex3D isTyping={isTyping} isSubmitting={isSubmitting} isSuccess={isSuccess} />
+                </Suspense>
+              </div>
+            )}
             <div className="relative z-10">
             <h2 className="text-[12px] uppercase tracking-widest mb-8 text-gray-500 font-mono">
               <ScrambleText text="INITIALIZE CONNECTION" className="" />
@@ -411,7 +410,7 @@ const Contact = () => {
                       <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
                       <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
                       <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-                      <span className="ml-3 font-mono text-[9px] text-white/15 uppercase tracking-widest">new_connection.sh</span>
+                      <span className="ml-3 font-mono text-[11px] text-white/65 uppercase tracking-widest">new_connection.sh</span>
                     </div>
 
                     <form

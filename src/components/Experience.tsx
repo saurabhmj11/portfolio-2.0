@@ -10,15 +10,12 @@ const ROLES = [
     start: new Date('2024-01-01'),
     title: 'Gen AI / LLM Engineer',
     company: 'OneOfficeAutomation',
-    desc: 'Architecting autonomous agents and production RAG pipelines for enterprise-scale intelligent workflows and decision systems.',
+    desc: 'Building LLM agents and RAG pipelines (LangGraph, FastAPI) alongside the company\'s RPA and SAP automation platform.',
     accent: '#60a5fa',
     stack: ['LangGraph', 'FastAPI', 'OpenAI', 'Python', 'Supabase'],
-    flags: '--agents=12+  --ctx=128k  --uptime=99.7%',
-    metrics: [
-      { key: 'agents_spawned', val: 12,   display: '12+',   unit: '' },
-      { key: 'context_window', val: 128,  display: '128k',  unit: '' },
-      { key: 'system_uptime',  val: 99.7, display: '99.7%', unit: '%' },
-    ],
+    flags: '--since=2024-01  --mode=remote  --focus=agents,rag,rpa',
+    // Only verifiable facts here — no unsourced performance numbers.
+    metrics: [] as { key: string; val: number; display: string; unit: string }[],
     diagram: [
       'USER ──→ [PLANNER] ──→ [TOOL_CALL]',
       '           ↑                ↓      ',
@@ -34,16 +31,12 @@ const ROLES = [
     period: '2023 → 2024',
     start: new Date('2023-06-01'),
     title: 'ML Engineer',
-    company: 'Applied Projects',
-    desc: 'Hardened vision transformers and recommendation engines for high-throughput, real-world production data streams.',
+    company: 'Freelance',
+    desc: 'Worked on vision transformer and recommendation-engine models for real-world data streams.',
     accent: '#a78bfa',
     stack: ['TensorFlow', 'PyTorch', 'AWS', 'PostgreSQL', 'Scikit-Learn'],
-    flags: '--accuracy=94%  --f1=0.91  --gpu=4x',
-    metrics: [
-      { key: 'model_accuracy', val: 94,   display: '94%',  unit: '%' },
-      { key: 'f1_score',       val: 91,   display: '0.91', unit: '%' },
-      { key: 'gpu_scale',      val: 80,   display: '4×',   unit: '%' },
-    ],
+    flags: '--since=2023  --type=freelance',
+    metrics: [] as { key: string; val: number; display: string; unit: string }[],
     diagram: [
       ' INPUT   HIDDEN   OUTPUT ',
       '  [○]─────[●]─────[○]   ',
@@ -63,12 +56,8 @@ const ROLES = [
     desc: 'Built semantic retrieval engines and early vector search systems from raw data ingestion pipelines.',
     accent: '#22d3ee',
     stack: ['Pandas', 'Pinecone', 'HuggingFace', 'Docker', 'Python'],
-    flags: '--recall=94%  --dims=768  --pipelines=6x',
-    metrics: [
-      { key: 'recall@10',    val: 94,  display: '94%',  unit: '%' },
-      { key: 'vector_dims',  val: 76,  display: '768',  unit: '%' },
-      { key: 'pipelines',    val: 60,  display: '6×',   unit: '%' },
-    ],
+    flags: '--since=2022  --type=internship',
+    metrics: [] as { key: string; val: number; display: string; unit: string }[],
     diagram: [
       ' RAW_DATA → [PARSE] → [CHUNK]  ',
       '    ↓           ↓        ↓     ',
@@ -94,7 +83,7 @@ const Uptime = ({ start, accent }: { start: Date; accent: string }) => {
     return () => clearInterval(id);
   }, [start]);
   return (
-    <span className="font-mono text-[9px]" style={{ color: accent }}>
+    <span className="font-mono text-[11px]" style={{ color: accent }}>
       uptime: {t}
     </span>
   );
@@ -160,7 +149,7 @@ const MetricBar = ({ metric, accent, cardHovered }: {
   return (
     <div className="space-y-1">
       <div className="flex justify-between items-center">
-        <span className="font-mono text-[9px] text-white/30 tracking-widest">{metric.key}</span>
+        <span className="font-mono text-[11px] text-white/65 tracking-widest">{metric.key}</span>
         <span className="font-mono text-[10px] font-bold" style={{ color: accent }}>{displayStr}</span>
       </div>
       <div className="h-[2.5px] w-full bg-white/[0.06] relative overflow-hidden rounded-full">
@@ -230,15 +219,15 @@ const ProcessCard = ({ role, index }: { role: typeof ROLES[0]; index: number }) 
       >
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 rounded-full" style={{ background: role.accent, boxShadow: `0 0 6px ${role.accent}` }} />
-          <span className="font-mono text-[9px] text-white/30 tracking-widest">{role.path}</span>
+          <span className="font-mono text-[11px] text-white/65 tracking-widest">{role.path}</span>
         </div>
         <div className="flex items-center gap-3">
           {role.live
             ? <Uptime start={role.start} accent={role.accent} />
-            : <span className="font-mono text-[9px] text-white/20">{role.period}</span>
+            : <span className="font-mono text-[11px] text-white/65">{role.period}</span>
           }
           <span
-            className="font-mono text-[8px] font-bold px-2 py-0.5 rounded tracking-widest uppercase"
+            className="font-mono text-[11px] font-bold px-2 py-0.5 rounded tracking-widest uppercase"
             style={{
               color: role.live ? '#4ade80' : 'rgba(255,255,255,0.2)',
               background: role.live ? '#4ade8012' : 'rgba(255,255,255,0.03)',
@@ -260,7 +249,7 @@ const ProcessCard = ({ role, index }: { role: typeof ROLES[0]; index: number }) 
               <span className="font-mono text-[10px] font-black tracking-widest" style={{ color: `${role.accent}70` }}>
                 PID:{role.pid}
               </span>
-              <span className="font-mono text-[8px] text-white/15 tracking-widest">{role.period}</span>
+              <span className="font-mono text-[11px] text-white/65 tracking-widest">{role.period}</span>
             </div>
             <h3
               className="font-display font-black uppercase tracking-tight leading-[0.9] text-white"
@@ -277,7 +266,7 @@ const ProcessCard = ({ role, index }: { role: typeof ROLES[0]; index: number }) 
 
           {/* CLI flags */}
           <div
-            className="rounded-lg px-3 py-2 font-mono text-[9px] leading-relaxed"
+            className="rounded-lg px-3 py-2 font-mono text-[11px] leading-relaxed"
             style={{ background: '#ffffff05', border: '1px solid rgba(255,255,255,0.05)' }}
           >
             <span className="text-white/15">$ run </span>
@@ -292,7 +281,7 @@ const ProcessCard = ({ role, index }: { role: typeof ROLES[0]; index: number }) 
             {role.stack.map(t => (
               <span
                 key={t}
-                className="px-2.5 py-1 font-mono text-[8px] uppercase tracking-widest rounded-md border"
+                className="px-2.5 py-1 font-mono text-[11px] uppercase tracking-widest rounded-md border"
                 style={{ color: `${role.accent}99`, borderColor: `${role.accent}20`, background: `${role.accent}08` }}
               >
                 {t}
@@ -404,7 +393,7 @@ const ShellHeader = () => {
 
       {/* Output block */}
       <div className="border-l-2 border-white/[0.06] pl-6 space-y-2">
-        <p className="font-mono text-[9px] text-white/20 tracking-widest">
+        <p className="font-mono text-[11px] text-white/65 tracking-widest">
           # Scanning /career/... found 3 processes
         </p>
         <motion.h2
@@ -429,7 +418,7 @@ const ShellHeader = () => {
             <ScrambleTextOnHover text="History." hovered={hovered} />
           </motion.span>
         </motion.h2>
-        <p className="font-mono text-[9px] text-white/20 tracking-widest mt-4">
+        <p className="font-mono text-[11px] text-white/65 tracking-widest mt-4">
           # {runningCount} running · {completedCount} completed · total runtime ≈ {runtimeCount}y
         </p>
       </div>
@@ -478,7 +467,7 @@ const Experience = () => (
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ delay: 0.4 }}
-        className="mt-12 font-mono text-[9px] text-white/10 tracking-widest flex items-center gap-3"
+        className="mt-12 font-mono text-[11px] text-white/65 tracking-widest flex items-center gap-3"
       >
         <span className="text-[#4ade80]/30">saurabh@portfolio:~$</span>
         <span>EOF · exit 0</span>

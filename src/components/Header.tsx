@@ -89,6 +89,15 @@ const Header: React.FC = () => {
             </a>
           </Magnetic>
         ))}
+        {/* One-click PDF résumé (generated from src/data/resume.json at build time) */}
+        <a
+          href="/Saurabh-Lokhande-AI-Engineer.pdf"
+          target="_blank"
+          rel="noopener"
+          className="px-3 py-1.5 rounded-full border border-white/25 hover:bg-white hover:text-black transition-colors"
+        >
+          Résumé<span className="sr-only"> (PDF, opens in a new tab)</span>
+        </a>
 
         {/* Audio mute toggle */}
         <button

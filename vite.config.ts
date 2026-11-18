@@ -1,11 +1,13 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import routeMeta from './build/routeMeta';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
+    routeMeta(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
@@ -65,21 +67,30 @@ export default defineConfig({
     reportCompressedSize: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Core React
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          // Framer Motion (large — isolate it)
-          'vendor-framer': ['framer-motion'],
-          // GSAP (large — isolate it)
-          'vendor-gsap': ['gsap'],
-          // Markdown / blog
-          'vendor-markdown': ['react-markdown', 'rehype-highlight'],
-          // Lucide icons
-          'vendor-icons': ['lucide-react'],
-          // Helmet
-          'vendor-seo': ['react-helmet-async'],
-          // Three.js / 3D (heavy — isolate it)
-          'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
+        // Path-based chunking: only code that physically lives in a package
+        // goes into its vendor chunk. (The object form also pulled shared
+        // helpers into vendor-three, which forced the 200 KB three.js chunk
+        // to be preloaded on every page — even on mobile, which never renders 3D.)
+        manualChunks(id: string) {
+          // Tiny helpers shared across every chunk (Vite preload, CJS interop, Babel runtime)
+          // must live in an always-loaded chunk, or Rollup co-locates them with
+          // whichever heavy vendor chunk imported them first.
+          // (Vite module ids always use forward slashes, even on Windows.)
+          if (id.includes('commonjsHelpers') || id.includes('preload-helper') || id.includes('/node_modules/@babel/runtime/')) {
+            return 'vendor-react';
+          }
+          if (!id.includes('node_modules')) return undefined;
+          const groups: Record<string, RegExp> = {
+            'vendor-react': /\/node_modules\/(react|react-dom|react-router|react-router-dom|scheduler|@remix-run)\//,
+            'vendor-framer': /\/node_modules\/(framer-motion|motion-dom|motion-utils)\//,
+            'vendor-gsap': /\/node_modules\/gsap\//,
+            'vendor-markdown': /\/node_modules\/(react-markdown|rehype-highlight|highlight\.js|lowlight|remark-\w[\w-]*|rehype-\w[\w-]*|mdast-\w[\w-]*|hast-\w[\w-]*|micromark[\w-]*|unified|unist-\w[\w-]*|vfile[\w-]*)\//,
+            'vendor-icons': /\/node_modules\/lucide-react\//,
+            'vendor-seo': /\/node_modules\/react-helmet-async\//,
+            'vendor-three': /\/node_modules\/(three|@react-three|three-stdlib|three-mesh-bvh|troika-[\w-]+|camera-controls|maath|meshline|stats-gl|@monogrid)\//,
+          };
+          for (const [name, re] of Object.entries(groups)) if (re.test(id)) return name;
+          return undefined;
         },
       },
     },

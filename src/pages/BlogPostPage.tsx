@@ -64,8 +64,9 @@ const BlogPostPage = () => {
     if (!post) {
         return (
             <div className="min-h-screen bg-[#020202] text-white flex items-center justify-center">
+                <Seo title="Post not found" description="This post does not exist." noindex />
                 <div className="text-center">
-                    <p className="font-mono text-white/30 text-xs uppercase tracking-widest mb-4">404</p>
+                    <p className="font-mono text-white/65 text-xs uppercase tracking-widest mb-4">404</p>
                     <h1 className="font-display font-black text-5xl uppercase tracking-tighter mb-8">Post not found</h1>
                     <Link to="/blog" className="font-mono text-xs text-white/50 hover:text-white uppercase tracking-widest transition-colors">
                         ← Back to log
@@ -89,6 +90,9 @@ const BlogPostPage = () => {
                 description={post.excerpt || ''}
                 keywords={post.tags?.join(', ')}
                 type="article"
+                url={`/blog/${post.slug}`}
+                publishedAt={post.publishedAt}
+                tags={post.tags}
             />
 
             {/* ── HERO HEADER ── */}
@@ -114,7 +118,7 @@ const BlogPostPage = () => {
                     >
                         <Link
                             to="/blog"
-                            className="inline-flex items-center gap-2 font-mono text-xs text-white/30 hover:text-white uppercase tracking-widest transition-colors group"
+                            className="inline-flex items-center gap-2 font-mono text-xs text-white/65 hover:text-white uppercase tracking-widest transition-colors group"
                         >
                             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
                             Research Log
@@ -128,18 +132,18 @@ const BlogPostPage = () => {
                         transition={{ duration: 0.5, delay: 0.1 }}
                         className="flex flex-wrap items-center gap-4 mb-8"
                     >
-                        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-white/30 uppercase tracking-widest">
+                        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-white/65 uppercase tracking-widest">
                             <Calendar className="w-3 h-3" />
                             {formattedDate}
                         </span>
                         <span className="w-1 h-1 rounded-full bg-white/20" />
-                        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-white/30 uppercase tracking-widest">
+                        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-white/65 uppercase tracking-widest">
                             <Clock className="w-3 h-3" />
                             {post.readTime || '5 min'} read
                         </span>
                         <div className="flex flex-wrap gap-2 ml-auto">
                             {post.tags?.map(tag => (
-                                <span key={tag} className="font-mono text-[9px] text-white/40 border border-white/10 px-3 py-1 uppercase tracking-widest">
+                                <span key={tag} className="font-mono text-[11px] text-white/40 border border-white/10 px-3 py-1 uppercase tracking-widest">
                                     {tag}
                                 </span>
                             ))}
@@ -204,7 +208,7 @@ const BlogPostPage = () => {
                     prose-pre:bg-[#0d0d0d] prose-pre:border prose-pre:border-white/10 prose-pre:rounded-xl prose-pre:shadow-2xl
                     prose-blockquote:border-l-2 prose-blockquote:border-white/20 prose-blockquote:pl-6 prose-blockquote:text-white/50 prose-blockquote:italic prose-blockquote:not-italic prose-blockquote:font-light
                     prose-ul:text-white/60 prose-ol:text-white/60
-                    prose-li:marker:text-white/30
+                    prose-li:marker:text-white/65
                     prose-hr:border-white/10
                     prose-img:rounded-xl prose-img:border prose-img:border-white/10
                 ">
@@ -218,12 +222,12 @@ const BlogPostPage = () => {
             <div className="border-t border-white/10 py-12 px-6 md:px-12 max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
                 <Link
                     to="/blog"
-                    className="inline-flex items-center gap-2 font-mono text-xs text-white/30 hover:text-white uppercase tracking-widest transition-colors group"
+                    className="inline-flex items-center gap-2 font-mono text-xs text-white/65 hover:text-white uppercase tracking-widest transition-colors group"
                 >
                     <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
                     Back to Research Log
                 </Link>
-                <p className="font-mono text-[10px] text-white/15 uppercase tracking-widest">
+                <p className="font-mono text-[10px] text-white/65 uppercase tracking-widest">
                     <ScrambleText text="End of article" />
                 </p>
             </div>

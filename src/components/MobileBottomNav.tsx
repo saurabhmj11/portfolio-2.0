@@ -175,7 +175,7 @@ const MobileBottomNav: React.FC = () => {
 
                   {/* Label */}
                   <span
-                    className="relative z-10 text-[9px] font-mono uppercase tracking-widest mt-0.5 transition-all duration-300"
+                    className="relative z-10 text-[10px] font-mono uppercase tracking-widest mt-0.5 transition-all duration-300"
                     style={{
                       color:         isActive ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.2)',
                       letterSpacing: '0.08em',

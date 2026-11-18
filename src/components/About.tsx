@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import GitHubActivity from './GitHubActivity';
 import { profileLqip } from '../assets/profileLqip';
+import projectsData from '../data/projectsData';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Countable, checkable facts only — derived from the data the site shows.
 const STATS = [
-  { value: 10, suffix: '+', label: 'Agentic AI\nSystems Built' },
-  { value: 60, suffix: '%', label: 'Faster RAG\nPipelines' },
-  { value: 3, suffix: '+', label: 'Years of\nEngineering' },
+  { value: projectsData.length, suffix: '', label: 'Projects in\nSelected Work' },
+  { value: projectsData.filter(p => p.repo).length, suffix: '', label: 'Open-Source\nRepos Linked' },
+  { value: 2022, suffix: '', label: 'Building AI\nSince' },
 ];
 
 const BIO_TEXT =
-  "Hi, I'm Saurabh Lokhande — an AI Engineer with 3+ years of experience building production-grade Agentic AI systems, RAG pipelines, and LLM-powered applications. I specialize in LangChain, LangGraph, and scalable full-stack architectures that deliver real-world intelligent automation.";
+  "Hi, I'm Saurabh Lokhande — an AI Engineer who has been building Agentic AI systems, RAG pipelines, and LLM-powered applications. I specialize in LangChain, LangGraph, and scalable full-stack architectures that deliver real-world intelligent automation.";
 
 // ── Optimised profile picture with WebP + LQIP blur-up ───────────────────────
 interface ProfileImageProps {
@@ -277,9 +278,9 @@ const AboutDesktop = () => {
             {STATS.map((stat, i) => (
               <div key={i} className="flex flex-col items-center gap-2">
                 <span className="stat-num font-display font-black text-3xl md:text-5xl lg:text-6xl text-white leading-none tabular-nums tracking-tighter">
-                  0{stat.suffix}
+                  {stat.value}{stat.suffix}
                 </span>
-                <span className="font-mono text-[9px] md:text-[10px] text-white/30 uppercase tracking-[0.25em] text-center whitespace-pre-line">
+                <span className="font-mono text-[11px] md:text-xs text-white/65 uppercase tracking-[0.25em] text-center whitespace-pre-line">
                   {stat.label}
                 </span>
               </div>
@@ -297,13 +298,6 @@ const AboutDesktop = () => {
           }}
         />
       </section>
-
-      {/* GitHub Activity Heatmap — outside pinned section so it doesn't affect h-screen layout */}
-      <div className="relative z-20 flex justify-center px-4 pb-16 bg-[#050505]">
-        <div className="w-full max-w-3xl overflow-x-auto">
-          <GitHubActivity username="saurabhmj11" />
-        </div>
-      </div>
 
     </div>
   );

@@ -1,11 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAudioDirector } from '../context/AudioContext';
 import { useInView } from 'react-intersection-observer';
-import { Helmet } from 'react-helmet-async';
 import ScrollReveal from './ScrollReveal';
 import ScrambleText from './ScrambleText';
 import Card3DTilt from './Card3DTilt';
+import projectsData from '../data/projectsData';
 
 // ─── Tech Stack Data ──────────────────────────────────────────────────────────
 const STACK = [
@@ -16,12 +16,12 @@ const STACK = [
         border: 'border-violet-500/20 hover:border-violet-500/50',
         dot: 'bg-violet-400',
         skills: [
-            { name: 'LLM Agents', level: 98 },
-            { name: 'RAG Systems', level: 96 },
-            { name: 'LangChain / Graph', level: 94 },
-            { name: 'Gemini API', level: 92 },
-            { name: 'OpenAI API', level: 95 },
-            { name: 'ChromaDB / FAISS', level: 88 },
+            'LLM Agents',
+            'RAG Systems',
+            'LangChain / Graph',
+            'Gemini API',
+            'OpenAI API',
+            'ChromaDB / FAISS',
         ],
     },
     {
@@ -31,12 +31,12 @@ const STACK = [
         border: 'border-blue-500/20 hover:border-blue-500/50',
         dot: 'bg-blue-400',
         skills: [
-            { name: 'Python / FastAPI', level: 96 },
-            { name: 'Node.js', level: 88 },
-            { name: 'PostgreSQL', level: 85 },
-            { name: 'Prisma ORM', level: 88 },
-            { name: 'Supabase', level: 90 },
-            { name: 'REST / SSE', level: 92 },
+            'Python / FastAPI',
+            'Node.js',
+            'PostgreSQL',
+            'Prisma ORM',
+            'Supabase',
+            'REST / SSE',
         ],
     },
     {
@@ -46,12 +46,12 @@ const STACK = [
         border: 'border-emerald-500/20 hover:border-emerald-500/50',
         dot: 'bg-emerald-400',
         skills: [
-            { name: 'React / Next.js 15', level: 95 },
-            { name: 'TypeScript', level: 92 },
-            { name: 'Framer Motion', level: 90 },
-            { name: 'GSAP / ScrollTrigger', level: 87 },
-            { name: 'Tailwind CSS', level: 94 },
-            { name: 'Three.js / WebGL', level: 72 },
+            'React / Next.js',
+            'TypeScript',
+            'Framer Motion',
+            'GSAP / ScrollTrigger',
+            'Tailwind CSS',
+            'Three.js / WebGL',
         ],
     },
     {
@@ -61,87 +61,20 @@ const STACK = [
         border: 'border-orange-500/20 hover:border-orange-500/50',
         dot: 'bg-orange-400',
         skills: [
-            { name: 'Docker', level: 88 },
-            { name: 'Render / Vercel', level: 92 },
-            { name: 'AWS (EC2, S3)', level: 80 },
-            { name: 'GitHub Actions', level: 85 },
-            { name: 'Prisma Migrations', level: 88 },
-            { name: 'Zustand', level: 90 },
+            'Docker',
+            'Render / Vercel',
+            'AWS (EC2, S3)',
+            'GitHub Actions',
+            'Prisma Migrations',
+            'Zustand',
         ],
     },
 ];
 
-// Marquee tech logos (text-based, no images)
-const MARQUEE_TAGS = [
-    'Python', 'TypeScript', 'Next.js 15', 'FastAPI', 'LangGraph', 'Gemini',
-    'ChromaDB', 'Supabase', 'Prisma', 'Framer Motion', 'GSAP', 'Docker',
-    'Zustand', 'shadcn/ui', 'React', 'OpenAI', 'Tailwind', 'RAG', 'SSE',
-    'PostgreSQL', 'Node.js', 'Three.js', 'Presidio', 'Render',
-];
-
-// ─── Skill Bar ────────────────────────────────────────────────────────────────
-const SkillBar = ({
-    name, level, accent, delay, cardHovered,
-}: { name: string; level: number; accent: string; delay: number; cardHovered: boolean }) => {
-    const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
-    const [displayNum, setDisplayNum] = useState(0);
-    const rafRef = useRef<number | null>(null);
-
-    const shouldAnimate = cardHovered || inView;
-
-    // Count up on viewport entry or card hover
-    useEffect(() => {
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        if (!shouldAnimate) { setDisplayNum(0); return; }
-        const duration = 1500 + delay * 400;
-        const start = performance.now();
-        const tick = (now: number) => {
-            const p = Math.min((now - start) / duration, 1);
-            const eased = 1 - Math.pow(1 - p, 3);
-            setDisplayNum(Math.round(eased * level));
-            if (p < 1) rafRef.current = requestAnimationFrame(tick);
-        };
-        rafRef.current = requestAnimationFrame(tick);
-        return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-    }, [shouldAnimate, level, delay]);
-
-    return (
-        <div ref={ref}>
-            <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-mono transition-colors duration-300"
-                    style={{ color: shouldAnimate ? 'white' : 'rgb(156,163,175)' }}>
-                    {name}
-                </span>
-                <span
-                    className="text-[10px] font-mono tabular-nums transition-colors duration-300"
-                    style={{ color: shouldAnimate ? 'rgb(209,213,219)' : 'rgb(75,85,99)' }}
-                >
-                    {shouldAnimate ? displayNum : 0}%
-                </span>
-            </div>
-            <div className="h-[2px] bg-white/5 rounded-full overflow-hidden">
-                <motion.div
-                    key={shouldAnimate ? 'animated' : 'idle'}
-                    className={`h-full ${accent} rounded-full`}
-                    initial={{ width: '0%' }}
-                    animate={{ width: shouldAnimate ? `${level}%` : '0%' }}
-                    transition={{
-                        duration: shouldAnimate ? 1.5 + delay * 0.4 : 1.5,
-                        delay: shouldAnimate ? delay * 0.15 : delay,
-                        ease: [0.22, 1, 0.36, 1],
-                    }}
-                />
-            </div>
-        </div>
-    );
-};
-
 // ─── Domain Card ─────────────────────────────────────────────────────────────
 const DomainCard = ({
-    domain, color, accent, border, dot, skills, index,
+    domain, color, border, dot, skills, index,
 }: typeof STACK[number] & { index: number }) => {
-    const [hovered, setHovered] = useState(false);
-
     return (
         <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -149,8 +82,6 @@ const DomainCard = ({
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.6, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
             className={`relative p-6 bg-gradient-to-br ${color} border ${border} rounded-2xl transition-all duration-500 overflow-hidden group`}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
         >
             {/* Hover shimmer */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
@@ -165,43 +96,18 @@ const DomainCard = ({
                 </h3>
             </div>
 
-            {/* Skill bars */}
-            <div className="space-y-4 relative z-10">
-                {skills.map((s, i) => (
-                    <SkillBar
-                        key={s.name}
-                        name={s.name}
-                        level={s.level}
-                        accent={accent}
-                        delay={i * 0.06}
-                        cardHovered={hovered}
-                    />
-                ))}
-            </div>
-        </motion.div>
-    );
-};
-
-// ─── Marquee Strip ────────────────────────────────────────────────────────────
-const MarqueeStrip = ({ reverse = false }: { reverse?: boolean }) => {
-    const doubled = [...MARQUEE_TAGS, ...MARQUEE_TAGS];
-    return (
-        <div className="overflow-hidden py-3 mask-fade-x">
-            <motion.div
-                className="flex gap-6 w-max"
-                animate={{ x: reverse ? ['0%', '50%'] : ['0%', '-50%'] }}
-                transition={{ duration: 28, ease: 'linear', repeat: Infinity }}
-            >
-                {doubled.map((tag, i) => (
-                    <span
-                        key={i}
-                        className="px-4 py-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-gray-600 border border-white/5 rounded-full whitespace-nowrap hover:text-white hover:border-white/20 transition-colors duration-300 cursor-default"
+            {/* Skills */}
+            <ul className="flex flex-wrap gap-2 relative z-10">
+                {skills.map((name) => (
+                    <li
+                        key={name}
+                        className="px-3 py-1.5 text-xs font-mono text-gray-300 border border-white/10 rounded-full bg-black/20"
                     >
-                        {tag}
-                    </span>
+                        {name}
+                    </li>
                 ))}
-            </motion.div>
-        </div>
+            </ul>
+        </motion.div>
     );
 };
 
@@ -220,12 +126,6 @@ const Skills = () => {
             className="py-20 md:py-32 bg-[#050505] text-white relative overflow-hidden"
             id="skills"
         >
-            {inView && (
-                <Helmet>
-                    <title>Capabilities | Saurabh Lokhande</title>
-                    <meta name="description" content="Full-stack AI engineering capabilities: LLM agents, RAG systems, FastAPI, Next.js, and production-grade deployments." />
-                </Helmet>
-            )}
 
             {/* Background atmosphere */}
             <div className="absolute inset-0 pointer-events-none">
@@ -257,12 +157,6 @@ const Skills = () => {
                     </div>
                 </ScrollReveal>
 
-                {/* ── Marquee Tags ── */}
-                <div className="mb-10 space-y-2">
-                    <MarqueeStrip />
-                    <MarqueeStrip reverse />
-                </div>
-
                 {/* ── Domain Grid ── */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
                     {STACK.map((domain, i) => (
@@ -277,9 +171,9 @@ const Skills = () => {
                     <div className="mt-16 pt-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
                         <div className="flex items-center gap-6 flex-wrap justify-center md:justify-start">
                             {[
-                                { value: '4+', label: 'Years Building AI' },
-                                { value: '15+', label: 'Production Projects' },
-                                { value: '2', label: 'Live SaaS Deployed' },
+                                { value: '2022', label: 'Building AI Since' },
+                                { value: String(projectsData.length), label: 'Projects Shown' },
+                                { value: String(projectsData.filter(p => p.liveUrl && p.repo).length), label: 'Live Apps with Source' },
                             ].map(({ value, label }) => (
                                 <div key={label} className="text-center md:text-left">
                                     <span className="block text-3xl font-display font-black text-white tracking-tight">{value}</span>

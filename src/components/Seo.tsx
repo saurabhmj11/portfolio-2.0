@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 
 interface SeoProps {
     title?: string;
@@ -10,6 +11,8 @@ interface SeoProps {
     keywords?: string;
     publishedAt?: string;
     tags?: string[];
+    /** For 404s and admin screens: keep them out of search results. */
+    noindex?: boolean;
 }
 
 const BASE_URL = 'https://saurabh-a-lokhande.netlify.app';
@@ -17,16 +20,22 @@ const DEFAULT_IMAGE = `${BASE_URL}/og-image.jpg`;
 
 const Seo: React.FC<SeoProps> = ({
     title = 'Saurabh Lokhande — AI Engineer & Generative AI Specialist',
-    description = 'AI Engineer specializing in LLM agents, RAG systems, and full-stack AI applications. Production-grade projects, live deployed agents, and autonomous AI workflows.',
+    // Keep in sync with build/routeMeta.ts ('/') so client and static HTML agree.
+    description = 'AI engineer building retrieval and agent systems since 2022. Case studies with measured evaluations, live demos and source code.',
     image = DEFAULT_IMAGE,
-    url = BASE_URL,
+    url,
     type = 'website',
     keywords = 'AI Engineer, Generative AI, Saurabh Lokhande, LLM Agents, RAG Systems, LangChain, OpenAI, Full-Stack AI, Machine Learning Portfolio',
     publishedAt,
     tags,
+    noindex = false,
 }) => {
+    // Default canonical = the page actually being viewed, never silently the homepage.
+    const { pathname } = useLocation();
+    url = url ?? (pathname === '/' ? '/' : pathname.replace(/\/$/, ''));
     const siteTitle = 'Saurabh Lokhande';
-    const fullTitle = title === siteTitle ? title : `${title} — ${siteTitle}`;
+    // Append the name only when it isn't already in the title (no 'X — Name — Name').
+    const fullTitle = title.includes(siteTitle) ? title : `${title} — ${siteTitle}`;
     const imageUrl = image.startsWith('http') ? image : `${BASE_URL}${image}`;
     const canonicalUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
 
@@ -58,7 +67,7 @@ const Seo: React.FC<SeoProps> = ({
             <meta name="description" content={description} />
             <meta name="keywords" content={keywords} />
             <meta name="author" content="Saurabh Lokhande" />
-            <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+            <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1'} />
             <meta name="theme-color" content="#020202" />
             <link rel="canonical" href={canonicalUrl} />
 
