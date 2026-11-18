@@ -19,6 +19,27 @@
   status = 200
   force = false
 
+# Old case-study slugs → current ones
+[[redirects]]
+  from = "/project/openreception"
+  to = "/project/doc-ai"
+  status = 301
+
+[[redirects]]
+  from = "/project/agen"
+  to = "/project/multi-agent-research"
+  status = 301
+
+[[redirects]]
+  from = "/project/research-agent"
+  to = "/project/dataos"
+  status = 301
+
+[[redirects]]
+  from = "/project/resume-processing"
+  to = "/project/hire-me-os"
+  status = 301
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -38,7 +59,7 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://fonts.gstatic.com https://images.unsplash.com https://portfolio-backend-43ii.onrender.com; img-src 'self' data: blob: https://images.unsplash.com https://*.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' data: blob:; connect-src 'self' https://portfolio-backend-43ii.onrender.com https://api.github.com https://github-contributions-api.jogruber.de https://formspree.io https://*.formspree.io https://ipapi.co; frame-src 'none'; object-src 'none';"
+    Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://images.unsplash.com https://portfolio-backend-43ii.onrender.com https://www.googletagmanager.com; img-src 'self' data: blob: https://images.unsplash.com https://*.unsplash.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://portfolio-backend-43ii.onrender.com https://api.github.com https://github-contributions-api.jogruber.de https://formspree.io https://*.formspree.io; frame-src 'none'; object-src 'none';"
     Cross-Origin-Opener-Policy = "same-origin-allow-popups"
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"

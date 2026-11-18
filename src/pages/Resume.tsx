@@ -1,10 +1,16 @@
 import { resumeData } from '../data/resume';
 import { Download, ArrowLeft, Mail, Github, Linkedin, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Seo from '../components/Seo';
 
 const Resume = () => {
     return (
         <div className="min-h-screen bg-off-white dark:bg-[#050505] text-primary-text dark:text-white pt-24 pb-20 px-4 md:px-0">
+            <Seo
+                title="Résumé"
+                description="Résumé of Saurabh Lokhande, AI engineer: Gen AI / LLM Engineer at OneOfficeAutomation, RAG and multi-agent systems."
+                url="/resume"
+            />
             <div className="max-w-4xl mx-auto bg-white dark:bg-[#111] p-8 md:p-16 shadow-2xl rounded-sm">
 
                 {/* Header Actions */}
@@ -13,13 +19,14 @@ const Resume = () => {
                         <ArrowLeft size={20} />
                         <span>Back to Home</span>
                     </Link>
-                    <button
-                        onClick={() => window.print()}
+                    <a
+                        href="/Saurabh-Lokhande-AI-Engineer.pdf"
+                        download
                         className="flex items-center gap-2 bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide hover:opacity-80 transition-opacity"
                     >
-                        <Download size={16} />
-                        <span>Print / Save PDF</span>
-                    </button>
+                        <Download size={16} aria-hidden="true" />
+                        <span>Download PDF</span>
+                    </a>
                 </div>
 
                 {/* Header Info */}

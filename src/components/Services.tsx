@@ -298,7 +298,7 @@ const CapabilityCard = ({ service, bgIndex }: { service: typeof services[0]; bgI
 
             {/* Number + Icon header */}
             <div className="absolute top-6 left-6 z-10 flex items-center gap-3">
-                <span className="text-[10px] font-mono text-white/30 tracking-widest">{service.num}</span>
+                <span className="text-[10px] font-mono text-white/65 tracking-widest">{service.num}</span>
                 <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
                     <Icon className="w-3.5 h-3.5 text-white/50" strokeWidth={1.5} />
                 </div>
@@ -325,7 +325,7 @@ const CapabilityCard = ({ service, bgIndex }: { service: typeof services[0]; bgI
                 <p className="text-white/60 text-xs md:text-sm leading-relaxed font-light mb-3">{service.description}</p>
                 <div className="flex flex-wrap gap-1.5 md:gap-2">
                     {service.tags.map(tag => (
-                        <span key={tag} className="text-[8px] md:text-[9px] font-mono text-white/50 border border-white/15 px-2 py-0.5 md:px-2.5 md:py-1 uppercase tracking-widest">
+                        <span key={tag} className="text-[11px] md:text-[11px] font-mono text-white/50 border border-white/15 px-2 py-0.5 md:px-2.5 md:py-1 uppercase tracking-widest">
                             {tag}
                         </span>
                     ))}
@@ -380,7 +380,7 @@ const Services = () => {
                     <motion.p
                         initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
                         transition={{ duration: 0.5 }}
-                        className="font-mono text-xs text-white/25 uppercase tracking-[0.4em] mb-6"
+                        className="font-mono text-xs text-white/65 uppercase tracking-[0.4em] mb-6"
                     >
                         // My Expertise
                     </motion.p>

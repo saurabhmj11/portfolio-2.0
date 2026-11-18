@@ -9,6 +9,13 @@ interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> 
     quality?: number;
     /** CSS class for the wrapper container */
     wrapperClassName?: string;
+    /**
+     * Above-the-fold / LCP image: load immediately with high priority instead of
+     * waiting for the IntersectionObserver and native lazy loading.
+     */
+    priority?: boolean;
+    /** Called once the image has loaded (e.g. to refresh ScrollTrigger positions). */
+    onLoaded?: () => void;
 }
 
 /**
@@ -26,16 +33,19 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     quality = 75,
     wrapperClassName = '',
     className = '',
+    priority = false,
+    onLoaded,
     ...rest
 }) => {
     const [isLoaded, setIsLoaded] = useState(false);
-    const [shouldRender, setShouldRender] = useState(false);
+    const [failed, setFailed] = useState(false);
+    const [shouldRender, setShouldRender] = useState(priority);
     const sentinelRef = useRef<HTMLDivElement>(null);
 
     // Optimize Unsplash URLs by appending size/quality params
     const optimizedSrc = React.useMemo(() => {
         if (src.includes('images.unsplash.com')) {
-            const url = new URL(src);
+            const url = new URL(src, window.location.origin);
             url.searchParams.set('w', String(width));
             url.searchParams.set('q', String(quality));
             url.searchParams.set('auto', 'format');
@@ -47,7 +57,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
     // IntersectionObserver to start loading when within 200px of viewport
     useEffect(() => {
-        if (!sentinelRef.current) return;
+        if (priority || !sentinelRef.current) return;
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
@@ -59,7 +69,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         );
         observer.observe(sentinelRef.current);
         return () => observer.disconnect();
-    }, []);
+    }, [priority]);
 
     return (
         <div
@@ -72,15 +82,18 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
                 style={{ opacity: isLoaded ? 0 : 1 }}
             />
 
-            {shouldRender && (
+            {shouldRender && !failed && (
                 <img
+                    {...rest}
                     src={optimizedSrc}
                     alt={alt}
-                    loading="lazy"
-                    decoding="async"
-                    onLoad={() => setIsLoaded(true)}
+                    loading={priority ? 'eager' : 'lazy'}
+                    decoding={priority ? 'sync' : 'async'}
+                    // React 18 warns on camelCase fetchPriority; pass the DOM attribute.
+                    {...(priority ? { fetchpriority: 'high' } : {})}
+                    onLoad={() => { setIsLoaded(true); onLoaded?.(); }}
+                    onError={() => { setFailed(true); onLoaded?.(); }}
                     className={`transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
-                    {...rest}
                 />
             )}
         </div>

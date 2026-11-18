@@ -260,7 +260,7 @@ const LangGraphInteractive = () => {
                                     </div>
                                     <div className="mt-4 text-center absolute top-full w-32 -ml-8 bg-black/80 backdrop-blur-sm p-2 rounded border border-white/5">
                                         <p className={`font-mono text-[10px] uppercase tracking-widest ${isActive ? 'text-white' : 'text-gray-500'}`}>{node.label}</p>
-                                        {isActive && <p className="text-[9px] text-cyan-400/80 mt-1 leading-tight">{node.desc}</p>}
+                                        {isActive && <p className="text-[11px] text-cyan-400/80 mt-1 leading-tight">{node.desc}</p>}
                                     </div>
                                 </motion.div>
                             );

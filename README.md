@@ -10,7 +10,7 @@
 
 ![Profile Views](https://komarev.com/ghpvc/?username=saurabhmj11&color=00C9A7&style=for-the-badge&label=PROFILE+VIEWS)
 ![GitHub followers](https://img.shields.io/github/followers/saurabhmj11?style=for-the-badge&color=1F3864&labelColor=000000)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-1F3864?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/saurabh-lokhande-325041112/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-1F3864?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/saurabhsl/)
 [![Portfolio](https://img.shields.io/badge/Portfolio-Visit-00C9A7?style=for-the-badge&logo=vercel&logoColor=white)](https://saurabh-a-lokhande.netlify.app/)
 [![Email](https://img.shields.io/badge/Email-Contact-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:saurabhmj11@gmail.com)
 
@@ -141,7 +141,7 @@ fun_fact: "I ship code with more enthusiasm than my coffee intake would suggest 
 
 <div align="center">
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/saurabh-lokhande-325041112/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/saurabhsl/)
 [![Portfolio](https://img.shields.io/badge/Portfolio-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://saurabh-a-lokhande.netlify.app/)
 [![Gmail](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:saurabhmj11@gmail.com)
 

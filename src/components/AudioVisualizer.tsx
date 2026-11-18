@@ -17,7 +17,9 @@ const AudioVisualizer = () => {
                 transition={{ delay: 2 }}
                 onClick={toggleMute}
                 className="fixed top-24 right-4 z-[100] bg-black/50 backdrop-blur-md border border-white/10 p-3 rounded-full text-white/50 hover:text-white transition-colors"
-                aria-label="Toggle AI Director Audio"
+                type="button"
+                aria-pressed={!isMuted}
+                aria-label="AI Director audio"
             >
                 {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
             </motion.button>
@@ -25,14 +27,15 @@ const AudioVisualizer = () => {
     }
 
     return (
-        <motion.div
+        <motion.button
+            type="button"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 2, duration: 1 }}
-            className="fixed bottom-8 left-8 z-[100] flex items-center gap-4 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full px-4 py-2 hover:bg-black/60 transition-colors cursor-pointer group"
+            className="fixed bottom-8 left-8 z-[100] flex items-center gap-4 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full px-4 py-2 hover:bg-black/60 transition-colors cursor-pointer group text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
             onClick={toggleMute}
-            role="button"
-            aria-label="Toggle AI Voice Director"
+            aria-pressed={!isMuted}
+            aria-label="AI Director audio"
         >
             <div className="flex items-center gap-1 h-6 w-8">
                 {[...Array(4)].map((_, i) => (
@@ -70,7 +73,7 @@ const AudioVisualizer = () => {
             <div className="ml-2 text-gray-500 group-hover:text-white transition-colors">
                 {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
             </div>
-        </motion.div>
+        </motion.button>
     );
 };
 

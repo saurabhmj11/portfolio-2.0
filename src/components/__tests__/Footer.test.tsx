@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import Footer from '../Footer';
 import { BrowserRouter } from 'react-router-dom';
@@ -84,24 +84,16 @@ describe('Footer Component', () => {
         expect(resumeLink).toHaveAttribute('href', '/resume');
     });
 
-    it('renders system status bar with location and version', async () => {
-        // Use real timers for this test so Promises resolve normally
-        vi.useRealTimers();
-
-        const spy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
-            ok: true,
-            json: () => Promise.resolve({ city: 'NEW YORK', region_code: 'NY' }),
-        } as Response);
+    it('renders system status bar with a static location and version, without geolocating the visitor', () => {
+        const spy = vi.spyOn(globalThis, 'fetch');
 
         renderFooter();
 
-        // Wait for the async fetch to resolve and state to update
-        await waitFor(() => {
-            expect(screen.getByText(/NEW YORK, NY/i)).toBeInTheDocument();
-        }, { timeout: 5000 });
-
+        expect(screen.getByText(/WARDHA, MH/i)).toBeInTheDocument();
         expect(screen.getByText(/V_2026\.1/i)).toBeInTheDocument();
         expect(screen.getByText(/DEPLOYMENT READY/i)).toBeInTheDocument();
+        // Privacy: the footer must not send the visitor's IP to a lookup service.
+        expect(spy).not.toHaveBeenCalledWith(expect.stringContaining('ipapi'), expect.anything());
 
         spy.mockRestore();
     });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactLenis } from '@studio-freight/react-lenis';
+import { ReactLenis } from 'lenis/react';
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -175,10 +175,9 @@ const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
                 smoothWheel: true,
                 wheelMultiplier: 0.9,
                 // syncTouch keeps finger-tracking 1:1; lerp only applies on release
-                touchMultiplier: 2.0,
-                syncTouch: true,
-                syncTouchLerp: 0.12,
-                touchInertiaMultiplier: 30,
+                // Touch devices keep native scrolling: it's what phones are
+                // tuned for, and it frees the main thread on slow CPUs.
+                syncTouch: false,
             }}
         >
             <div style={{ position: 'relative' }}>

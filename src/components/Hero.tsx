@@ -7,10 +7,11 @@ import { useInView } from 'react-intersection-observer';
 import { useAudioDirector } from '../context/AudioContext';
 import TextReveal from './TextReveal';
 import Magnetic from './Magnetic';
-import { ArrowDown, Github, Star, GitBranch, Users } from 'lucide-react';
+import { ArrowDown, Github, FileText } from 'lucide-react';
 import HackerText from './HackerText';
 import useIsMobile from '../hooks/useIsMobile';
-import { useGitHubStats } from '../hooks/useGitHubStats';
+import { prefersReducedMotion, useIdleReady } from '../hooks/useIdleReady';
+import { scrollToSection } from '../utils/scrollToSection';
 
 const InteractiveCore = React.lazy(() => import('./InteractiveCore'));
 
@@ -18,13 +19,14 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
     const isMobile = useIsMobile();
+    // The 6 MB background video and the WebGL core are decoration: start them
+    // only once the page is interactive so they never delay first paint.
+    const idle = useIdleReady();
     const containerRef = useRef<HTMLElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end start"]
     });
-
-    const { stats, loading } = useGitHubStats('saurabhmj11');
 
     const { playSectionChime } = useAudioDirector();
     // Lower threshold so audio fires immediately on mobile
@@ -56,6 +58,10 @@ const Hero = () => {
 
     useEffect(() => {
         const ctx = gsap.context(() => {
+            if (prefersReducedMotion()) {
+                gsap.set(['.hero-intro', '.hero-connector', '.hero-cta'], { opacity: 1, clearProps: 'transform' });
+                return;
+            }
             // Use a shorter delay on mobile to prevent perceived black screen
             const isMobileDevice = window.innerWidth < 768;
             const tl = gsap.timeline({ delay: isMobileDevice ? 0 : 0.1 });
@@ -68,11 +74,6 @@ const Hero = () => {
                     { opacity: 0, rotation: -20, scale: 0.8 },
                     { opacity: 1, rotation: 0, scale: 1, duration: 0.6, ease: 'back.out(1.7)' },
                     "-=0.3"
-                )
-                .fromTo('.hero-desc',
-                    { opacity: 0, y: isMobileDevice ? 15 : 30 },
-                    { opacity: 1, y: 0, duration: isMobileDevice ? 0.5 : 1, ease: 'power3.out' },
-                    "-=0.2"
                 )
                 .fromTo('.hero-cta',
                     { opacity: 0, scale: 0.9 },
@@ -95,7 +96,7 @@ const Hero = () => {
             className="relative min-h-[100dvh] w-full flex flex-col items-center justify-start overflow-x-hidden bg-transparent text-white px-4 pt-32 pb-24"
         >
             {/* ── Background Video (desktop only) ── */}
-            {!isMobile && (
+            {!isMobile && idle && !prefersReducedMotion() && (
                 <motion.div
                     className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
                     style={{ opacity: videoOpacity }}
@@ -124,7 +125,7 @@ const Hero = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/90 z-[2]" />
 
             {/* 3D Components — Desktop only, behind text (z-20), text is z-40 */}
-            {!isMobile && coreInView ? (
+            {!isMobile && idle && coreInView && !prefersReducedMotion() ? (
                 <div className="absolute inset-0 z-[3] pointer-events-auto mix-blend-screen overflow-hidden">
                     <Suspense fallback={null}>
                         <InteractiveCore />
@@ -153,22 +154,26 @@ const Hero = () => {
                     <span className="text-green-400 text-xs font-mono tracking-widest uppercase">Open to Work — AI / LLM Roles</span>
                 </motion.div>
 
+                {/* One real heading for search engines and screen readers; the big
+                    animated rows below are decorative (aria-hidden). */}
+                <h1 className="sr-only">Saurabh Lokhande — Generative AI Engineer &amp; Software Developer</h1>
+
                 {/* Extraordinary Typography Block */}
-                <div className="flex flex-col w-full max-w-7xl mx-auto leading-[0.85] font-display font-bold tracking-tighter uppercase cursor-default relative text-white px-0 lg:px-12">
+                <div aria-hidden="true" className="flex flex-col w-full max-w-7xl mx-auto leading-[0.85] font-display font-bold tracking-tighter uppercase cursor-default relative text-white px-0 lg:px-12">
 
                     {/* Row 1: I'm a Generative AI */}
                     <div className="flex flex-col items-center md:items-start relative z-10 w-full md:pl-[10%] mb-4 md:-mb-6 animate-float">
                         <span className="hero-intro font-serif italic text-3xl md:text-5xl text-neon-cyan opacity-0 normal-case tracking-normal md:pl-16 mb-2 mix-blend-screen">
                             I'm a
                         </span>
-                        <h1 className="text-[clamp(2rem,11.5vw,9rem)] text-center md:text-left leading-none bg-clip-text text-transparent bg-gradient-to-r from-neon-blue via-neon-cyan to-neon-purple animate-gradient-x drop-shadow-lg">
+                        <div className="text-[clamp(2rem,11.5vw,9rem)] text-center md:text-left leading-none bg-clip-text text-transparent bg-gradient-to-r from-neon-blue via-neon-cyan to-neon-purple animate-gradient-x drop-shadow-lg">
                             <HackerText text="Generative AI" speed={40} />
-                        </h1>
+                        </div>
                     </div>
 
                     {/* Row 2: ENGINEER & (Outlined) */}
                     <div className="flex flex-col md:flex-row items-center justify-center md:justify-end relative z-0 w-full md:pr-[10%] mt-4 md:-mt-4">
-                        <TextReveal el="h1" className="text-[clamp(3.5rem,11.5vw,12rem)] text-outline-strong mix-blend-screen text-center md:text-right leading-none" delay={0.8}>
+                        <TextReveal fade={false} el="div" className="text-[clamp(3.5rem,11.5vw,12rem)] text-outline-strong mix-blend-screen text-center md:text-right leading-none" delay={0.15}>
                             ENGINEER
                         </TextReveal>
                         <span className="hero-connector font-serif italic text-4xl md:text-7xl text-blue-400 opacity-0 normal-case tracking-normal mt-2 md:mt-0 md:mb-6 md:ml-4">
@@ -178,10 +183,10 @@ const Hero = () => {
 
                     {/* Row 3: SOFTWARE DEVELOPER */}
                     <div className="flex flex-col items-center md:items-start relative z-20 w-full md:pl-[20%] mt-4 md:-mt-8">
-                        <TextReveal el="h1" className="text-[clamp(1.8rem,10vw,9rem)] text-center md:text-left leading-none" delay={1.0}>
+                        <TextReveal fade={false} el="div" className="text-[clamp(1.8rem,10vw,9rem)] text-center md:text-left leading-none" delay={0.25}>
                             SOFTWARE
                         </TextReveal>
-                        <TextReveal el="h1" className="text-[clamp(1.8rem,10vw,9rem)] text-center md:text-left leading-[0.85]" delay={1.2}>
+                        <TextReveal fade={false} el="div" className="text-[clamp(1.8rem,10vw,9rem)] text-center md:text-left leading-[0.85]" delay={0.35}>
                             DEVELOPER
                         </TextReveal>
                     </div>
@@ -189,28 +194,31 @@ const Hero = () => {
                 </div>
 
                 {/* Description & Buttons */}
-                <div className="hero-desc mt-10 max-w-2xl opacity-0 flex flex-col items-center">
+                <div className="hero-desc mt-10 max-w-2xl flex flex-col items-center">
                     <p className="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed font-light">
                         <span className="font-semibold text-white block mb-2">Hi, I'm Saurabh Lokhande</span>
-                        Crafting intelligent agents and scalable systems.
+                        I build retrieval and agent systems — and measure them. My Doc AI engine reaches Recall@3 97.5% on 4,584 pages.
+                        <span className="block mt-3 text-sm font-mono text-gray-400">
+                            Gen AI / LLM Engineer at OneOfficeAutomation · building AI since 2022 · India / Remote
+                        </span>
                     </p>
 
                     <div className="hero-cta flex flex-col sm:flex-row gap-3 sm:gap-6 items-center pointer-events-auto">
                         <Magnetic>
-                            <a href="#projects" className="px-6 sm:px-8 py-3.5 sm:py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-medium rounded-full hover:bg-white/20 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:border-neon-purple/50 transition-all duration-300 inline-block text-sm sm:text-base w-48 sm:w-auto text-center relative overflow-hidden group">
+                            <a href="#projects" onClick={(e) => { e.preventDefault(); scrollToSection('#projects'); }} className="px-6 sm:px-8 py-3.5 sm:py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-medium rounded-full hover:bg-white/20 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:border-neon-purple/50 transition-all duration-300 inline-block text-sm sm:text-base w-48 sm:w-auto text-center relative overflow-hidden group">
                                 <span className="relative z-10">View Projects</span>
                                 <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]" />
                             </a>
                         </Magnetic>
                         <Magnetic>
-                            <a href="#contact" className="px-6 sm:px-8 py-3.5 sm:py-4 border border-white/10 bg-black/20 backdrop-blur-md text-gray-300 font-medium rounded-full hover:bg-white/10 hover:text-white hover:border-white/30 transition-all duration-300 inline-block text-sm sm:text-base w-48 sm:w-auto text-center">
+                            <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('#contact'); }} className="px-6 sm:px-8 py-3.5 sm:py-4 border border-white/10 bg-black/20 backdrop-blur-md text-gray-300 font-medium rounded-full hover:bg-white/10 hover:text-white hover:border-white/30 transition-all duration-300 inline-block text-sm sm:text-base w-48 sm:w-auto text-center">
                                 Contact Me
                             </a>
                         </Magnetic>
                     </div>
                 </div>
 
-                {/* ── GitHub Social Proof Strip (Live Data) ── */}
+                {/* ── Quick links ── */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -221,26 +229,15 @@ const Hero = () => {
                         href="https://github.com/saurabhmj11"
                         target="_blank" rel="noopener noreferrer"
                         className="flex items-center gap-1.5 hover:text-white transition-colors group"
-                        aria-label="GitHub profile"
                     >
-                        <Github size={12} className="text-gray-600 group-hover:text-white transition-colors" />
-                        <span>saurabhmj11</span>
+                        <Github size={12} className="text-gray-600 group-hover:text-white transition-colors" aria-hidden="true" />
+                        <span>GitHub</span>
                     </a>
-                    <span className="text-gray-700">·</span>
-                    <span className="flex items-center gap-1.5">
-                        <GitBranch size={12} className="text-blue-400/60" />
-                        {loading ? '--' : stats?.publicRepos} Public Repos
-                    </span>
-                    <span className="text-gray-700">·</span>
-                    <span className="flex items-center gap-1.5">
-                        <Star size={12} className="text-yellow-400/60" />
-                        {!loading && (stats?.totalStars ?? 0) > 0 ? `${stats?.totalStars} Stars` : 'Active Builder'}
-                    </span>
-                    <span className="text-gray-700">·</span>
-                    <span className="flex items-center gap-1.5">
-                        <Users size={12} className="text-purple-400/60" />
-                        {!loading && (stats?.followers ?? 0) > 0 ? `${stats?.followers} Followers` : 'Open Source Contributor'}
-                    </span>
+                    <span className="text-gray-700" aria-hidden="true">·</span>
+                    <a href="/Saurabh-Lokhande-AI-Engineer.pdf" target="_blank" rel="noopener" className="flex items-center gap-1.5 hover:text-white transition-colors group">
+                        <FileText size={12} className="text-gray-600 group-hover:text-white transition-colors" aria-hidden="true" />
+                        <span>Résumé (PDF)</span><span className="sr-only"> opens in a new tab</span>
+                    </a>
                 </motion.div>
             </motion.div>
 

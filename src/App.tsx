@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, MotionConfig } from 'framer-motion';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 
 import { TerminalProvider } from './context/TerminalContext';
 import { AudioProvider }    from './context/AudioContext';
 import { scrollToSection }  from './utils/scrollToSection';
+import { useIdleReady } from './hooks/useIdleReady';
 
 import Analytics      from './components/Analytics';
 import SmoothScroll   from './components/SmoothScroll';
@@ -41,9 +42,10 @@ const CaseStudy   = React.lazy(() => import('./pages/CaseStudy'));
 
 function App() {
   const [isLoading,   setIsLoading]   = useState(true);
+  // Decorative / secondary UI waits until the browser is idle after load.
+  const idle = useIdleReady();
+  const ready = !isLoading && idle;
   const [isChatOpen,  setIsChatOpen]  = useState(false);
-  // Swipe-to-navigate is disabled to allow smooth Lenis/ScrollTrigger animations.
-  // useSwipeNavigation();
 
   const location = useLocation();
 
@@ -53,6 +55,7 @@ function App() {
    * retried up to 15 × 100 ms before giving up.
    */
   React.useEffect(() => {
+    if (location.hash === '#main-content') return; // skip link: native focus jump
     if (location.hash) {
       scrollToSection(location.hash);
     } else {
@@ -61,19 +64,27 @@ function App() {
   }, [location]);
 
   return (
+    <MotionConfig reducedMotion="user">
     <TerminalProvider>
       <AudioProvider>
         <HelmetProvider>
           <Analytics />
           <Seo />
           <SmoothScroll>
+            {/* Keyboard users: jump past the header and floating widgets. */}
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[3000] focus:px-4 focus:py-2 focus:rounded-full focus:bg-white focus:text-black focus:font-medium"
+            >
+              Skip to content
+            </a>
             {/* Preloader overlay — does NOT block crawlers from seeing content */}
             <AnimatePresence mode="wait">
               {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
             </AnimatePresence>
 
             {/* Visual overlays loaded after preloader exits */}
-            {!isLoading && (
+            {ready && (
               <React.Suspense fallback={null}>
                 <Spotlight />
                 <ScrollProgress />
@@ -89,12 +100,13 @@ function App() {
 
                 <Header />
 
-                {!isLoading && (
+                {ready && (
                   <React.Suspense fallback={null}>
                     <CommandPalette />
                   </React.Suspense>
                 )}
 
+                <div id="main-content" tabIndex={-1} className="outline-none">
                 <AnimatePresence mode="wait">
                   <React.Suspense fallback={null}>
                     <Routes location={location} key={location.pathname}>
@@ -108,17 +120,18 @@ function App() {
                     </Routes>
                   </React.Suspense>
                 </AnimatePresence>
+                </div>
               </div>
 
               {/* Fixed footer — rendered behind the main content layer */}
-              {!isLoading && (
+              {ready && (
                 <React.Suspense fallback={null}>
                   <Footer />
                 </React.Suspense>
               )}
 
               {/* Floating UI — chatbot, terminal, scroll-to-top */}
-              {!isLoading && (
+              {ready && (
                 <React.Suspense fallback={null}>
                   <Chatbot isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
                   <Terminal />
@@ -131,7 +144,7 @@ function App() {
               {!isLoading && <MobileBottomNav />}
 
               {/* PWA install prompt + offline toast */}
-              {!isLoading && (
+              {ready && (
                 <React.Suspense fallback={null}>
                   <PWAPrompt />
                 </React.Suspense>
@@ -141,6 +154,7 @@ function App() {
         </HelmetProvider>
       </AudioProvider>
     </TerminalProvider>
+    </MotionConfig>
   );
 }
 

@@ -7,19 +7,26 @@
  *
  * @param href  Hash string, e.g. "#contact"
  */
+/** Event that asks the homepage to mount all of its deferred sections now. */
+export const MOUNT_ALL_SECTIONS_EVENT = 'portfolio:mount-all-sections';
+
 export function scrollToSection(href: string): void {
-  const MAX_ATTEMPTS = 15;
+  const MAX_ATTEMPTS = 30;
   const INTERVAL_MS  = 100;
 
   const tryScroll = (): boolean => {
     const el = document.querySelector(href);
     if (!el) return false;
     el.scrollIntoView({ behavior: 'smooth' });
-    window.history.pushState(null, '', href);
+    // Don't stack duplicate history entries for the same hash.
+    if (window.location.hash !== href) window.history.pushState(null, '', href);
     return true;
   };
 
   if (tryScroll()) return;
+
+  // Homepage sections mount progressively; make sure the target gets rendered.
+  window.dispatchEvent(new Event(MOUNT_ALL_SECTIONS_EVENT));
 
   let attempts = 0;
   const timer = setInterval(() => {

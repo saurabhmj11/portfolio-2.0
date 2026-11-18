@@ -1,15 +1,14 @@
 # Saurabh Lokhande — AI Engineer & Generative AI Specialist
 
-AI Engineer with 3+ years of experience building production-grade Agentic AI systems, RAG pipelines, and LLM-powered applications. Based in India. Open to AI engineering roles, freelance AI projects, and collaborations.
+AI Engineer building Agentic AI systems since 2022, RAG pipelines, and LLM-powered applications. Based in India. Open to AI engineering roles, freelance AI projects, and collaborations.
 
 ## Site Navigation
 
 - [Home — Hero & Overview](/)
-- [About — Bio, stats, and GitHub activity](/#about)
+- [About — Bio and stats](/#about)
 - [Skills — Tech stack and capabilities](/#skills)
 - [Services — What I offer](/#services)
-- [Projects — Case studies and live demos](/#projects)
-- [Live Agents — Real-time autonomous agent demos](/#agents)
+- [Selected Work — Projects, case studies and live demos](/#projects)
 - [Experience — Work history and milestones](/#experience)
 - [Blog — Research notes and technical articles](/blog)
 - [Contact — Get in touch](/#contact)
@@ -17,9 +16,10 @@ AI Engineer with 3+ years of experience building production-grade Agentic AI sys
 
 ## Featured Projects
 
-- [Hire Me OS 2.0](/project/hire-me-os) — Autonomous career intelligence SaaS with 6-block job evaluation, Autopilot 24/7 scheduler, AI resume tailor, and Chrome extension. Built with React, FastAPI, LangChain.
-- [Doc AI (Ultra Doc Intelligence)](/project/doc-ai) — Logistics document intelligence with hybrid BM25 + ChromaDB RAG, HIPAA-compliant PII masking via Microsoft Presidio, and confidence-scored Q&A.
-- [AI Meal Planner](/project/meal-planner) — Personalized nutrition planning with LLM-powered meal generation, macro tracking, and adaptive recommendations.
+- [Hire Me OS 2.0](/project/hire-me-os) — Multi-tenant career SaaS: 6-block job evaluation with 10 scored dimensions and an A–F grade, Autopilot scheduler, AI resume tailor, and Chrome extension. Built with Next.js 16, Supabase, and Prisma.
+- [Doc AI](/project/doc-ai) — Document intelligence with hybrid BM25 + vector RAG and cited answers. v2 engine evaluated on 4,584 pages: Recall@3 97.5%, MRR@10 0.867, retrieval p50 0.55 s (40-question synthetic set; technical report: https://github.com/saurabhmj11/Doc-AI-Enterprise-RAG-Chatbot/blob/main/TECHNICAL_REPORT.md).
+- [Multi-Agent Research](/project/multi-agent-research) — LangGraph planner, researcher, verifier and writer agents (Python/FastAPI) running locally on Ollama.
+- [DataOS](/project/dataos) — Browser-based simulation of an agentic data-analysis platform with Gemini-powered Q&A. MIT licensed.
 
 ## Core Capabilities
 

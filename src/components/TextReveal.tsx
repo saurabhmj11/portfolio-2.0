@@ -2,6 +2,8 @@ import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+import { prefersReducedMotion } from '../hooks/useIdleReady';
+
 gsap.registerPlugin(ScrollTrigger);
 
 interface TextRevealProps {
@@ -10,23 +12,28 @@ interface TextRevealProps {
     el?: React.ElementType;
     delay?: number;
     threshold?: number;
+    /**
+     * Fade words in from transparent. Set false for above-the-fold headings so
+     * they paint immediately (keeps Largest Contentful Paint fast) and only slide.
+     */
+    fade?: boolean;
 }
 
-const TextReveal: React.FC<TextRevealProps> = ({ children, className, el: Wrapper = 'p', delay = 0, threshold = 0.85 }) => {
+const TextReveal: React.FC<TextRevealProps> = ({ children, className, el: Wrapper = 'p', delay = 0, threshold = 0.85, fade = true }) => {
     const ref = useRef<HTMLElement>(null);
 
     useEffect(() => {
+        if (prefersReducedMotion()) return;
         const ctx = gsap.context(() => {
             const words = ref.current?.querySelectorAll('.word');
             if (words) {
                 gsap.fromTo(words,
-                    {
-                        y: 100,
-                        opacity: 0,
-                        rotateX: 45
-                    },
+                    fade
+                        ? { y: 100, opacity: 0, rotateX: 45 }
+                        : { yPercent: 35, rotateX: 25 },
                     {
                         y: 0,
+                        yPercent: 0,
                         opacity: 1,
                         rotateX: 0,
                         duration: 1.2,
@@ -44,7 +51,7 @@ const TextReveal: React.FC<TextRevealProps> = ({ children, className, el: Wrappe
         }, ref);
 
         return () => ctx.revert();
-    }, [delay, threshold, children]);
+    }, [delay, threshold, children, fade]);
 
     const words = children.split(" ");
 

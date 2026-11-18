@@ -1,0 +1,109 @@
+{
+    "personal": {
+        "name": "Saurabh Lokhande",
+        "title": "AI Engineer — Generative AI | Agentic Systems | LLM Architecture",
+        "location": "Remote | India",
+        "email": "saurabhmj11@gmail.com",
+        "phone": "+91-7767913887",
+        "github": "github.com/saurabhmj11",
+        "linkedin": "linkedin.com/in/saurabhsl",
+        "portfolio": "saurabh-a-lokhande.netlify.app"
+    },
+    "summary": "AI Engineer designing and building Generative AI systems since 2022, including agentic architectures, Retrieval-Augmented Generation (RAG), and LLM-powered applications. Experienced in building AI SaaS platforms, multi-agent workflows, and scalable AI backends using Python, FastAPI, LangGraph, and vector databases. Strong focus on production architecture, orchestration, and real-world AI deployment beyond basic chatbot implementations.",
+    "skills": {
+        "Gen AI & LLMs": [
+            "Agentic AI Systems",
+            "Multi-Agent Architectures",
+            "RAG",
+            "Prompt Engineering & Evaluation",
+            "Tool Calling & Workflow Orchestration",
+            "Context Management & Memory Systems"
+        ],
+        "Frameworks & Tools": [
+            "LangChain",
+            "LangGraph",
+            "Hugging Face Transformers",
+            "OpenAI APIs",
+            "Vector Databases (FAISS, Chroma, Pinecone)"
+        ],
+        "Backend & Engineering": [
+            "Python (Advanced)",
+            "FastAPI",
+            "REST APIs",
+            "Async Workflows",
+            "Docker",
+            "Git"
+        ],
+        "Data & ML": [
+            "NLP",
+            "Embeddings & Semantic Search",
+            "Document Processing Pipelines",
+            "Model Evaluation Strategies"
+        ]
+    },
+    "experience": [
+        {
+            "role": "Generative AI / LLM Engineer",
+            "duration": "Jan 2024 – Present",
+            "type": "Remote",
+            "company": "OneOfficeAutomation",
+            "points": [
+                "Designed and deployed production-style AI systems focusing on agent orchestration, retrieval architecture, and scalable AI services.",
+                "Developed OpenReception — an AI receptionist SaaS platform capable of handling business calls, booking appointments, and answering queries autonomously.",
+                "Built AGEN — an AI agent browser platform with a WebUI, persistent browser sessions, and tool-calling architecture.",
+                "Designed a stateful Multi-Agent Research Automation System using LangGraph for automated workflows.",
+                "Developed an AI Resume Processing & Candidate Intelligence System to automatically extract structured candidate insights from cloud storage."
+            ]
+        },
+        {
+            "role": "ML Engineer",
+            "duration": "2023 – 2024",
+            "type": "Freelance",
+            "company": "Freelance",
+            "points": [
+                "Worked on vision transformer and recommendation-engine models for real-world data streams.",
+                "Stack: TensorFlow, PyTorch, AWS, PostgreSQL, Scikit-Learn."
+            ]
+        },
+        {
+            "role": "Data & AI Intern",
+            "duration": "2022 – 2023",
+            "type": "Internship",
+            "company": "Pantech Solutions",
+            "points": [
+                "Built semantic retrieval engines and early vector search systems from raw data ingestion pipelines.",
+                "Stack: Pandas, Pinecone, Hugging Face, Docker, Python."
+            ]
+        }
+    ],
+    "projects": [
+        {
+            "name": "Doc AI — Large-corpus RAG engine",
+            "link": "github.com/saurabhmj11/Doc-AI-Enterprise-RAG-Chatbot",
+            "desc": "Hybrid BM25 + dense retrieval fused with RRF, cross-encoder reranking and cited answers over 12 PDFs / 4,584 pages (with OCR), on open-source models running CPU-only. Measured on a 40-question synthetic set: Recall@3 97.5%, MRR@10 0.867, retrieval p50 0.55 s; full-answer p50 cut from ~31 s to 6.7 s (smaller model plus shorter prompts)."
+        },
+        {
+            "name": "Hire Me OS 2.0 — Job-search SaaS",
+            "link": "github.com/saurabhmj11/hireme-os-2.0",
+            "desc": "Multi-tenant Next.js 16 + Supabase/Prisma app: an evaluation engine that writes 6 report blocks and scores 10 weighted dimensions into an A–F grade, an Autopilot scheduler and a Chrome extension."
+        },
+        {
+            "name": "Multi-Agent Research Automation System",
+            "link": "github.com/saurabhmj11/multi-agent-research-auto",
+            "desc": "LangGraph pipeline (planner → researcher → verifier → writer) that replaces a single prompt chain with explicit, observable steps; runs locally on Ollama with DuckDuckGo search."
+        },
+        {
+            "name": "OpenReception — AI Receptionist SaaS Platform (employer project, not public)",
+            "desc": "Designed LLM-driven conversational architecture with FastAPI backend, real-time AI processing, RAG pipeline for business knowledge retrieval, and integrated Twilio/voice APIs."
+        },
+        {
+            "name": "AGEN — AI Agent Browser Platform (employer project, not public)",
+            "desc": "Built an AI agent framework with persistent browser sessions for long-running tasks. Developed WebUI using Gradio and designed tool-calling architecture for real website interactions."
+        }
+    ],
+    "education": {
+        "degree": "Bachelor’s Degree in Engineering",
+        "school": "Amravati University",
+        "year": "2019 – 2023"
+    }
+}

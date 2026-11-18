@@ -16,7 +16,7 @@ const steps = [
         num: '01',
         title: 'Deep Discovery',
         tag: 'PROBLEM FRAMING',
-        desc: 'Decomposing the problem space before writing a single line of code. Mapping data flows, identifying failure modes, and defining success metrics — architecting the multi-agent orchestration logic for autonomous reasoning systems.',
+        desc: 'Framing the problem before writing code: mapping the data, listing the ways it can fail, and deciding up front how success will be measured.',
         accent: '#3b82f6', // blue-500
         gradient: 'from-blue-500/20 to-transparent',
         icon: '◈',
@@ -25,16 +25,16 @@ const steps = [
         num: '02',
         title: 'System Design',
         tag: 'ARCHITECTURE',
-        desc: 'Architecting for scale and resilience. Designing event-driven pipelines, choosing the right vector store topology, and drawing explicit boundaries between services — building robust infrastructure for high-throughput AI systems.',
+        desc: 'Choosing components that fit the data, not the hype — for example hybrid BM25 + vector search when exact identifiers matter — and drawing explicit boundaries between services.',
         accent: '#8b5cf6', // violet-500
         gradient: 'from-violet-500/20 to-transparent',
         icon: '⬡',
     },
     {
         num: '03',
-        title: 'Implementation',
-        tag: 'PRECISION ENGINEERING',
-        desc: 'Building with deterministic precision. Implementing idempotent logic, hardened RAG retrieval chains, and type-safe API contracts — securing integration points and ensuring multi-tenant data isolation for production backends.',
+        title: 'Build & Evaluate',
+        tag: 'MEASURE EVERY CHANGE',
+        desc: 'Measuring as I build: re-timing after each change took the Doc AI engine from ~31 s to 6.7 s per answer (p50, CPU laptop), and retrieval and citation quality are scored on a 40-question eval.',
         accent: '#10b981', // emerald-500
         gradient: 'from-emerald-500/20 to-transparent',
         icon: '◎',
@@ -42,8 +42,8 @@ const steps = [
     {
         num: '04',
         title: 'Deployment',
-        tag: 'PRODUCTION LAUNCH',
-        desc: 'Shipping to production with zero-downtime strategies. Rolling out ML inference engines to edge nodes, configuring observability dashboards, and establishing automated rollback gates — ensuring sub-100ms latency at scale.',
+        tag: 'SHIP & DOCUMENT',
+        desc: 'Shipping in Docker with a fallback path for when the model is down, then writing up what was measured, what failed, and what is still open.',
         accent: '#f59e0b', // amber-500
         gradient: 'from-amber-500/20 to-transparent',
         icon: '⊕',
@@ -145,7 +145,7 @@ const Workflow = () => {
         >
             {/* Header */}
             <div className="text-center mb-24 max-w-3xl mx-auto relative z-20">
-                <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-white/30 mb-4">
+                <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-white/65 mb-4">
                     My Process
                 </p>
                 <h2 className="font-display font-black text-white tracking-tighter leading-none text-5xl md:text-7xl">

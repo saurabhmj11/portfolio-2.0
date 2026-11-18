@@ -1,26 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import { Server, Database, Code, Shield, Network, Zap, Cpu, Globe, BrainCircuit } from 'lucide-react';
 
-export interface TopologyNode {
-    id: string;
-    label: string;
-    icon: string;
-    x: number; // 0 to 100 percentage
-    y: number; // 0 to 100 percentage
-}
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-export interface TopologyEdge {
-    from: string;
-    to: string;
-    label?: string;
-    animated?: boolean;
-}
-
-export interface TopologyData {
-    nodes: TopologyNode[];
-    edges: TopologyEdge[];
-}
+import type { TopologyData, TopologyNode } from '../data/topology';
+export type { TopologyData, TopologyNode, TopologyEdge } from '../data/topology';
 
 interface AnimatedTopologyProps {
     data: TopologyData;
@@ -38,114 +25,189 @@ const iconMap: Record<string, React.ElementType> = {
     brain: BrainCircuit,
 };
 
-const AnimatedTopology: React.FC<AnimatedTopologyProps> = ({ data }) => {
-    const [hoveredNode, setHoveredNode] = useState<string | null>(null);
-    const [mounted, setMounted] = useState(false);
+const DIAGRAM_HEIGHT = 420;
 
-    useEffect(() => {
-        setMounted(true);
+/**
+ * Data-driven system diagram.
+ * - Edges draw themselves as you scroll (GSAP ScrollTrigger scrub on stroke-dashoffset).
+ * - Nodes are focusable buttons; hover or focus highlights their direct connections.
+ * - Under 640px the diagram becomes a readable list of connections.
+ * - prefers-reduced-motion: the finished diagram, no scroll animation.
+ */
+const AnimatedTopology: React.FC<AnimatedTopologyProps> = ({ data }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const diagramRef = useRef<HTMLDivElement>(null);
+    const [width, setWidth] = useState(0);
+    const [active, setActive] = useState<string | null>(null);
+
+    const byId = useMemo(() => new Map(data.nodes.map(n => [n.id, n])), [data.nodes]);
+    const neighbours = useMemo(() => {
+        const m = new Map<string, Set<string>>();
+        data.nodes.forEach(n => m.set(n.id, new Set([n.id])));
+        data.edges.forEach(e => {
+            m.get(e.from)?.add(e.to);
+            m.get(e.to)?.add(e.from);
+        });
+        return m;
+    }, [data]);
+
+    // Edges are drawn in pixel space so stroke widths and dash lengths are true
+    // (a stretched 0–100 viewBox distorts them, and gradient strokes vanish on
+    // perfectly horizontal lines).
+    useLayoutEffect(() => {
+        const el = diagramRef.current;
+        if (!el) return;
+        const update = () => setWidth(el.clientWidth);
+        update();
+        const ro = new ResizeObserver(update);
+        ro.observe(el);
+        return () => ro.disconnect();
     }, []);
 
-    if (!mounted) return null;
-
-    const getConnectedNodes = (nodeId: string) => {
-        const connected = new Set<string>();
-        connected.add(nodeId);
-        data.edges.forEach((edge) => {
-            if (edge.from === nodeId) connected.add(edge.to);
-            if (edge.to === nodeId) connected.add(edge.from);
+    useGSAP(() => {
+        if (!width) return;
+        const mm = gsap.matchMedia();
+        mm.add('(prefers-reduced-motion: no-preference) and (min-width: 640px)', () => {
+            const tl = gsap.timeline({
+                defaults: { ease: 'none' },
+                scrollTrigger: {
+                    trigger: diagramRef.current,
+                    start: 'top 80%',
+                    end: 'center 45%',
+                    scrub: 0.6,
+                },
+            });
+            // Only the decorative visual animates (opacity/scale); the button itself stays
+            // visible and focusable even while the diagram is "undrawn".
+            tl.from('.topo-node-visual', { opacity: 0, scale: 0.6, stagger: 0.08, duration: 0.4 })
+              .fromTo('.topo-edge', { strokeDashoffset: 1 }, { strokeDashoffset: 0, stagger: 0.08, duration: 0.6 }, 0.15)
+              .from('.topo-edge-label', { opacity: 0, stagger: 0.05, duration: 0.3 }, '>-0.2');
         });
-        return connected;
+        return () => mm.revert();
+    }, { scope: containerRef, dependencies: [width > 0, data], revertOnUpdate: true });
+
+    const isLit = (id: string) => !active || neighbours.get(active)?.has(id);
+    const edgeLit = (from: string, to: string) => !active || (active === from || active === to);
+    const px = (n: TopologyNode) => ({ x: (n.x / 100) * width, y: (n.y / 100) * DIAGRAM_HEIGHT });
+
+    const describe = (id: string) => {
+        const n = byId.get(id);
+        const links = [...(neighbours.get(id) ?? [])].filter(x => x !== id).map(x => byId.get(x)?.label).filter(Boolean);
+        return `${n?.label}${links.length ? `, connects to ${links.join(', ')}` : ''}`;
     };
 
-    const connectedNodes = hoveredNode ? getConnectedNodes(hoveredNode) : null;
-
     return (
-        <div className="relative w-full h-[450px] bg-[#09090b]/80 rounded-3xl border border-white/5 overflow-hidden shadow-2xl shadow-cyan-900/10 backdrop-blur-md font-mono mt-8">
-            {/* Grid Background */}
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)] opacity-50" />
+        <div ref={containerRef}>
+            {/* ── Diagram (≥640px) ── */}
+            <div
+                ref={diagramRef}
+                role="group"
+                aria-label="System architecture diagram"
+                className="relative w-full hidden sm:block bg-[#09090b]/80 rounded-3xl border border-white/5 overflow-hidden font-mono"
+                style={{ height: DIAGRAM_HEIGHT }}
+            >
+                <div
+                    className="absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)]"
+                    style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '20px 20px' }}
+                    aria-hidden="true"
+                />
 
-            {/* SVG Edges */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                <defs>
-                    <linearGradient id="edge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="rgba(34, 211, 238, 0.2)" />
-                        <stop offset="100%" stopColor="rgba(34, 211, 238, 0.8)" />
-                    </linearGradient>
-                    <filter id="glow">
-                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                        <feMerge>
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                    </filter>
-                </defs>
-                {data.edges.map((edge, i) => {
-                    const fromNode = data.nodes.find((n) => n.id === edge.from);
-                    const toNode = data.nodes.find((n) => n.id === edge.to);
-                    if (!fromNode || !toNode) return null;
+                {width > 0 && (
+                    <svg className="absolute inset-0 pointer-events-none" width={width} height={DIAGRAM_HEIGHT} aria-hidden="true">
+                        {data.edges.map((edge, i) => {
+                            const a = byId.get(edge.from);
+                            const b = byId.get(edge.to);
+                            if (!a || !b) return null;
+                            const p1 = px(a);
+                            const p2 = px(b);
+                            const lit = edgeLit(edge.from, edge.to);
+                            return (
+                                <g key={`${edge.from}-${edge.to}-${i}`} style={{ opacity: lit ? 1 : 0.15, transition: 'opacity 250ms' }}>
+                                    <line
+                                        className="topo-edge"
+                                        x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+                                        stroke="rgb(34,211,238)"
+                                        strokeOpacity={0.6}
+                                        strokeWidth={2}
+                                        strokeLinecap="round"
+                                        pathLength={1}
+                                        strokeDasharray={1}
+                                    />
+                                    {edge.label && (
+                                        <text
+                                            className="topo-edge-label"
+                                            x={(p1.x + p2.x) / 2}
+                                            y={(p1.y + p2.y) / 2 - 8}
+                                            textAnchor="middle"
+                                            fill="rgba(165,243,252,0.75)"
+                                            fontSize={10}
+                                            letterSpacing="0.05em"
+                                        >
+                                            {edge.label}
+                                        </text>
+                                    )}
+                                </g>
+                            );
+                        })}
+                    </svg>
+                )}
 
-                    const isHighlighted =
-                        !hoveredNode ||
-                        (connectedNodes && connectedNodes.has(edge.from) && connectedNodes.has(edge.to));
-
-                    // Use percentages in SVG for responsiveness
-                    const x1 = `${fromNode.x}%`;
-                    const y1 = `${fromNode.y}%`;
-                    const x2 = `${toNode.x}%`;
-                    const y2 = `${toNode.y}%`;
-
+                {data.nodes.map(node => {
+                    const Icon = iconMap[node.icon] || Cpu;
+                    const lit = isLit(node.id);
                     return (
-                        <g key={`edge-${i}`}>
-                            <motion.line
-                                x1={x1}
-                                y1={y1}
-                                x2={x2}
-                                y2={y2}
-                                stroke="url(#edge-gradient)"
-                                strokeWidth="2"
-                                opacity={isHighlighted ? 0.6 : 0.1}
-                                initial={{ pathLength: 0, opacity: 0 }}
-                                animate={{ pathLength: 1, opacity: isHighlighted ? 0.6 : 0.1 }}
-                                transition={{ duration: 1.5, ease: 'easeInOut' }}
-                            />
-                            {/* In standard SVG, offsetPath using percentages is not widely supported across browsers.
-                                We'll skip the offsetPath animation for this MVP and just use the glowing line. */}
-                        </g>
+                        // Outer wrapper owns positioning; GSAP animates only the inner element,
+                        // so its transforms never fight the centring translate.
+                        <div
+                            key={node.id}
+                            className="absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-200"
+                            style={{ left: `${node.x}%`, top: `${node.y}%`, opacity: lit ? 1 : 0.3 }}
+                        >
+                            <button
+                                type="button"
+                                aria-label={describe(node.id)}
+                                onMouseEnter={() => setActive(node.id)}
+                                onMouseLeave={() => setActive(null)}
+                                onFocus={() => setActive(node.id)}
+                                onBlur={() => setActive(null)}
+                                className="flex flex-col items-center rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-300"
+                            >
+                                <span className="topo-node-visual flex flex-col items-center">
+                                <span className="w-14 h-14 bg-black/70 rounded-2xl border border-cyan-500/30 flex items-center justify-center shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+                                    <Icon className="w-6 h-6 text-cyan-400" aria-hidden="true" />
+                                </span>
+                                <span className="mt-3 text-[11px] text-cyan-100 font-semibold uppercase tracking-wider text-center max-w-[130px] leading-tight px-2 py-1 bg-black/60 rounded-lg border border-white/5">
+                                    {node.label}
+                                </span>
+                                </span>
+                            </button>
+                        </div>
                     );
                 })}
-            </svg>
+            </div>
 
-            {/* Nodes */}
-            {data.nodes.map((node) => {
-                const Icon = iconMap[node.icon] || Cpu;
-                const isHighlighted = !hoveredNode || (connectedNodes && connectedNodes.has(node.id));
-
-                return (
-                    <motion.div
-                        key={node.id}
-                        className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer"
-                        style={{ left: `${node.x}%`, top: `${node.y}%` }}
-                        onMouseEnter={() => setHoveredNode(node.id)}
-                        onMouseLeave={() => setHoveredNode(null)}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{
-                            scale: isHighlighted ? 1 : 0.8,
-                            opacity: isHighlighted ? 1 : 0.3,
-                        }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                        whileHover={{ scale: 1.1 }}
-                    >
-                        <div className="w-14 h-14 bg-black/60 rounded-2xl border border-cyan-500/30 flex items-center justify-center shadow-[0_0_20px_rgba(34,211,238,0.2)] backdrop-blur-xl relative group">
-                            <div className="absolute inset-0 rounded-2xl bg-cyan-400/10 blur-md group-hover:bg-cyan-400/30 transition-colors" />
-                            <Icon className="w-6 h-6 text-cyan-400 relative z-10" />
-                        </div>
-                        <div className="mt-3 text-[10px] sm:text-xs text-cyan-100 font-semibold uppercase tracking-wider text-center max-w-[120px] leading-tight px-2 py-1 bg-black/50 rounded-lg backdrop-blur-sm border border-white/5">
-                            {node.label}
-                        </div>
-                    </motion.div>
-                );
-            })}
+            {/* ── Connection list (<640px) ── */}
+            <ol className="sm:hidden space-y-3 font-mono" aria-label="System architecture">
+                {data.nodes.map(node => {
+                    const Icon = iconMap[node.icon] || Cpu;
+                    const outgoing = data.edges.filter(e => e.from === node.id);
+                    return (
+                        <li key={node.id} className="flex gap-3 p-4 rounded-2xl border border-white/10 bg-white/[0.03]">
+                            <span className="w-10 h-10 shrink-0 rounded-xl border border-cyan-500/30 flex items-center justify-center">
+                                <Icon className="w-5 h-5 text-cyan-400" aria-hidden="true" />
+                            </span>
+                            <span className="min-w-0">
+                                <span className="block text-sm text-white">{node.label}</span>
+                                {outgoing.map((e, i) => (
+                                    <span key={i} className="block text-xs text-gray-400 mt-1">
+                                        → {byId.get(e.to)?.label}{e.label ? ` · ${e.label}` : ''}
+                                    </span>
+                                ))}
+                            </span>
+                        </li>
+                    );
+                })}
+            </ol>
         </div>
     );
 };
